@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WEB UI Test Page</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  </head>
+
+  <body>
+    <h1>Spark Data Web Analyzer</h1>
+    <h2>Task Timeline</h2>
+    <script type="text/javascript">
+var dataQuantity = 20;
+var taskTimeArray = [];
+
+for(var i = 0; i < dataQuantity; i++){
+  var taskTime = {
+    id: i,
+    TaskID: i,
+    DeserializationStart: 18.0,
+    DeserializationEnd:   33.0,
+    ExecutionStart: 33.0,
+    ExecutionEnd:   44.0,
+    SerializationStart: 44.0,
+    SerializationEnd:   70.0,
+  }
+
+  taskTime.DeserializationStart = Math.random() * 300;
+  taskTime.DeserializationEnd = Math.random() * 200 + taskTime.DeserializationStart;
+  taskTime.ExecutionStart = Math.random() * 5 + taskTime.DeserializationEnd;
+  taskTime.ExecutionEnd = Math.random() * 200 + taskTime.ExecutionStart;
+  taskTime.SerializationStart = Math.random() * 5 + taskTime.ExecutionEnd;
+  taskTime.SerializationEnd = Math.random() * 200 + taskTime.SerializationStart;
+
+  taskTimeArray.push(taskTime);
+}
+
+var barGraphWidth = 10;
+var spacePerData = 16;
+var margin = 0;
+var IDSpace = 50;
+var graphRightPadding = 100;
+
+var graphSvgHeight = dataQuantity * spacePerData;
+var graphSvgWidth = 800;
+var graphDivHeight = 150;
+var graphDivWidth = graphSvgWidth;
+
+var graphDivTop = 120;
+var graphDivLeft = 0;
+
+var graphDiv = d3
+.select("body")
+.append("div")
+.style("height", graphDivHeight + "px")
+.style("width", graphDivWidth + "px")
+.style("overflow-x", "hidden")
+.style("overflow-y", "scroll")
+.style("position", "absolute")
+.style("top", graphDivTop + "px")
+.style("left", graphDivLeft + "px");
+
+var graphSvg = graphDiv
+.append("svg")
+.attr("width", graphSvgWidth)
+.attr("height", graphSvgHeight);
+
+var maxLength = d3.max(taskTimeArray, function(d) { return d.SerializationEnd; });
+var xScale = d3.scale.linear().domain([0, maxLength]).range([0, graphSvgWidth - graphRightPadding - IDSpace]);
+
+var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+var group = graphSvg
+  .selectAll("g")
+  .data(taskTimeArray)
+.enter()
+  .append("g");
+
+  group
+  .append("rect")
+  .style("fill", function(d,i) {
+    return i % 2 == 0 ? "rgb(200,200,200)" : "rgb(225,225,225)";
+  })
+.attr("x", 0)
+.attr("y", function(d,i) {
+  return i * spacePerData;
+})
+.attr("width", function(d) {
+  return IDSpace + xScale(maxLength) + graphRightPadding;
+})
+.attr("height", spacePerData);
+
+var xAxisTick = d3.svg.axis().scale(xScale).orient("bottom").tickSize(graphSvgHeight).tickSubdivide(true);
+
+graphSvg.append("g")
+.attr("class", "axis")
+.attr("transform", "translate(" + IDSpace + ",0)")
+.call(xAxisTick);
+
+group
+.append("text")
+.text(function(d) {
+  return "TaskID: " + d.TaskID;
+})
+.attr("font-size", "7px")
+.attr("fill", "black")
+.attr("x", 0)
+.attr("y", function(d) {
+  return d.id * spacePerData + 8;
+});
+
+group
+.append("rect")
+.style("fill", "blue")
+.attr("x", function(d) {
+  return IDSpace + xScale(d.DeserializationStart);
+})
+.attr("y", function(d) {
+  return d.id * spacePerData + (spacePerData - barGraphWidth) / 2;
+})
+.attr("width", function(d) {
+  return xScale(d.DeserializationEnd - d.DeserializationStart - margin);
+})
+.attr("height", barGraphWidth);
+
+group
+.append("text")
+.text("Deserialization")
+.attr("font-size", "7px")
+.attr("fill", "white")
+.attr("x", function(d) {
+  return IDSpace + xScale(d.DeserializationStart) + 5;
+})
+.attr("y", function(d) {
+  return d.id * spacePerData + 10;
+});
+
+group
+.append("rect")
+.style("fill", "red")
+.attr("x", function(d) {
+  return IDSpace + xScale(d.ExecutionStart);
+})
+.attr("y", function(d) {
+  return d.id * spacePerData + (spacePerData - barGraphWidth) / 2;
+})
+.attr("width", function(d) {
+  return xScale(d.ExecutionEnd - d.ExecutionStart - margin);
+})
+.attr("height", barGraphWidth);
+
+group
+.append("text")
+.text("Execution")
+.attr("font-size", "7px")
+.attr("fill", "white")
+.attr("x", function(d) {
+  return IDSpace + xScale(d.ExecutionStart) + 5;
+})
+.attr("y", function(d) {
+  return d.id * spacePerData + 10;
+})
+
+group
+.append("rect")
+.style("fill", "orange")
+.attr("x", function(d) {
+  return IDSpace + xScale(d.SerializationStart);
+})
+.attr("y", function(d) {
+  return d.id * spacePerData + (spacePerData - barGraphWidth) / 2;
+})
+.attr("width", function(d) {
+  return xScale(d.SerializationEnd - d.SerializationStart - margin);
+})
+.attr("height", barGraphWidth);
+
+group
+.append("text")
+.text("Serialization")
+.attr("font-size", "7px")
+.attr("fill", "white")
+.attr("x", function(d) {
+  return IDSpace + xScale(d.SerializationStart) + 5;
+})
+.attr("y", function(d) {
+  return d.id * spacePerData + 10;
+})
+
+var axisHeight = 20;
+var axisWidth = graphSvgWidth;
+var axisTop = graphDivTop + graphDivHeight;
+var axisLeft = graphDivLeft;
+
+var axisSvg = d3
+.select("body")
+.append("svg")
+.attr("width", axisWidth)
+.attr("height", axisHeight)
+.style("position", "absolute")
+.style("top", axisTop  + "px")
+.style("left",  axisLeft + "px");
+
+axisSvg.append("g")
+.attr("class", "axis")
+.attr("transform", "translate(" + IDSpace + ",0)")
+.call(xAxis)
+.selectAll("text")
+.attr("transform", "rotate(45)");
+
+
+    </script>
+
+
+  </body>
+</html>
