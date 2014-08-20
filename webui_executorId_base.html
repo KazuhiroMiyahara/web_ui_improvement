@@ -12,25 +12,28 @@
     <script type="text/javascript">
 var dataQuantity = 50;
 var executorTimeArray = [];
+var minTaskCountPerExecutor = 10;
+var maxTaskCountPerExecutor = 15;
 
 for(var i = 0; i < dataQuantity; i++){
   var executorTime = {
     id: i,
-    TaskID: i,
-    DeserializationStart: 18.0,
-    DeserializationEnd:   33.0,
-    ExecutionStart: 33.0,
-    ExecutionEnd:   44.0,
-    SerializationStart: 44.0,
-    SerializationEnd:   70.0,
+    ExecutorID: i,
+    Tasks: []
   }
 
-  executorTime.DeserializationStart = Math.random() * 300;
-  executorTime.DeserializationEnd = Math.random() * 200 + executorTime.DeserializationStart;
-  executorTime.ExecutionStart = Math.random() * 5 + executorTime.DeserializationEnd;
-  executorTime.ExecutionEnd = Math.random() * 200 + executorTime.ExecutionStart;
-  executorTime.SerializationStart = Math.random() * 5 + executorTime.ExecutionEnd;
-  executorTime.SerializationEnd = Math.random() * 200 + executorTime.SerializationStart;
+  taskCount = minTaskCountPerExecutor + Math.floor(Math.random() * (maxTaskCountPerExecutor - minTaskCountPerExecutor));
+  tmpTime = 0.0;
+
+  for(var j=0; j < taskCount; j++){
+    taskTimeMinimum = {
+      TaskID: Math.floor(Math.random() * 1000),
+      start: tmpTime = tmpTime + Math.random() * (j % 5 == 0 && j != 0 ? 1000 : 10),
+      end: tmpTime = tmpTime + Math.random() * 100
+    }
+
+    executorTime.Tasks.push(taskTimeMinimum);
+  }
 
   executorTimeArray.push(executorTime);
 }
@@ -65,7 +68,7 @@ var graphSvg = graphDiv
 .attr("width", graphSvgWidth)
 .attr("height", graphSvgHeight);
 
-var maxLength = d3.max(executorTimeArray, function(d) { return d.SerializationEnd; });
+var maxLength = d3.max(executorTimeArray, function(d) { return d.Tasks[d.Tasks.length - 1].end; });
 var xScale = d3.scale.linear().domain([0, maxLength]).range([0, graphSvgWidth - graphRightPadding - IDSpace]);
 
 var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
@@ -74,7 +77,8 @@ var group = graphSvg
   .selectAll("g")
   .data(executorTimeArray)
 .enter()
-  .append("g");
+  .append("g")
+.attr("transform", function(d,i) { return "translate(0," + i * spacePerData + ")"; });
 
   group
   .append("rect")
@@ -82,9 +86,7 @@ var group = graphSvg
     return i % 2 == 0 ? "rgb(200,200,200)" : "rgb(225,225,225)";
   })
 .attr("x", 0)
-.attr("y", function(d,i) {
-  return i * spacePerData;
-})
+.attr("y", 0)
 .attr("width", function(d) {
   return IDSpace + xScale(maxLength) + graphRightPadding;
 })
@@ -97,99 +99,57 @@ graphSvg.append("g")
 .attr("transform", "translate(" + IDSpace + ",0)")
 .call(xAxisTick);
 
-var taskIdFontSize = 16;
+var executorIdFontSize = 16;
 
 group
 .append("text")
 .text(function(d) {
-  return "TaskID: " + d.TaskID;
+  return "ExecutorID: " + d.ExecutorID;
 })
-.attr("font-size", taskIdFontSize + "px")
+.attr("font-size", executorIdFontSize + "px")
 .attr("fill", "black")
 .attr("x", 0)
 .attr("y", function(d) {
-  return (d.id  + 0.5) * spacePerData + taskIdFontSize / 2;
+  return spacePerData / 2 + executorIdFontSize / 2;
 });
 
 var graphBarFontSize = 16;
 
 group
+  .selectAll("rect")
+.data(function(d) {
+  return d.Tasks;
+})
+.enter()
 .append("rect")
 .style("fill", "blue")
 .attr("x", function(d) {
-  return IDSpace + xScale(d.DeserializationStart);
+  return IDSpace + xScale(d.start);
 })
 .attr("y", function(d) {
-  return d.id * spacePerData + (spacePerData - barGraphWidth) / 2;
+  return (spacePerData - barGraphWidth) / 2;
 })
 .attr("width", function(d) {
-  return xScale(d.DeserializationEnd - d.DeserializationStart - margin);
+  return xScale(d.end - d.start - margin);
 })
 .attr("height", barGraphWidth);
 
 group
+  .selectAll("text")
+.data(function(d) {
+  return d.Tasks;
+})
+.enter()
 .append("text")
-.text("Deserialization")
+.text(function(d) { return "TID: " + d.TaskID; } )
 .attr("font-size", graphBarFontSize + "px")
 .attr("fill", "white")
 .attr("x", function(d) {
-  return IDSpace + xScale(d.DeserializationStart) + 5;
+  return IDSpace + xScale(d.start) + 5;
 })
 .attr("y", function(d) {
-  return (d.id + 0.5) * spacePerData + graphBarFontSize / 2;
+  return spacePerData / 2 + graphBarFontSize / 2;
 });
-
-group
-.append("rect")
-.style("fill", "red")
-.attr("x", function(d) {
-  return IDSpace + xScale(d.ExecutionStart);
-})
-.attr("y", function(d) {
-  return d.id * spacePerData + (spacePerData - barGraphWidth) / 2;
-})
-.attr("width", function(d) {
-  return xScale(d.ExecutionEnd - d.ExecutionStart - margin);
-})
-.attr("height", barGraphWidth);
-
-group
-.append("text")
-.text("Execution")
-.attr("font-size", graphBarFontSize + "px")
-.attr("fill", "white")
-.attr("x", function(d) {
-  return IDSpace + xScale(d.ExecutionStart) + 5;
-})
-.attr("y", function(d) {
-  return (d.id + 0.5) * spacePerData + graphBarFontSize / 2;
-})
-
-group
-.append("rect")
-.style("fill", "orange")
-.attr("x", function(d) {
-  return IDSpace + xScale(d.SerializationStart);
-})
-.attr("y", function(d) {
-  return d.id * spacePerData + (spacePerData - barGraphWidth) / 2;
-})
-.attr("width", function(d) {
-  return xScale(d.SerializationEnd - d.SerializationStart - margin);
-})
-.attr("height", barGraphWidth);
-
-group
-.append("text")
-.text("Serialization")
-.attr("font-size", graphBarFontSize + "px")
-.attr("fill", "white")
-.attr("x", function(d) {
-  return IDSpace + xScale(d.SerializationStart) + 5;
-})
-.attr("y", function(d) {
-  return (d.id + 0.5) * spacePerData + graphBarFontSize / 2;
-})
 
 var axisHeight = 20;
 var axisWidth = graphSvgWidth;
