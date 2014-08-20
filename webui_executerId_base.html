@@ -10,7 +10,7 @@
     <h1>Spark Data Web Analyzer</h1>
     <h2>Task Timeline</h2>
     <script type="text/javascript">
-var dataQuantity = 20;
+var dataQuantity = 50;
 var taskTimeArray = [];
 
 for(var i = 0; i < dataQuantity; i++){
@@ -35,15 +35,15 @@ for(var i = 0; i < dataQuantity; i++){
   taskTimeArray.push(taskTime);
 }
 
-var barGraphWidth = 10;
-var spacePerData = 16;
+var barGraphWidth = 24;
+var spacePerData = 32;
 var margin = 0;
-var IDSpace = 50;
+var IDSpace = 100;
 var graphRightPadding = 100;
 
 var graphSvgHeight = dataQuantity * spacePerData;
-var graphSvgWidth = 800;
-var graphDivHeight = 150;
+var graphSvgWidth = 1600;
+var graphDivHeight = 500;
 var graphDivWidth = graphSvgWidth;
 
 var graphDivTop = 120;
@@ -97,17 +97,21 @@ graphSvg.append("g")
 .attr("transform", "translate(" + IDSpace + ",0)")
 .call(xAxisTick);
 
+var taskIdFontSize = 16;
+
 group
 .append("text")
 .text(function(d) {
   return "TaskID: " + d.TaskID;
 })
-.attr("font-size", "7px")
+.attr("font-size", taskIdFontSize + "px")
 .attr("fill", "black")
 .attr("x", 0)
 .attr("y", function(d) {
-  return d.id * spacePerData + 8;
+  return (d.id  + 0.5) * spacePerData + taskIdFontSize / 2;
 });
+
+var graphBarFontSize = 16;
 
 group
 .append("rect")
@@ -126,13 +130,13 @@ group
 group
 .append("text")
 .text("Deserialization")
-.attr("font-size", "7px")
+.attr("font-size", graphBarFontSize + "px")
 .attr("fill", "white")
 .attr("x", function(d) {
   return IDSpace + xScale(d.DeserializationStart) + 5;
 })
 .attr("y", function(d) {
-  return d.id * spacePerData + 10;
+  return (d.id + 0.5) * spacePerData + graphBarFontSize / 2;
 });
 
 group
@@ -152,13 +156,13 @@ group
 group
 .append("text")
 .text("Execution")
-.attr("font-size", "7px")
+.attr("font-size", graphBarFontSize + "px")
 .attr("fill", "white")
 .attr("x", function(d) {
   return IDSpace + xScale(d.ExecutionStart) + 5;
 })
 .attr("y", function(d) {
-  return d.id * spacePerData + 10;
+  return (d.id + 0.5) * spacePerData + graphBarFontSize / 2;
 })
 
 group
@@ -178,13 +182,13 @@ group
 group
 .append("text")
 .text("Serialization")
-.attr("font-size", "7px")
+.attr("font-size", graphBarFontSize + "px")
 .attr("fill", "white")
 .attr("x", function(d) {
   return IDSpace + xScale(d.SerializationStart) + 5;
 })
 .attr("y", function(d) {
-  return d.id * spacePerData + 10;
+  return (d.id + 0.5) * spacePerData + graphBarFontSize / 2;
 })
 
 var axisHeight = 20;
