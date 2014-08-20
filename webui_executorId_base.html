@@ -8,13 +8,13 @@
 
   <body>
     <h1>Spark Data Web Analyzer</h1>
-    <h2>Task Timeline</h2>
+    <h2>Executer Timeline</h2>
     <script type="text/javascript">
 var dataQuantity = 50;
-var taskTimeArray = [];
+var executorTimeArray = [];
 
 for(var i = 0; i < dataQuantity; i++){
-  var taskTime = {
+  var executorTime = {
     id: i,
     TaskID: i,
     DeserializationStart: 18.0,
@@ -25,14 +25,14 @@ for(var i = 0; i < dataQuantity; i++){
     SerializationEnd:   70.0,
   }
 
-  taskTime.DeserializationStart = Math.random() * 300;
-  taskTime.DeserializationEnd = Math.random() * 200 + taskTime.DeserializationStart;
-  taskTime.ExecutionStart = Math.random() * 5 + taskTime.DeserializationEnd;
-  taskTime.ExecutionEnd = Math.random() * 200 + taskTime.ExecutionStart;
-  taskTime.SerializationStart = Math.random() * 5 + taskTime.ExecutionEnd;
-  taskTime.SerializationEnd = Math.random() * 200 + taskTime.SerializationStart;
+  executorTime.DeserializationStart = Math.random() * 300;
+  executorTime.DeserializationEnd = Math.random() * 200 + executorTime.DeserializationStart;
+  executorTime.ExecutionStart = Math.random() * 5 + executorTime.DeserializationEnd;
+  executorTime.ExecutionEnd = Math.random() * 200 + executorTime.ExecutionStart;
+  executorTime.SerializationStart = Math.random() * 5 + executorTime.ExecutionEnd;
+  executorTime.SerializationEnd = Math.random() * 200 + executorTime.SerializationStart;
 
-  taskTimeArray.push(taskTime);
+  executorTimeArray.push(executorTime);
 }
 
 var barGraphWidth = 24;
@@ -65,14 +65,14 @@ var graphSvg = graphDiv
 .attr("width", graphSvgWidth)
 .attr("height", graphSvgHeight);
 
-var maxLength = d3.max(taskTimeArray, function(d) { return d.SerializationEnd; });
+var maxLength = d3.max(executorTimeArray, function(d) { return d.SerializationEnd; });
 var xScale = d3.scale.linear().domain([0, maxLength]).range([0, graphSvgWidth - graphRightPadding - IDSpace]);
 
 var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 var group = graphSvg
   .selectAll("g")
-  .data(taskTimeArray)
+  .data(executorTimeArray)
 .enter()
   .append("g");
 
