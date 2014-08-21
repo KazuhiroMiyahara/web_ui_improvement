@@ -132,7 +132,17 @@ group
 .attr("width", function(d) {
   return xScale(d.end - d.start - margin);
 })
-.attr("height", barGraphWidth);
+.attr("height", barGraphWidth)
+.on("mouseover", function(){
+  d3
+  .select(this)
+  .style("fill", "black");
+})
+.on("mouseout", function(){
+  d3
+  .select(this)
+  .style("fill", "blue");
+});
 
 group
 .selectAll("text")
