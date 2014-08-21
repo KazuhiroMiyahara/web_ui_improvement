@@ -12,8 +12,8 @@
     <script type="text/javascript">
 var dataQuantity = 50;
 var executorTimeArray = [];
-var minTaskCountPerExecutor = 10;
-var maxTaskCountPerExecutor = 15;
+var minTaskCountPerExecutor = 5;
+var maxTaskCountPerExecutor = 10;
 
 for(var i = 0; i < dataQuantity; i++){
   var executorTime = {
@@ -29,7 +29,7 @@ for(var i = 0; i < dataQuantity; i++){
     taskTimeMinimum = {
       TaskID: Math.floor(Math.random() * 1000),
       start: tmpTime = tmpTime + Math.random() * (j % 5 == 0 && j != 0 ? 1000 : 10),
-      end: tmpTime = tmpTime + Math.random() * 100
+      end: tmpTime = tmpTime + Math.random() * 1000
     }
 
     executorTime.Tasks.push(taskTimeMinimum);
@@ -74,17 +74,17 @@ var xScale = d3.scale.linear().domain([0, maxLength]).range([0, graphSvgWidth - 
 var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 var group = graphSvg
-  .selectAll("g")
-  .data(executorTimeArray)
+.selectAll("g")
+.data(executorTimeArray)
 .enter()
-  .append("g")
+.append("g")
 .attr("transform", function(d,i) { return "translate(0," + i * spacePerData + ")"; });
 
-  group
-  .append("rect")
-  .style("fill", function(d,i) {
-    return i % 2 == 0 ? "rgb(200,200,200)" : "rgb(225,225,225)";
-  })
+group
+.append("rect")
+.style("fill", function(d,i) {
+  return i % 2 == 0 ? "rgb(200,200,200)" : "rgb(225,225,225)";
+})
 .attr("x", 0)
 .attr("y", 0)
 .attr("width", function(d) {
@@ -116,7 +116,7 @@ group
 var graphBarFontSize = 16;
 
 group
-  .selectAll("rect")
+.selectAll("rect")
 .data(function(d) {
   return d.Tasks;
 })
@@ -135,7 +135,7 @@ group
 .attr("height", barGraphWidth);
 
 group
-  .selectAll("text")
+.selectAll("text")
 .data(function(d) {
   return d.Tasks;
 })
