@@ -71,21 +71,20 @@ var xScale = d3.scale.linear().domain([0, maxLength]).range([0, graphSvgWidth - 
 var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
 var group = graphSvg
-  .selectAll("g")
-  .data(taskTimeArray)
+.selectAll("g")
+.data(taskTimeArray)
 .enter()
-  .append("g");
+.append("g")
+.attr("transform", function(d,i) { return "translate(0," + i * spacePerData + ")"; });
 
-  group
-  .append("rect")
-  .style("fill", function(d,i) {
-    return i % 2 == 0 ? "rgb(200,200,200)" : "rgb(225,225,225)";
-  })
-.attr("x", 0)
-.attr("y", function(d,i) {
-  return i * spacePerData;
+group
+.append("rect")
+.style("fill", function(d,i) {
+  return i % 2 == 0 ? "rgb(200,200,200)" : "rgb(225,225,225)";
 })
-.attr("width", function(d) {
+.attr("x", 0)
+.attr("y", 0)
+.attr("width", function() {
   return IDSpace + xScale(maxLength) + graphRightPadding;
 })
 .attr("height", spacePerData);
@@ -107,8 +106,8 @@ group
 .attr("font-size", taskIdFontSize + "px")
 .attr("fill", "black")
 .attr("x", 0)
-.attr("y", function(d) {
-  return (d.id  + 0.5) * spacePerData + taskIdFontSize / 2;
+.attr("y", function() {
+  return spacePerData / 2 + taskIdFontSize / 2;
 });
 
 var graphBarFontSize = 16;
@@ -119,8 +118,8 @@ group
 .attr("x", function(d) {
   return IDSpace + xScale(d.DeserializationStart);
 })
-.attr("y", function(d) {
-  return d.id * spacePerData + (spacePerData - barGraphWidth) / 2;
+.attr("y", function() {
+  return (spacePerData - barGraphWidth) / 2;
 })
 .attr("width", function(d) {
   return xScale(d.DeserializationEnd - d.DeserializationStart - margin);
@@ -135,8 +134,8 @@ group
 .attr("x", function(d) {
   return IDSpace + xScale(d.DeserializationStart) + 5;
 })
-.attr("y", function(d) {
-  return (d.id + 0.5) * spacePerData + graphBarFontSize / 2;
+.attr("y", function() {
+  return spacePerData / 2 + graphBarFontSize / 2;
 });
 
 group
@@ -146,7 +145,7 @@ group
   return IDSpace + xScale(d.ExecutionStart);
 })
 .attr("y", function(d) {
-  return d.id * spacePerData + (spacePerData - barGraphWidth) / 2;
+  return (spacePerData - barGraphWidth) / 2;
 })
 .attr("width", function(d) {
   return xScale(d.ExecutionEnd - d.ExecutionStart - margin);
@@ -161,8 +160,8 @@ group
 .attr("x", function(d) {
   return IDSpace + xScale(d.ExecutionStart) + 5;
 })
-.attr("y", function(d) {
-  return (d.id + 0.5) * spacePerData + graphBarFontSize / 2;
+.attr("y", function() {
+  return spacePerData / 2 + graphBarFontSize / 2;
 })
 
 group
@@ -172,7 +171,7 @@ group
   return IDSpace + xScale(d.SerializationStart);
 })
 .attr("y", function(d) {
-  return d.id * spacePerData + (spacePerData - barGraphWidth) / 2;
+  return (spacePerData - barGraphWidth) / 2;
 })
 .attr("width", function(d) {
   return xScale(d.SerializationEnd - d.SerializationStart - margin);
@@ -187,8 +186,8 @@ group
 .attr("x", function(d) {
   return IDSpace + xScale(d.SerializationStart) + 5;
 })
-.attr("y", function(d) {
-  return (d.id + 0.5) * spacePerData + graphBarFontSize / 2;
+.attr("y", function() {
+  return spacePerData / 2 + graphBarFontSize / 2;
 })
 
 var axisHeight = 20;
