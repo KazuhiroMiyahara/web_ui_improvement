@@ -11,6 +11,12 @@
     <h2>Executer Timeline</h2>
     <script type="text/javascript">
 d3.csv("eventlog.txt", function(error, taskInfoArray) {
+  var barGraphWidth = 24;
+  var spacePerData = 32;
+  var barStrokeWidth = 1;
+  var IDSpace = 100;
+  var graphRightPadding = 100;
+
   var taskInfoArrayGroupedByExecutorID = d3
     .nest()
     .key(function(taskInfo) { return Number(taskInfo.executorID) })
@@ -18,15 +24,9 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
 
   <!--d3.select("body").append("div").text(JSON.stringify(taskInfoArrayGroupedByExecutorID));-->
 
-  var barGraphWidth = 24;
-  var spacePerData = 32;
-  var barStrokeWidth = 1;
-  var IDSpace = 100;
-  var graphRightPadding = 100;
-
   var graphSvgHeight = taskInfoArrayGroupedByExecutorID.length * spacePerData;
   var graphSvgWidth = 1600;
-  var graphDivHeight = 200;
+  var graphDivHeight = Math.min(500, graphSvgHeight);
   var graphDivWidth = graphSvgWidth;
 
   var graphDivTop = 120;
@@ -65,10 +65,11 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
   var taskInfoGroupedByExecutorIDGTag = graphSvg
-    .selectAll("g")
+    .selectAll('#MAIN_BAR')
     .data(taskInfoArrayGroupedByExecutorID)
     .enter()
     .append("g")
+    .attr("id", "MAIN_BAR")
     .attr("transform", function(taskInfoGroupedByExecutorID,i) { return "translate(0," + i * spacePerData + ")"; });
 
   taskInfoGroupedByExecutorIDGTag
@@ -120,27 +121,29 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .attr("transform", function(taskInfo) { 
       return "translate(" + (IDSpace + xScale(Number(taskInfo.taskStartTime))) + ", " + (spacePerData - barGraphWidth) / 2 + ")";
     })
-  .on("mouseover", function(){
+  .on("mouseover", function(taskInfo){
     d3
       .select(this)
       .select("rect")
-      .style("fill", "black");
+      .style("fill", "cyan");
 
     d3
-      .select(this)
-      .select('#information')
+      .select("svg")
+      .select("#EXECUTOR_ID_" + taskInfo.executorID)
+      .select("#TASK_ID_" + taskInfo.taskID)
       .style("visibility", "visible");
 
   })
-  .on("mouseout", function(){
+  .on("mouseout", function(taskInfo){
     d3
       .select(this)
       .select("rect")
       .style("fill", "blue");
 
     d3
-      .select(this)
-      .select('#information')
+      .select("svg")
+      .select("#EXECUTOR_ID_" + taskInfo.executorID)
+      .select("#TASK_ID_" + taskInfo.taskID)
       .style("visibility", "hidden");
 
   });
@@ -158,9 +161,9 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     })
   .attr("height", barGraphWidth);
 
+  <!--this text method chain will be removed.-->
   taskInfoGTag
     .append("text")
-    .text(function(taskInfo) { return "TID: " + Number(taskInfo.taskID); } )
     .attr("font-size", graphBarFontSize + "px")
     .attr("fill", "white")
     .attr("x", function() {
@@ -170,27 +173,62 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     return spacePerData / 2 + graphBarFontSize / 2 - 2;
   });
 
-  var taskInfoGTagInformation = taskInfoGTag
+  var taskInfoGroupedByExecutorIDExplanationGTag= graphSvg
+    .selectAll("#HOGE")
+    .data(taskInfoArrayGroupedByExecutorID)
+    .enter()
     .append("g")
-    .attr("id", "information")
-    .style("visibility", "hidden")
-    .attr("transform", "translate(20,-50)");
+    .attr("id", function(taskInfoGroupedByExecutorID) {
+      return "EXECUTOR_ID_" + taskInfoGroupedByExecutorID.key;
+    })
+    .attr("transform", function(taskInfoGroupedByExecutorID,i) { return "translate(0," + i * spacePerData + ")"; });
 
-  taskInfoGTagInformation
+  var taskInfoGTagExplanation= taskInfoGroupedByExecutorIDExplanationGTag
+    .selectAll("g")
+    .data(function(taskInfoGroupedByExecutorID) {
+      return taskInfoGroupedByExecutorID.values;
+    })
+    .enter()
+    .append("g")
+    .attr("id", function(taskInfo) { return "TASK_ID_" + taskInfo.taskID; })
+    .style("visibility", "hidden")
+    .attr("transform", function(taskInfo,i) { return "translate(" + (xScale(Number(taskInfo.taskStartTime)) + 5) +  "," + 20 + ")"; });
+
+
+
+
+  taskInfoGTagExplanation
     .append("rect")
     .style("fill", "white")
-    .attr("width", 50)
-    .attr("height", 40)
+    .style("stroke", "black")
+    .style("stroke-width", 2)
+    .attr("width", 300)
+    .attr("height", 200)
     .attr("x", 0)
     .attr("y", 0);
 
-  taskInfoGTagInformation
+  var taskInfoExplanationFontSize = 20;
+
+  taskInfoGTagExplanation
+    .selectAll("text")
+    .data(function(taskInfo) {
+      return ["taskID: " + taskInfo.taskID,
+              "executorID: " + taskInfo.executorID,
+              "taskStartTime: " + taskInfo.taskStartTime,
+              "taskFinishTime: " + taskInfo.taskFinishTime,
+              "serializeMilliSec: " + taskInfo.serializeMilliSec,
+              "deserializeMilliSec: " + taskInfo.deserializeMilliSec
+                ]
+    })
+    .enter()
     .append("text")
-    .text("test text")
-    .attr("font-size", graphBarFontSize + "px")
+    .text(function(text) { return text; })
+    .attr("font-size", taskInfoExplanationFontSize + "px")
     .attr("fill", "black")
     .attr("x", 5)
-    .attr("y", graphBarFontSize + 5);
+    .attr("y", function(text, i) {
+      return i * taskInfoExplanationFontSize + 20;
+    });
 
 
   var axisHeight = 20;
