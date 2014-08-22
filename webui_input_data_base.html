@@ -10,89 +10,23 @@
     <h1>Spark Data Web Analyzer</h1>
     <h2>Executer Timeline</h2>
     <script type="text/javascript">
-var taskInfoArray = [];
-alert(taskInfoArray.length);
+d3.csv("eventlog.txt", function(error, taskInfoArray) {
+  var taskInfoArrayGroupedByExecutorID = d3
+    .nest()
+    .key(function(taskInfo) { return Number(taskInfo.executorID) })
+    .entries(taskInfoArray);
 
-d3.csv("eventlog.txt", function(error, list) {
-  list
-    .forEach(function(row) {
-      var taskInfo = {
-        taskID: -1,
-        executorID: -1,
-        taskStartTime: -1,
-        taskFinishTime: -1,
-        serializeMilliSec: -1,
-        deserializeMilliSec: -1
-      }
-
-      d3
-        .entries(row)
-        .forEach(function(value,index) {
-          switch(index) {
-            case 0:
-              taskInfo.taskID = Number(value);
-              break;
-            case 1:
-              taskInfo.executorID = Number(value);
-              break;
-            case 2:
-              taskInfo.taskStartTime = Number(value);
-              break;
-            case 3:
-              taskInfo.taskFinishTime = Number(value);
-              break;
-            case 4:
-              taskInfo.serializeMilliSec = Number(value);
-              break;
-            case 5:
-              taskInfo.deserializeMilliSec = Number(value);
-              break;
-          }
-        });
-
-      taskInfoArray.push(taskInfo);
-
-    });
-
-
-  var dataQuantity = taskInfoArray.length;
-  var executorTimeArray = [];
-  var minTaskCountPerExecutor = 5;
-  var maxTaskCountPerExecutor = 10;
-
-  for(var i = 0; i < dataQuantity; i++){
-    var executorTime = {
-      id: i,
-      ExecutorID: i,
-      Tasks: []
-    }
-
-    taskCount = minTaskCountPerExecutor + Math.floor(Math.random() * (maxTaskCountPerExecutor - minTaskCountPerExecutor));
-    tmpTime = 0.0;
-
-    for(var j=0; j < taskCount; j++){
-      taskTimeMinimum = {
-        ID: j,
-        TaskID: Math.floor(Math.random() * 1000),
-        start: tmpTime = tmpTime + Math.random() * (j % 5 == 0 && j != 0 ? 1000 : 10),
-        end: tmpTime = tmpTime + Math.random() * 1000
-      }
-
-      executorTime.Tasks.push(taskTimeMinimum);
-    }
-
-    executorTimeArray.push(executorTime);
-  }
+  <!--d3.select("body").append("div").text(JSON.stringify(taskInfoArrayGroupedByExecutorID));-->
 
   var barGraphWidth = 24;
   var spacePerData = 32;
-  var margin = 0;
+  var barStrokeWidth = 1;
   var IDSpace = 100;
   var graphRightPadding = 100;
 
-  var graphSvgHeight = dataQuantity * spacePerData;
+  var graphSvgHeight = taskInfoArrayGroupedByExecutorID.length * spacePerData;
   var graphSvgWidth = 1600;
-  var graphDivHeight = 500;
+  var graphDivHeight = 200;
   var graphDivWidth = graphSvgWidth;
 
   var graphDivTop = 120;
@@ -114,26 +48,37 @@ d3.csv("eventlog.txt", function(error, list) {
     .attr("width", graphSvgWidth)
     .attr("height", graphSvgHeight);
 
-  var maxLength = d3.max(executorTimeArray, function(d) { return d.Tasks[d.Tasks.length - 1].end; });
-  var xScale = d3.scale.linear().domain([0, maxLength]).range([0, graphSvgWidth - graphRightPadding - IDSpace]);
+  var minLength = d3.min(taskInfoArrayGroupedByExecutorID, function(taskInfoGroupedByExecutorID) { 
+    return d3.min(taskInfoGroupedByExecutorID.values, function(taskInfo) {
+      return Number(taskInfo.taskStartTime);
+    });
+  });
+
+  var maxLength = d3.max(taskInfoArrayGroupedByExecutorID, function(taskInfoGroupedByExecutorID) { 
+    return d3.max(taskInfoGroupedByExecutorID.values, function(taskInfo) {
+      return Number(taskInfo.taskFinishTime);
+    });
+  });
+
+  var xScale = d3.scale.linear().domain([minLength, maxLength]).range([0, graphSvgWidth - graphRightPadding - IDSpace]);
 
   var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
-  var group = graphSvg
+  var taskInfoGroupedByExecutorIDGTag = graphSvg
     .selectAll("g")
-    .data(executorTimeArray)
+    .data(taskInfoArrayGroupedByExecutorID)
     .enter()
     .append("g")
-    .attr("transform", function(d,i) { return "translate(0," + i * spacePerData + ")"; });
+    .attr("transform", function(taskInfoGroupedByExecutorID,i) { return "translate(0," + i * spacePerData + ")"; });
 
-  group
+  taskInfoGroupedByExecutorIDGTag
     .append("rect")
-    .style("fill", function(d,i) {
+    .style("fill", function(taskInfoGroupedByExecutorID,i) {
       return i % 2 == 0 ? "rgb(200,200,200)" : "rgb(225,225,225)";
     })
   .attr("x", 0)
     .attr("y", 0)
-    .attr("width", function(d) {
+    .attr("width", function() {
       return IDSpace + xScale(maxLength) + graphRightPadding;
     })
   .attr("height", spacePerData);
@@ -145,46 +90,48 @@ d3.csv("eventlog.txt", function(error, list) {
     .attr("transform", "translate(" + IDSpace + ",0)")
     .call(xAxisTick);
 
-  var executorIdFontSize = 16;
+  var IDFontSize = 16;
 
-  group
+  taskInfoGroupedByExecutorIDGTag
     .append("text")
-    .text(function(d) {
-      return "ExecutorID: " + d.ExecutorID;
+    .text(function(taskInfoGroupedByExecutorID) {
+      return "ExecutorID: " + taskInfoGroupedByExecutorID.key;
     })
-  .attr("font-size", executorIdFontSize + "px")
+  .attr("font-size", IDFontSize + "px")
     .attr("fill", "black")
     .attr("x", 0)
-    .attr("y", function(d) {
-      return spacePerData / 2 + executorIdFontSize / 2;
+    .attr("y", function() {
+      return spacePerData / 2 + IDFontSize / 2;
     });
 
   var graphBarFontSize = 16;
 
-  var groupForEachTask = group
+  var taskInfoGTag = taskInfoGroupedByExecutorIDGTag
     .selectAll("g")
-    .data(function(d) {
-      return d.Tasks;
+    .data(function(taskInfoGroupedByExecutorID) {
+      return taskInfoGroupedByExecutorID.values;
     })
   .enter()
     .append("g")
-    .attr("width", function(d) {
-      return xScale(d.end - d.start - margin);
+    .attr("width", function(taskInfo) {
+      return xScale(Number(taskInfo.taskFinishTime)) - xScale(Number(taskInfo.taskStartTime));
     })
   .attr("height", barGraphWidth)
-    .attr("transform", function(d,i) { return "translate(" + (IDSpace + xScale(d.start)) + ", " + (spacePerData - barGraphWidth) / 2 + ")"; })
-    .on("mouseover", function(){
-      d3
-        .select(this)
-        .select("rect")
-        .style("fill", "black");
-
-      d3
-        .select(this)
-        .select('#information')
-        .style("visibility", "visible");
-
+    .attr("transform", function(taskInfo) { 
+      return "translate(" + (IDSpace + xScale(Number(taskInfo.taskStartTime))) + ", " + (spacePerData - barGraphWidth) / 2 + ")";
     })
+  .on("mouseover", function(){
+    d3
+      .select(this)
+      .select("rect")
+      .style("fill", "black");
+
+    d3
+      .select(this)
+      .select('#information')
+      .style("visibility", "visible");
+
+  })
   .on("mouseout", function(){
     d3
       .select(this)
@@ -198,36 +145,38 @@ d3.csv("eventlog.txt", function(error, list) {
 
   });
 
-  groupForEachTask
+  taskInfoGTag
     .append("rect")
     .attr("id", "bar")
     .style("fill", "blue")
+    .style("stroke", "white")
+    .style("stroke-width", barStrokeWidth)
     .attr("x", 0)
     .attr("y", 0)
-    .attr("width", function(d) {
-      return xScale(d.end - d.start - margin);
+    .attr("width", function(taskInfo) {
+      return xScale(Number(taskInfo.taskFinishTime)) - xScale(Number(taskInfo.taskStartTime));
     })
   .attr("height", barGraphWidth);
 
-  groupForEachTask
+  taskInfoGTag
     .append("text")
-    .text(function(d) { return "TID: " + d.TaskID; } )
+    .text(function(taskInfo) { return "TID: " + Number(taskInfo.taskID); } )
     .attr("font-size", graphBarFontSize + "px")
     .attr("fill", "white")
-    .attr("x", function(d) {
+    .attr("x", function() {
       return 5;
     })
-  .attr("y", function(d) {
-    return spacePerData / 2 + graphBarFontSize / 2;
+  .attr("y", function() {
+    return spacePerData / 2 + graphBarFontSize / 2 - 2;
   });
 
-  var groupForEachTaskInformation = groupForEachTask
+  var taskInfoGTagInformation = taskInfoGTag
     .append("g")
     .attr("id", "information")
     .style("visibility", "hidden")
     .attr("transform", "translate(20,-50)");
 
-  groupForEachTaskInformation
+  taskInfoGTagInformation
     .append("rect")
     .style("fill", "white")
     .attr("width", 50)
@@ -235,7 +184,7 @@ d3.csv("eventlog.txt", function(error, list) {
     .attr("x", 0)
     .attr("y", 0);
 
-  groupForEachTaskInformation
+  taskInfoGTagInformation
     .append("text")
     .text("test text")
     .attr("font-size", graphBarFontSize + "px")
@@ -263,7 +212,7 @@ d3.csv("eventlog.txt", function(error, list) {
     .attr("transform", "translate(" + IDSpace + ",0)")
     .call(xAxis)
     .selectAll("text")
-    .attr("transform", "rotate(45)");
+    .attr("transform", "rotate(0)");
 
 });
 
