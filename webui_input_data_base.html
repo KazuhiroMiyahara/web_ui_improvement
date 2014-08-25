@@ -45,6 +45,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
 
   var graphSvg = graphDiv
     .append("svg")
+    .attr("id", "graphSvg")
     .attr("width", graphSvgWidth)
     .attr("height", graphSvgHeight);
 
@@ -128,10 +129,14 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
       .style("fill", "cyan");
 
     d3
-      .select("svg")
+      .select("body")
+      .select("#graphSvg")
+      .style("top", 0  + "px")
+      .style("left",  0 + "px")
       .select("#EXECUTOR_ID_" + taskInfo.executorID)
       .select("#TASK_ID_" + taskInfo.taskID)
       .style("visibility", "visible");
+
 
   })
   .on("mouseout", function(taskInfo){
@@ -141,7 +146,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
       .style("fill", "blue");
 
     d3
-      .select("svg")
+      .select("#graphSvg")
       .select("#EXECUTOR_ID_" + taskInfo.executorID)
       .select("#TASK_ID_" + taskInfo.taskID)
       .style("visibility", "hidden");
@@ -174,14 +179,15 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   });
 
   var taskInfoGroupedByExecutorIDExplanationGTag= graphSvg
-    .selectAll("#HOGE")
+    .selectAll(".hoge")
     .data(taskInfoArrayGroupedByExecutorID)
     .enter()
     .append("g")
     .attr("id", function(taskInfoGroupedByExecutorID) {
       return "EXECUTOR_ID_" + taskInfoGroupedByExecutorID.key;
     })
-    .attr("transform", function(taskInfoGroupedByExecutorID,i) { return "translate(0," + i * spacePerData + ")"; });
+    .attr("transform", function(taskInfoGroupedByExecutorID,i) { return "translate(" + IDSpace + "," + i * spacePerData + ")"; });
+
 
   var taskInfoGTagExplanation= taskInfoGroupedByExecutorIDExplanationGTag
     .selectAll("g")
@@ -192,7 +198,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .append("g")
     .attr("id", function(taskInfo) { return "TASK_ID_" + taskInfo.taskID; })
     .style("visibility", "hidden")
-    .attr("transform", function(taskInfo,i) { return "translate(" + (xScale(Number(taskInfo.taskStartTime)) + 5) +  "," + 20 + ")"; });
+    .attr("transform", function(taskInfo,i) { return "translate(" + (xScale(Number(taskInfo.taskFinishTime)) + 10) +  "," + ((spacePerData - barGraphWidth) / 2 + 0) + ")"; });
 
 
 
@@ -239,6 +245,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   var axisSvg = d3
     .select("body")
     .append("svg")
+    .attr("id", "axisSvg")
     .attr("width", axisWidth)
     .attr("height", axisHeight)
     .style("position", "absolute")
