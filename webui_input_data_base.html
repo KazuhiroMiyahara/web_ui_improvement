@@ -8,8 +8,18 @@
 
   <body>
     <h1>Spark Data Web Analyzer</h1>
-    <h2>Executer Timeline</h2>
     <script type="text/javascript">
+d3
+.select("body")
+.append("h2")
+.text("Executor Timeline");
+
+d3
+.select("body")
+.append("h2")
+.text("Task Timeline");
+
+
 d3.csv("eventlog.txt", function(error, taskInfoArray) {
   var barGraphWidth = 24;
   var spacePerData = 32;
@@ -235,7 +245,17 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   .on("mouseover", function(taskInfo){
     d3
       .select(this)
-      .select("rect")
+      .select("#deserialize_bar")
+      .style("fill", "cyan");
+
+    d3
+      .select(this)
+      .select("#execute_bar")
+      .style("fill", "cyan");
+
+    d3
+      .select(this)
+      .select("#serialize_bar")
       .style("fill", "cyan");
 
     d3
@@ -248,8 +268,18 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   .on("mouseout", function(taskInfo){
     d3
       .select(this)
-      .select("rect")
+      .select("#deserialize_bar")
+      .style("fill", "red");
+
+    d3
+      .select(this)
+      .select("#execute_bar")
       .style("fill", "blue");
+
+    d3
+      .select(this)
+      .select("#serialize_bar")
+      .style("fill", "orange");
 
     d3
       .select("#taskTimelineBarGraphSvg")
@@ -274,14 +304,46 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   taskTimelineTaskInfoGTag
     .select("g")
     .append("rect")
-    .attr("id", "bar")
-    .style("fill", "blue")
+    .attr("id", "deserialize_bar")
+    .style("fill", "red")
     .style("stroke", "white")
     .style("stroke-width", barStrokeWidth)
     .attr("x", 0)
     .attr("y", 0)
     .attr("width", function(taskInfo) {
-      return taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime)) - taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime));
+      return taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime) + Number(taskInfo.deserializeMilliSec)) - taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime));
+    })
+  .attr("height", barGraphWidth);
+
+  taskTimelineTaskInfoGTag
+    .select("g")
+    .append("rect")
+    .attr("id", "execute_bar")
+    .style("fill", "blue")
+    .style("stroke", "white")
+    .style("stroke-width", barStrokeWidth)
+    .attr("x", function(taskInfo) {
+      return taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime) + Number(taskInfo.deserializeMilliSec)) - taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime));
+    })
+    .attr("y", 0)
+    .attr("width", function(taskInfo) {
+      return taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime) - Number(taskInfo.serializeMilliSec)) - taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime) + Number(taskInfo.deserializeMilliSec));
+    })
+  .attr("height", barGraphWidth);
+
+  taskTimelineTaskInfoGTag
+    .select("g")
+    .append("rect")
+    .attr("id", "serialize_bar")
+    .style("fill", "orange")
+    .style("stroke", "white")
+    .style("stroke-width", barStrokeWidth)
+    .attr("x", function(taskInfo) {
+      return taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime) - Number(taskInfo.serializeMilliSec)) - taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime));
+    })
+    .attr("y", 0)
+    .attr("width", function(taskInfo) {
+      return taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime)) - taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime) - Number(taskInfo.serializeMilliSec));
     })
   .attr("height", barGraphWidth);
 
@@ -336,7 +398,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .style("stroke", "black")
     .style("stroke-width", 2)
     .attr("width", 300)
-    .attr("height", 200)
+    .attr("height", 250)
     .attr("x", 0)
     .attr("y", 0);
 
@@ -369,7 +431,11 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
               "taskStartTime: " + taskInfo.taskStartTime,
               "taskFinishTime: " + taskInfo.taskFinishTime,
               "serializeMilliSec: " + taskInfo.serializeMilliSec,
-              "deserializeMilliSec: " + taskInfo.deserializeMilliSec
+              "deserializeMilliSec: " + taskInfo.deserializeMilliSec,
+              ,
+              "deserialize time is RED",
+              "execute time is BLUE",
+              "serialize time is ORANGE"
                 ]
     })
     .enter()
