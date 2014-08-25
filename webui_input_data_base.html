@@ -25,6 +25,8 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .key(function(taskInfo) { return Number(taskInfo.executorID) })
     .entries(taskInfoArray);
 
+  var taskTimelineTaskInfoArray = taskInfoArray;
+
   <!--d3.select("body").append("div").text(JSON.stringify(executorTimelineTaskInfoArrayGroupedByExecutorID));-->
 
   var executorTimelineSvgHeight = executorTimelineTaskInfoArrayGroupedByExecutorID.length * spacePerData;
@@ -33,6 +35,13 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   var executorTimelineDivWidth = executorTimelineSvgWidth;
   var executorTimelineDivTop = 120;
   var executorTimelineDivLeft = 0;
+
+  var taskTimelineSvgHeight = taskTimelineTaskInfoArray.length * spacePerData;
+  var taskTimelineSvgWidth = 1600;
+  var taskTimelineDivHeight = Math.min(500, taskTimelineSvgHeight);
+  var taskTimelineDivWidth = taskTimelineSvgWidth;
+  var taskTimelineDivTop = executorTimelineDivTop + executorTimelineDivHeight + 20;
+  var taskTimelineDivLeft = 0;
 
   var executorTimelineDiv = d3
     .select("body")
@@ -45,16 +54,37 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .style("top", executorTimelineDivTop + "px")
     .style("left", executorTimelineDivLeft + "px");
 
+  var taskTimelineDiv = d3
+    .select("body")
+    .append("div")
+    .style("height", taskTimelineDivHeight + "px")
+    .style("width", taskTimelineDivWidth + "px")
+    .style("overflow-x", "hidden")
+    .style("overflow-y", "scroll")
+    .style("position", "absolute")
+    .style("top", taskTimelineDivTop + "px")
+    .style("left", taskTimelineDivLeft + "px");
+
   var executorTimelineBarGraphSvg = executorTimelineDiv
     .append("svg")
     .attr("id", "executorTimelineBarGraphSvg")
     .attr("width", executorTimelineSvgWidth)
     .attr("height", executorTimelineSvgHeight);
 
+  var taskTimelineBarGraphSvg = taskTimelineDiv
+    .append("svg")
+    .attr("id", "taskTimelineBarGraphSvg")
+    .attr("width", taskTimelineSvgWidth)
+    .attr("height", taskTimelineSvgHeight);
+
   var executorTimelineMinLength = d3.min(executorTimelineTaskInfoArrayGroupedByExecutorID, function(taskInfoGroupedByExecutorID) {
     return d3.min(taskInfoGroupedByExecutorID.values, function(taskInfo) {
       return Number(taskInfo.taskStartTime);
     });
+  });
+
+  var taskTimelineMinLength = d3.min(taskTimelineTaskInfoArray, function(taskInfo) {
+    return Number(taskInfo.taskStartTime);
   });
 
   var executorTimelineMaxLength = d3.max(executorTimelineTaskInfoArrayGroupedByExecutorID, function(taskInfoGroupedByExecutorID) {
@@ -63,17 +93,31 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     });
   });
 
-  var executorTimelineGraphBarXScale = d3.scale.linear().domain([executorTimelineMinLength, executorTimelineMaxLength]).range([0, executorTimelineSvgWidth - graphRightPadding - IDSpace]);
+  var taskTimelineMaxLength = d3.max(taskTimelineTaskInfoArray, function(taskInfo) {
+    return Number(taskInfo.taskFinishTime);
+  });
 
+  var executorTimelineGraphBarXScale = d3.scale.linear().domain([executorTimelineMinLength, executorTimelineMaxLength]).range([0, executorTimelineSvgWidth - graphRightPadding - IDSpace]);
   var executorTimelineGraphBarXAxis = d3.svg.axis().scale(executorTimelineGraphBarXScale).orient("bottom");
 
+  var taskTimelineGraphBarXScale = d3.scale.linear().domain([taskTimelineMinLength, taskTimelineMaxLength]).range([0, taskTimelineSvgWidth - graphRightPadding - IDSpace]);
+  var taskTimelineGraphBarXAxis = d3.svg.axis().scale(taskTimelineGraphBarXScale).orient("bottom");
+
   var executorTimelineTaskInfoGroupedByExecutorIDGTag = executorTimelineBarGraphSvg
-    .selectAll('#MAIN_BAR')
+    .selectAll('#hoge')
     .data(executorTimelineTaskInfoArrayGroupedByExecutorID)
     .enter()
     .append("g")
     .attr("id", "MAIN_BAR")
     .attr("transform", function(taskInfoGroupedByExecutorID,i) { return "translate(0," + i * spacePerData + ")"; });
+
+  var taskTimelineTaskInfoGTag = taskTimelineBarGraphSvg
+    .selectAll('#hoge')
+    .data(taskTimelineTaskInfoArray)
+    .enter()
+    .append("g")
+    .attr("id", "MAIN_BAR")
+    .attr("transform", function(taskInfo,i) { return "translate(0," + i * spacePerData + ")"; });
 
   executorTimelineTaskInfoGroupedByExecutorIDGTag
     .append("rect")
@@ -87,12 +131,31 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     })
   .attr("height", spacePerData);
 
+  taskTimelineTaskInfoGTag
+    .append("rect")
+    .style("fill", function(taskInfo,i) {
+      return i % 2 == 0 ? "rgb(200,200,200)" : "rgb(225,225,225)";
+    })
+  .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", function() {
+      return IDSpace + taskTimelineGraphBarXScale(taskTimelineMaxLength) + graphRightPadding;
+    })
+  .attr("height", spacePerData);
+
   var executorTimelineGraphBarXAxisTick = d3.svg.axis().scale(executorTimelineGraphBarXScale).orient("bottom").tickSize(executorTimelineSvgHeight).tickSubdivide(true);
+
+  var taskTimelineGraphBarXAxisTick = d3.svg.axis().scale(taskTimelineGraphBarXScale).orient("bottom").tickSize(taskTimelineSvgHeight).tickSubdivide(true);
 
   executorTimelineBarGraphSvg.append("g")
     .attr("class", "axis")
     .attr("transform", "translate(" + IDSpace + ",0)")
     .call(executorTimelineGraphBarXAxisTick);
+
+  taskTimelineBarGraphSvg.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(" + IDSpace + ",0)")
+    .call(taskTimelineGraphBarXAxisTick);
 
   executorTimelineTaskInfoGroupedByExecutorIDGTag
     .append("text")
@@ -105,6 +168,20 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .attr("y", function() {
       return spacePerData / 2 + IDFontSize / 2;
     });
+
+  taskTimelineTaskInfoGTag
+    .append("text")
+    .text(function(taskInfo) {
+      return "TaskID: " + taskInfo.taskID;
+    })
+  .attr("font-size", IDFontSize + "px")
+    .attr("fill", "black")
+    .attr("x", 0)
+    .attr("y", function() {
+      return spacePerData / 2 + IDFontSize / 2;
+    });
+
+<!------------------------------------  to do add taskTimeline code below  ----------------------------------------->
 
   var executorTimelineTaskInfoGtag = executorTimelineTaskInfoGroupedByExecutorIDGTag
     .selectAll("g")
