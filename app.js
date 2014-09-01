@@ -1,24 +1,13 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>WEB UI Test Page</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-  </head>
+function dateToString(date) {
+  format = 'MM/DD hh:mm:ss';
+  format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
+  format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
+  format = format.replace(/hh/g, ('0' + date.getHours()).slice(-2));
+  format = format.replace(/mm/g, ('0' + date.getMinutes()).slice(-2));
+  format = format.replace(/ss/g, ('0' + date.getSeconds()).slice(-2));
 
-  <body>
-    <h1>Spark Data Web Analyzer</h1>
-    <script type="text/javascript">
-    function dateToString(date) {
-      format = 'MM/DD hh:mm:ss';
-      format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
-      format = format.replace(/DD/g, ('0' + date.getDate()).slice(-2));
-      format = format.replace(/hh/g, ('0' + date.getHours()).slice(-2));
-      format = format.replace(/mm/g, ('0' + date.getMinutes()).slice(-2));
-      format = format.replace(/ss/g, ('0' + date.getSeconds()).slice(-2));
-
-      return format;
-    }
+  return format;
+}
 
 d3
 .select("body")
@@ -50,7 +39,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
 
   <!--d3.select("body").append("div").text(JSON.stringify(executorTimelineTaskInfoArrayGroupedByExecutorID));-->
 
-  var executorTimelineSvgHeight = executorTimelineTaskInfoArrayGroupedByExecutorID.length * spacePerData;
+    var executorTimelineSvgHeight = executorTimelineTaskInfoArrayGroupedByExecutorID.length * spacePerData;
   var executorTimelineSvgWidth = 1600;
   var executorTimelineDivHeight = Math.min(500, executorTimelineSvgHeight);
   var executorTimelineDivWidth = executorTimelineSvgWidth;
@@ -336,7 +325,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .attr("x", function(taskInfo) {
       return taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime) + Number(taskInfo.deserializeMilliSec)) - taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime));
     })
-    .attr("y", 0)
+  .attr("y", 0)
     .attr("width", function(taskInfo) {
       return taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime) - Number(taskInfo.serializeMilliSec)) - taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime) + Number(taskInfo.deserializeMilliSec));
     })
@@ -352,7 +341,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .attr("x", function(taskInfo) {
       return taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime) - Number(taskInfo.serializeMilliSec)) - taskTimelineGraphBarXScale(Number(taskInfo.taskStartTime));
     })
-    .attr("y", 0)
+  .attr("y", 0)
     .attr("width", function(taskInfo) {
       return taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime)) - taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime) - Number(taskInfo.serializeMilliSec));
     })
@@ -366,7 +355,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .attr("id", function(taskInfoGroupedByExecutorID) {
       return "EXECUTOR_ID_" + taskInfoGroupedByExecutorID.key;
     })
-    .attr("transform", function(taskInfoGroupedByExecutorID,i) { return "translate(" + IDSpace + "," + i * spacePerData + ")"; });
+  .attr("transform", function(taskInfoGroupedByExecutorID,i) { return "translate(" + IDSpace + "," + i * spacePerData + ")"; });
 
   var taskTimelineTaskInfoGTagExplanation= taskTimelineBarGraphSvg
     .selectAll(".hoge")
@@ -376,7 +365,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .attr("id", function(taskInfo) {
       return "TASK_ID_" + taskInfo.taskID;
     })
-    .style("visibility", "hidden")
+  .style("visibility", "hidden")
     .attr("transform", function(taskInfo,i) { return "translate(" + (IDSpace + taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime)) + 10) +  "," + (i * spacePerData + (spacePerData - barGraphWidth) / 2 + 0) + ")"; });
 
   var executorTimelineTaskInfoGTagExplanation= executorTimelineTaskInfoGroupedByExecutorIDGTagExplanation
@@ -384,7 +373,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .data(function(taskInfoGroupedByExecutorID) {
       return taskInfoGroupedByExecutorID.values;
     })
-    .enter()
+  .enter()
     .append("g")
     .attr("id", function(taskInfo) { return "TASK_ID_" + taskInfo.taskID; })
     .style("visibility", "hidden")
@@ -417,14 +406,14 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .selectAll("text")
     .data(function(taskInfo) {
       return ["taskID: " + taskInfo.taskID,
-              "executorID: " + taskInfo.executorID,
-              "taskStartTime: " + new Date(Number(taskInfo.taskStartTime)),
-              "taskFinishTime: " + new Date(Number(taskInfo.taskFinishTime)),
-              "serializeMilliSec: " + taskInfo.serializeMilliSec,
-              "deserializeMilliSec: " + taskInfo.deserializeMilliSec
-                ]
+      "executorID: " + taskInfo.executorID,
+      "taskStartTime: " + new Date(Number(taskInfo.taskStartTime)),
+      "taskFinishTime: " + new Date(Number(taskInfo.taskFinishTime)),
+      "serializeMilliSec: " + taskInfo.serializeMilliSec,
+      "deserializeMilliSec: " + taskInfo.deserializeMilliSec
+      ]
     })
-    .enter()
+  .enter()
     .append("text")
     .text(function(text) { return text; })
     .attr("font-size", taskInfoExplanationFontSize + "px")
@@ -438,18 +427,18 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .selectAll("text")
     .data(function(taskInfo) {
       return ["taskID: " + taskInfo.taskID,
-              "executorID: " + taskInfo.executorID,
-              "taskStartTime: " + new Date(Number(taskInfo.taskStartTime)),
-              "taskFinishTime: " + new Date(Number(taskInfo.taskFinishTime)),
-              "serializeMilliSec: " + taskInfo.serializeMilliSec,
-              "deserializeMilliSec: " + taskInfo.deserializeMilliSec,
-              ,
-              "deserialize time is RED",
-              "execute time is BLUE",
-              "serialize time is ORANGE"
-                ]
+      "executorID: " + taskInfo.executorID,
+      "taskStartTime: " + new Date(Number(taskInfo.taskStartTime)),
+      "taskFinishTime: " + new Date(Number(taskInfo.taskFinishTime)),
+      "serializeMilliSec: " + taskInfo.serializeMilliSec,
+      "deserializeMilliSec: " + taskInfo.deserializeMilliSec,
+        ,
+        "deserialize time is RED",
+          "execute time is BLUE",
+          "serialize time is ORANGE"
+      ]
     })
-    .enter()
+  .enter()
     .append("text")
     .text(function(text) { return text; })
     .attr("font-size", taskInfoExplanationFontSize + "px")
@@ -498,7 +487,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .text(function(text) {
       return dateToString(new Date(Number(text)));
     })
-    .attr("transform", "rotate(0)");
+  .attr("transform", "rotate(0)");
 
   taskTimelineAxisSvg.append("g")
     .attr("class", "axis")
@@ -508,12 +497,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .text(function(text) {
       return dateToString(new Date(Number(text)));
     })
-    .attr("transform", "rotate(0)");
+  .attr("transform", "rotate(0)");
 
 });
 
-    </script>
-
-
-  </body>
-</html>
