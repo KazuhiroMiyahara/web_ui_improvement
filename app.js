@@ -265,15 +265,12 @@ d3
 
 }
 
+function showTaskTimeline(taskInfoArray) {
 d3
 .select("body")
 .append("h2")
 .text("Task Timeline")
 ;
-
-
-d3.csv("eventlog.txt", function(error, taskInfoArray) {
-  showExecutorTimeline(taskInfoArray);
 
   var barGraphWidth = 24;
   var spacePerData = 32;
@@ -492,9 +489,6 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     .attr("transform", function(taskInfo,i) { return "translate(" + (IDSpace + taskTimelineGraphBarXScale(Number(taskInfo.taskFinishTime)) + 10) +  "," + (i * spacePerData + (spacePerData - barGraphWidth) / 2 + 0) + ")"; })
     ;
 
-
-
-
   taskTimelineTaskInfoGTagExplanation
     .append("rect")
     .style("fill", "white")
@@ -535,7 +529,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
 
   var taskTimelineAxisHeight = 20;
   var taskTimelineAxisWidth = taskTimelineSvgWidth;
-  var taskTimelineAxisTop = taskTimelineDivTop + taskTimelineDivHeight;
+//  var taskTimelineAxisTop = taskTimelineDivTop + taskTimelineDivHeight;
   var taskTimelineAxisLeft = taskTimelineDivLeft;
 
   var taskTimelineAxisSvg = d3
@@ -561,6 +555,18 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     })
   .attr("transform", "rotate(0)")
   ;
+
+}
+
+
+
+
+
+
+
+d3.csv("eventlog.txt", function(error, taskInfoArray) {
+  showExecutorTimeline(taskInfoArray);
+  showTaskTimeline(taskInfoArray);
 
 })
 ;
