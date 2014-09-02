@@ -1,3 +1,9 @@
+main();
+
+function showData(data) {
+  d3.select("body").append("div").text(JSON.stringify(data));
+}
+
 function dateToString(date) {
   format = 'MM/DD hh:mm:ss';
   format = format.replace(/MM/g, ('0' + (date.getMonth() + 1)).slice(-2));
@@ -558,16 +564,52 @@ d3
 
 }
 
+function taskExecutionTime(taskInfo) {
+return taskInfo.taskFinishTime - taskInfo.taskStartTime;
+}
 
+function taskOtherTime(taskInfo){
+return taskExecutionTime(taskInfo) - taskInfo.deserializeMilliSec - taskInfo.serializeMilliSec - taskInfo.JVMGCTime - taskInfo.shuffleReadTime - taskInfo.shuffleWriteTime;
+}
 
+function addDummyData(taskInfoArray){
+var stageIDCounter = 0;
 
+taskInfoArray.forEach(function (taskInfo) {
+taskInfo.gettingResultTime = taskExecutionTime(taskInfo) + taskInfo.taskStartTime;
+taskInfo.taskLocality = "nodelocal"
 
+taskInfo.JVMGCTime = 0.0;
+taskInfo.shuffleReadTime = 0.0;
+taskInfo.fetchWaitTime = 0.0;
+taskInfo.shuffleWriteTime = 0.0;
 
+taskInfo.JVMGCTime = taskOtherTime(taskInfo) * 0.1;
+taskInfo.shuffleReadTime = taskOtherTime(taskInfo) * 0.1;
+taskInfo.fetchWaitTime = taskInfo.shuffleReadTime * 0.3;
+taskInfo.shuffleWriteTime = taskOtherTime(taskInfo) * 0.1;
 
+taskInfo.bytesRead = taskInfo.deserializeMilliSec;
+taskInfo.memoryBytesSpilled = taskInfo.serializeMilliSec;
+taskInfo.diskBytesSpilled = taskInfo.serializeMilliSec + taskOtherTime(taskInfo);
+taskInfo.totalBlocksFetched = taskInfo.shuffleReadTime;
+taskInfo.remoteBlocksFetched = taskInfo.totalBlocksFetched * 0.3;
+taskInfo.localBlocksFetched = taskInfo.totalBlocksFetched - taskInfo.remoteBlocksFetched;
+taskInfo.shuffleBytesWritten = taskInfo.totalBlocksFetched * 0.8;
+
+taskInfo.stageID = (stageIDCounter++) % 3;
+});
+}
+
+function main(){
 d3.csv("eventlog.txt", function(error, taskInfoArray) {
+  addDummyData(taskInfoArray);
+
+  showData(taskInfoArray);
+
   showExecutorTimeline(taskInfoArray);
   showTaskTimeline(taskInfoArray);
 
 })
 ;
-
+}
