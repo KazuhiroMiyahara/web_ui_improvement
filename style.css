@@ -6,7 +6,7 @@ p {
 
 div.bar {
    display: inline-block;
-   width: 20px;   /* Ç±ÇÃêîílÇÕé¿çséûÇ…è„èëÇ´Ç≥ÇÍÇ‹Ç∑ */
+   width: 20px;
    height: 20px;
    background-color: teal;
    margin-right: 2px;
@@ -23,4 +23,76 @@ div.bar {
    font-family: sans-serif;
    font-size: 11px;
 }
+
+div.mainTabBox {
+    margin: 0px;
+    padding: 0px;
+}
+
+p.tabs {
+    margin: 0px;
+    padding: 0px;
+}
+
+p.tabs a {
+    display: block;
+    margin: 0px 1px 0px 0px;
+    padding: 10px;
+    float: left;
+    width: 200px;
+    font-size: 20px;
+}
+
+p.tabs a.tabProtoType {
+    background-color: red;
+    color: white;
+}
+
+p.tabs a.tabAllExecutors {
+    background-color: blue;
+    color: white;
+}
+
+p.tabs a.tabAllStages {
+    background-color: green;
+    color: white;
+}
+
+p.tabs a.tabTest {
+    background-color: orange;
+    color: white;
+}
+
+div.tab {
+    overflow: auto;
+    clear: left;
+    border: 2px solid black;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

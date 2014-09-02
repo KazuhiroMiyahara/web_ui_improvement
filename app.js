@@ -15,7 +15,7 @@ function dateToString(date) {
   return format;
 }
 
-function showExecutorTimeline(taskInfoArray) {
+function showExecutorTimeline(showDiv, taskInfoArray) {
   var barGraphWidth = 24;
   var spacePerData = 32;
   var barStrokeWidth = 1;
@@ -25,8 +25,7 @@ function showExecutorTimeline(taskInfoArray) {
   var graphBarFontSize = 16;
   var taskInfoExplanationFontSize = 20;
 
-d3
-.select("body")
+showDiv
 .append("h2")
 .text("Executor Timeline")
 ;
@@ -44,8 +43,7 @@ d3
   var executorTimelineDivTop = 120;
   var executorTimelineDivLeft = 0;
 
-  var executorTimelineDiv = d3
-    .select("body")
+  var executorTimelineDiv = showDiv
     .append("div")
     .style("height", executorTimelineDivHeight + "px")
     .style("width", executorTimelineDivWidth + "px")
@@ -144,8 +142,7 @@ d3
       .style("fill", "cyan")
       ;
 
-    d3
-      .select("body")
+    showDiv
       .select("#executorTimelineBarGraphSvg")
       .select("#EXECUTOR_ID_" + taskInfo.executorID)
       .select("#TASK_ID_" + taskInfo.taskID)
@@ -245,8 +242,7 @@ d3
   var executorTimelineAxisTop = executorTimelineDivTop + executorTimelineDivHeight;
   var executorTimelineAxisLeft = executorTimelineDivLeft;
 
-  var executorTimelineAxisSvg = d3
-    .select("body")
+  var executorTimelineAxisSvg = showDiv
     .append("svg")
     .attr("id", "executorTimelineAxisSvg")
     .attr("width", executorTimelineAxisWidth)
@@ -271,9 +267,9 @@ d3
 
 }
 
-function showTaskTimeline(taskInfoArray) {
-d3
-.select("body")
+function showTaskTimeline(showDiv, taskInfoArray) {
+
+showDiv
 .append("h2")
 .text("Task Timeline")
 ;
@@ -296,8 +292,7 @@ d3
 //  var taskTimelineDivTop = executorTimelineDivTop + executorTimelineDivHeight + 20;
   var taskTimelineDivLeft = 0;
 
-  var taskTimelineDiv = d3
-    .select("body")
+  var taskTimelineDiv = showDiv
     .append("div")
     .style("height", taskTimelineDivHeight + "px")
     .style("width", taskTimelineDivWidth + "px")
@@ -399,8 +394,7 @@ d3
       .style("fill", "cyan")
       ;
 
-    d3
-      .select("body")
+    showDiv
       .select("#taskTimelineBarGraphSvg")
       .select("#TASK_ID_" + taskInfo.taskID)
       .style("visibility", "visible")
@@ -538,8 +532,7 @@ d3
 //  var taskTimelineAxisTop = taskTimelineDivTop + taskTimelineDivHeight;
   var taskTimelineAxisLeft = taskTimelineDivLeft;
 
-  var taskTimelineAxisSvg = d3
-    .select("body")
+  var taskTimelineAxisSvg = showDiv
     .append("svg")
     .attr("id", "taskTimelineAxisSvg")
     .attr("width", taskTimelineAxisWidth)
@@ -601,14 +594,125 @@ taskInfo.stageID = (stageIDCounter++) % 3;
 });
 }
 
+function switchTab(tabName){
+    var tabs = d3
+    .select("#mainTabBox")
+    .select("#tabs")
+    ;
+
+    tabs
+    .select("#tabProtoType")
+    .style("display", "none")
+    ;
+
+    tabs
+    .select("#tabAllExecutors")
+    .style("display", "none")
+    ;
+
+    tabs
+    .select("#tabAllStages")
+    .style("display", "none")
+    ;
+
+    tabs
+    .select("#tabTest")
+    .style("display", "none")
+    ;
+
+    var tabNameWrapper = "#" + tabName;
+
+    tabs
+    .select(tabNameWrapper)
+    .style("display", "block")
+    ;
+
+    return false;
+}
+
 function main(){
 d3.csv("eventlog.txt", function(error, taskInfoArray) {
   addDummyData(taskInfoArray);
 
-  showData(taskInfoArray);
+  //showData(taskInfoArray);
 
-  showExecutorTimeline(taskInfoArray);
-  showTaskTimeline(taskInfoArray);
+  var mainTabBox = d3
+  .select("body")
+  .append("div")
+  .attr("class", "mainTabBox")
+  .attr("id", "mainTabBox")
+  ;
+
+  var tabs = mainTabBox
+  .append("p")
+  .attr("class", "tabs")
+  .attr("id", "tabs")
+  ;
+
+  tabs
+  .append("a")
+  .attr("href", "#tabProtoType")
+  .attr("class", "tabProtoType")
+  .attr("onClick", "return switchTab('tabProtoType');")
+  .text("Prototype")
+  ;
+
+  tabs
+  .append("a")
+  .attr("href", "#tabAllExecutors")
+  .attr("class", "tabAllExecutors")
+  .attr("onClick", "return switchTab('tabAllExecutors');")
+  .text("All Executors")
+  ;
+
+  tabs
+  .append("a")
+  .attr("href", "#tabAllStages")
+  .attr("class", "tabAllStages")
+  .attr("onClick", "return switchTab('tabAllStages');")
+  .text("All Stages")
+  ;
+
+  tabs
+  .append("a")
+  .attr("href", "#tabTest")
+  .attr("class", "tabTest")
+  .attr("onClick", "return switchTab('tabTest');")
+  .text("test tab")
+  ;
+
+  var tabProtoType = tabs
+  .append("div")
+  .attr("id", "tabProtoType")
+  .attr("class", "tab")
+  .append("p")
+  ;
+
+  var tabAllExecutors = tabs
+  .append("div")
+  .attr("id", "tabAllExecutors")
+  .attr("class", "tab")
+  .append("p")
+  ;
+
+  var tabAllStages = tabs
+  .append("div")
+  .attr("id", "tabAllStages")
+  .attr("class", "tab")
+  .append("p")
+  ;
+
+  var tabAllStages = tabs
+  .append("div")
+  .attr("id", "tabTest")
+  .attr("class", "tab")
+  .append("p")
+  ;
+
+  switchTab("tabProtoType");
+
+  showExecutorTimeline(tabProtoType, taskInfoArray);
+  showTaskTimeline(tabProtoType, taskInfoArray);
 
 })
 ;
