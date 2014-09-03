@@ -58,8 +58,18 @@ div.tab {
     overflow: auto;
     clear: left;
     border: 5px solid orange;
+    background-color: white;
 }
 
+a.graphLabel {
+    display: block;
+    margin: 0px 1px 0px 0px;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: orange;
+    color: black;
+}
 
 
 

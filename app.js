@@ -558,30 +558,30 @@ showDiv
 }
 
 function formatTaskTimes(taskInfo){
-var timeFormat = [];
+var data = [];
 
-timeFormat
+data
 .push({
 "type": "deserialize",
 "time": Number(taskInfo.deserializeMilliSec)
 })
 ;
 
-timeFormat
+data
 .push({
 "type": "serialize",
 "time": Number(taskInfo.serializeMilliSec)
 })
 ;
 
-timeFormat
+data
 .push({
 "type": "JVMGC",
 "time": Number(taskInfo.JVMGCTime)
 })
 ;
 
-timeFormat
+data
 .push({
 "type": "shuffle read",
 "data": [{
@@ -594,62 +594,127 @@ timeFormat
 })
 ;
 
-timeFormat
+data
 .push({
 "type": "shuffle write",
 "time": Number(taskInfo.shuffleWriteTime)
 })
 ;
 
-timeFormat
+data
 .push({
-"type": "others",
+"type": "execute",
 "time": Number(taskOtherTime(taskInfo))
 })
 ;
 
 
-return timeFormat;
+return {"type ": "times", "data": data};
 }
 
 function showTaskInformation(showDiv, taskInfo){
 
 var timeFormat = formatTaskTimes(taskInfo);
 
-showData(showDiv, timeFormat);
-
-var radius = 200;
+var radius = 300;
 var svgHeight = 2 * radius;
 var svgWidth = 2 * radius;
-var color = d3.scale.category20b();
+var svgLeft = 1000;
+var svgTop = 200;
+var color = d3.scale.category20();
 
 var circleGraphSvg = showDiv
 .append("svg")
 .attr("id", "circleGraphSvg")
 .attr("width", svgWidth)
 .attr("height", svgHeight)
+.attr("transform", "translate(" + radius + "," + radius + ")")
 ;
 
 var partition = d3
 .layout
 .partition()
+.sort(null)
 .children(function(d, depth) {
   return d.data !== void(0) ? d.data : null;
 })
 .value(function(d) {
   return d.time;
 })
-.size([2 * Math.PI, radius / 3]);
+.size([2 * Math.PI, radius]);
 
+var arc = d3
+.svg
+.arc()
+.startAngle(function(d) {
+   return d.x;
+})
+.endAngle(function(d) {
+   return d.x + d.dx;
+})
+.innerRadius(function(d) {
+   return d.y;
+})
+.outerRadius(function(d) {
+   return d.y + d.dy;
+})
+;
 
-//---------------------------- to do -------------------------------
+var dataPart = partition.nodes(timeFormat).slice(1);
 
+var arcs = circleGraphSvg
+.selectAll(".arc")
+.data(dataPart)
+.enter()
+.append("g")
+.attr("class", "arc")
+;
 
+arcs
+.append("path")
+.attr("d", function(d) {
+   return arc(d);
+})
+.style("fill", function(d, i) {
+  return color(i);
+})
+.attr("stroke", "white")
+.attr("stroke-width", "5")
+;
 
+var maxDepth = d3.max(dataPart, function(d) {return d.depth;});
 
+dataPart
+.forEach(function(d) {
+  var tmpAngle = ((d.x + d.dx / 2) * 180 / Math.PI - 90);
+  var tmpX = (radius / (maxDepth + 1)) * (d.depth + 0.5);
 
+  circleGraphSvg
+  .append("text")
+  .attr("x", tmpAngle < 90 ? tmpX : -tmpX)
+  .attr("y", 0)
+  .attr("transform", "rotate(" + (tmpAngle < 90 ? tmpAngle : tmpAngle - 180) + ")")
+  .attr("text-anchor", "middle")
+  .attr("fill", "black")
+  .attr("font-size", "20")
+  .style("font-weight", "bold")
+  .text(function() {
+     return d.type;
+  })
+  ;
+})
+;
 
-
+  circleGraphSvg
+  .append("text")
+  .attr("x", 0)
+  .attr("y", 0)
+  .attr("text-anchor", "middle")
+  .attr("fill", "black")
+  .attr("font-size", "20")
+  .style("font-weight", "bold")
+  .text("TaskID:" + taskInfo.taskID)
+  ;
 
 
 }
@@ -705,8 +770,6 @@ function switchOffTab(tabs, tabProperty){
     .select(tmpStr)
     .attr("class", "tabNameOff")
     ;
-
-
 }
 
 function switchOnTab(tabs, tabProperty){
@@ -723,8 +786,6 @@ function switchOnTab(tabs, tabProperty){
     .select(tmpStr)
     .attr("class", "tabNameOn")
     ;
-
-
 }
 
 function switchTab(tabProperty){
@@ -800,11 +861,11 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   var tabAllStages = appendTabBody(tabs, "AllStages");
   var tabTest = appendTabBody(tabs, "Test");
 
-  switchTab("ProtoType");
+  switchTab("Test");
 
   showExecutorTimeline(tabProtoType, taskInfoArray);
   showTaskTimeline(tabProtoType, taskInfoArray);
-  showTaskInformation(tabTest, taskInfoArray[0]);
+  showTaskInformation(tabTest, taskInfoArray[2]);
 
 })
 ;
