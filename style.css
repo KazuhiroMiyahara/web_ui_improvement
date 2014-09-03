@@ -41,32 +41,23 @@ p.tabs a {
     float: left;
     width: 200px;
     font-size: 20px;
+    font-weight: bold;
 }
 
-p.tabs a.tabProtoType {
-    background-color: red;
+p.tabs a.tabNameOff {
+    background-color: brown;
     color: white;
 }
 
-p.tabs a.tabAllExecutors {
-    background-color: blue;
-    color: white;
-}
-
-p.tabs a.tabAllStages {
-    background-color: green;
-    color: white;
-}
-
-p.tabs a.tabTest {
+p.tabs a.tabNameOn {
     background-color: orange;
-    color: white;
+    color: black;
 }
 
 div.tab {
     overflow: auto;
     clear: left;
-    border: 2px solid black;
+    border: 5px solid orange;
 }
 
 

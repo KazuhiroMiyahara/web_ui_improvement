@@ -1,7 +1,7 @@
 main();
 
-function showData(data) {
-  d3.select("body").append("div").text(JSON.stringify(data));
+function showData(showDiv, data) {
+  showDiv.append("div").text(JSON.stringify(data));
 }
 
 function dateToString(date) {
@@ -557,6 +557,103 @@ showDiv
 
 }
 
+function formatTaskTimes(taskInfo){
+var timeFormat = [];
+
+timeFormat
+.push({
+"type": "deserialize",
+"time": Number(taskInfo.deserializeMilliSec)
+})
+;
+
+timeFormat
+.push({
+"type": "serialize",
+"time": Number(taskInfo.serializeMilliSec)
+})
+;
+
+timeFormat
+.push({
+"type": "JVMGC",
+"time": Number(taskInfo.JVMGCTime)
+})
+;
+
+timeFormat
+.push({
+"type": "shuffle read",
+"data": [{
+"type": "fetch wait",
+"time": Number(taskInfo.fetchWaitTime)
+},{
+"type": "others",
+"time": Number(taskInfo.shuffleReadTime) - Number(taskInfo.fetchWaitTime)
+}]
+})
+;
+
+timeFormat
+.push({
+"type": "shuffle write",
+"time": Number(taskInfo.shuffleWriteTime)
+})
+;
+
+timeFormat
+.push({
+"type": "others",
+"time": Number(taskOtherTime(taskInfo))
+})
+;
+
+
+return timeFormat;
+}
+
+function showTaskInformation(showDiv, taskInfo){
+
+var timeFormat = formatTaskTimes(taskInfo);
+
+showData(showDiv, timeFormat);
+
+var radius = 200;
+var svgHeight = 2 * radius;
+var svgWidth = 2 * radius;
+var color = d3.scale.category20b();
+
+var circleGraphSvg = showDiv
+.append("svg")
+.attr("id", "circleGraphSvg")
+.attr("width", svgWidth)
+.attr("height", svgHeight)
+;
+
+var partition = d3
+.layout
+.partition()
+.children(function(d, depth) {
+  return d.data !== void(0) ? d.data : null;
+})
+.value(function(d) {
+  return d.time;
+})
+.size([2 * Math.PI, radius / 3]);
+
+
+//---------------------------- to do -------------------------------
+
+
+
+
+
+
+
+
+
+}
+
 function taskExecutionTime(taskInfo) {
 return taskInfo.taskFinishTime - taskInfo.taskStartTime;
 }
@@ -594,47 +691,91 @@ taskInfo.stageID = (stageIDCounter++) % 3;
 });
 }
 
-function switchTab(tabName){
+function switchOffTab(tabs, tabProperty){
+    var tmpStr = "#tab" + tabProperty;
+
+    tabs
+    .select(tmpStr)
+    .style("display", "none")
+    ;
+
+    var tmpStr = "#tabName" + tabProperty;
+
+    tabs
+    .select(tmpStr)
+    .attr("class", "tabNameOff")
+    ;
+
+
+}
+
+function switchOnTab(tabs, tabProperty){
+    var tmpStr = "#tab" + tabProperty;
+
+    tabs
+    .select(tmpStr)
+    .style("display", "block")
+    ;
+
+    var tmpStr = "#tabName" + tabProperty;
+
+    tabs
+    .select(tmpStr)
+    .attr("class", "tabNameOn")
+    ;
+
+
+}
+
+function switchTab(tabProperty){
     var tabs = d3
     .select("#mainTabBox")
     .select("#tabs")
     ;
 
-    tabs
-    .select("#tabProtoType")
-    .style("display", "none")
-    ;
+    switchOffTab(tabs, "ProtoType");
+    switchOffTab(tabs, "AllExecutors");
+    switchOffTab(tabs, "AllStages");
+    switchOffTab(tabs, "Test");
 
-    tabs
-    .select("#tabAllExecutors")
-    .style("display", "none")
-    ;
-
-    tabs
-    .select("#tabAllStages")
-    .style("display", "none")
-    ;
-
-    tabs
-    .select("#tabTest")
-    .style("display", "none")
-    ;
-
-    var tabNameWrapper = "#" + tabName;
-
-    tabs
-    .select(tabNameWrapper)
-    .style("display", "block")
-    ;
+    switchOnTab(tabs, tabProperty);
 
     return false;
+}
+
+function appendTabName(tabs, tabProperty) {
+    var tmpStr1 = "#tab" + tabProperty;
+    var tmpStr2 = "tabName" + tabProperty;
+    var tmpStr3 = "return switchTab('" + tabProperty + "');";
+
+  tabs
+  .append("a")
+  .attr("href", tmpStr1)
+  .attr("id", tmpStr2)
+  .attr("class", "tabNameOff")
+  .attr("onClick", tmpStr3)
+  .text(tabProperty)
+  ;
+}
+
+function appendTabBody(tabs, tabProperty){
+var tmpStr = "tab" + tabProperty;
+
+var tabBody = tabs
+.append("div")
+.attr("id", tmpStr)
+.attr("class", "tab")
+.append("p")
+ ;
+
+ return tabBody;
 }
 
 function main(){
 d3.csv("eventlog.txt", function(error, taskInfoArray) {
   addDummyData(taskInfoArray);
 
-  //showData(taskInfoArray);
+  //showData(showDiv, taskInfoArray);
 
   var mainTabBox = d3
   .select("body")
@@ -649,70 +790,21 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   .attr("id", "tabs")
   ;
 
-  tabs
-  .append("a")
-  .attr("href", "#tabProtoType")
-  .attr("class", "tabProtoType")
-  .attr("onClick", "return switchTab('tabProtoType');")
-  .text("Prototype")
-  ;
+    appendTabName(tabs, "ProtoType");
+    appendTabName(tabs, "AllExecutors");
+    appendTabName(tabs, "AllStages");
+    appendTabName(tabs, "Test");
 
-  tabs
-  .append("a")
-  .attr("href", "#tabAllExecutors")
-  .attr("class", "tabAllExecutors")
-  .attr("onClick", "return switchTab('tabAllExecutors');")
-  .text("All Executors")
-  ;
+  var tabProtoType = appendTabBody(tabs, "ProtoType");
+  var tabAllExecutors = appendTabBody(tabs, "AllExecutors");
+  var tabAllStages = appendTabBody(tabs, "AllStages");
+  var tabTest = appendTabBody(tabs, "Test");
 
-  tabs
-  .append("a")
-  .attr("href", "#tabAllStages")
-  .attr("class", "tabAllStages")
-  .attr("onClick", "return switchTab('tabAllStages');")
-  .text("All Stages")
-  ;
-
-  tabs
-  .append("a")
-  .attr("href", "#tabTest")
-  .attr("class", "tabTest")
-  .attr("onClick", "return switchTab('tabTest');")
-  .text("test tab")
-  ;
-
-  var tabProtoType = tabs
-  .append("div")
-  .attr("id", "tabProtoType")
-  .attr("class", "tab")
-  .append("p")
-  ;
-
-  var tabAllExecutors = tabs
-  .append("div")
-  .attr("id", "tabAllExecutors")
-  .attr("class", "tab")
-  .append("p")
-  ;
-
-  var tabAllStages = tabs
-  .append("div")
-  .attr("id", "tabAllStages")
-  .attr("class", "tab")
-  .append("p")
-  ;
-
-  var tabAllStages = tabs
-  .append("div")
-  .attr("id", "tabTest")
-  .attr("class", "tab")
-  .append("p")
-  ;
-
-  switchTab("tabProtoType");
+  switchTab("ProtoType");
 
   showExecutorTimeline(tabProtoType, taskInfoArray);
   showTaskTimeline(tabProtoType, taskInfoArray);
+  showTaskInformation(tabTest, taskInfoArray[0]);
 
 })
 ;
