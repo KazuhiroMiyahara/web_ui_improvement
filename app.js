@@ -3,6 +3,12 @@ main();
 function main(){
 d3.csv("eventlog.txt", function(error, taskInfoArray) {
   addDummyData(taskInfoArray);
+  var executorInfoArray = d3
+    .nest()
+    .key(function(taskInfo) { return Number(taskInfo.executorID) })
+    .entries(taskInfoArray)
+    ;
+
 
   var mainTabBox = d3
   .select("body")
@@ -31,7 +37,11 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
 
   showExecutorTimeline(tabProtoType, taskInfoArray);
   showTaskTimeline(tabProtoType, taskInfoArray);
+  /*
   showTaskInformation(tabTest, taskInfoArray[2]);
+  /*/
+  showExecutorInformation(tabTest, executorInfoArray[0]);
+  //*/
 
 })
 ;

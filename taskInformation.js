@@ -207,7 +207,9 @@ var informationTable = mainTrRight
 informationTable
 .append("th")
 .style("padding", "12px")
-.style("background", "orange")
+.style("background", function(d,i){
+  return i % 2 == 0 ? "tan" : "wheat";
+})
 .text(function(d){
   return d[0];
 })
@@ -216,7 +218,9 @@ informationTable
 informationTable
 .append("td")
 .style("padding", "12px")
-.style("background", "orange")
+.style("background", function(d,i){
+  return i % 2 == 0 ? "tan" : "wheat";
+})
 .text(function(d){
   return d[1];
 })
