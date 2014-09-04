@@ -4,12 +4,14 @@ p {
    color: black;
 }
 
-div.bar {
-   display: inline-block;
-   width: 20px;
-   height: 20px;
-   background-color: teal;
-   margin-right: 2px;
+.linkBar {
+  fill: sienna;
+  stroke: white;
+  stroke-width: 1;
+}
+
+.linkBar:hover {
+  fill: orange;
 }
 
 .axis path,

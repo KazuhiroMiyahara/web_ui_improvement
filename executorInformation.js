@@ -16,6 +16,7 @@ var timelineRow = mainTable
 
 var timelineSpace = timelineRow
 .append("td")
+.style("padding", "12px")
 ;
 
 var histogramRow = mainTable
@@ -24,6 +25,7 @@ var histogramRow = mainTable
 
 var histogramSpace = histogramRow
 .append("td")
+.style("padding", "12px")
 ;
 
 var timelineTable = timelineSpace
@@ -168,9 +170,12 @@ var histogramSecondRowThirdCell = histogramSecondRow
   timelineGraphBarForEachTaskG
   .append("rect")
   .attr("id", "bar")
+  .attr("class", "linkBar")
+  /*
   .style("fill", "sienna")
   .style("stroke", "white")
   .style("stroke-width", barStrokeWidth)
+  */
   .attr("x", 0)
   .attr("y", 0)
   .attr("width", function(taskInfo) {
