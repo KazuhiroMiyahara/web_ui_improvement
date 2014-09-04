@@ -618,12 +618,18 @@ var timeFormat = formatTaskTimes(taskInfo);
 
 var radius = 300;
 var svgHeight = 2 * radius;
-var svgWidth = 2 * radius;
-var svgLeft = 1000;
-var svgTop = 200;
+var svgWidth = 2 * radius + 100;
 var color = d3.scale.category20();
 
-var circleGraphSvg = showDiv
+var mainTr = showDiv
+.append("table")
+.append("tr")
+;
+
+var mainTrLeft = mainTr.append("td");
+var mainTrRight = mainTr.append("td");
+
+var circleGraphSvg = mainTrLeft
 .append("svg")
 .attr("id", "circleGraphSvg")
 .attr("width", svgWidth)
@@ -716,6 +722,67 @@ dataPart
   .text("TaskID:" + taskInfo.taskID)
   ;
 
+//----------------------------------------------------------------------------------------------------------
+
+var informationTable = mainTrRight
+.append("div")
+.style("height", radius * 2 + "px")
+.style("overflow-y", "scroll")
+.append("table")
+.style("font-size", 20 + "px")
+.style("border-collapse", "separate")
+.style("border-spacing", "1px 1px")
+.attr("cellpadding", 3)
+.selectAll(".tr")
+.data(function() {
+  return [["taskID",taskInfo.taskID],
+  ["executorID",taskInfo.executorID],
+  ["stageID",taskInfo.stageID],
+  ["taskLocality",taskInfo.taskLocality],
+  ["taskStartTime",new Date(Number(taskInfo.taskStartTime))],
+  ["taskFinishTime",new Date(Number(taskInfo.taskFinishTime))],
+  ["gettingResultTime",new Date(Number(taskInfo.gettingResultTime))],
+  ["JVMGCTime",taskInfo.JVMGCTime + " [ms]"],
+  ["shuffleReadTime",taskInfo.shuffleReadTime + " [ms]"],
+  ["fetchWaitTime",taskInfo.fetchWaitTime + " [ms]"],
+  ["shuffleWriteTime",taskInfo.shuffleWriteTime + " [ms]"],
+  ["serializeMilliSec",taskInfo.serializeMilliSec + " [ms]"],
+  ["deserializeMilliSec",taskInfo.deserializeMilliSec + " [ms]"],
+  ["bytesRead",taskInfo.bytesRead + " [byte]"],
+  ["memoryBytesSpilled",taskInfo.memoryBytesSpilled + " [byte]"],
+  ["diskBytesSpilled",taskInfo.diskBytesSpilled + " [byte]"],
+  ["totalBlocksFetched",taskInfo.totalBlocksFetched + " [byte]"],
+  ["remoteBlocksFetched",taskInfo.remoteBlocksFetched + " [byte]"],
+  ["localBlocksFetched",taskInfo.localBlocksFetched + " [byte]"],
+  ["shuffleBytesWritten",taskInfo.shuffleBytesWritten + " [byte]"],
+  ]
+})
+.enter()
+.append("tr")
+.attr("align", "right")
+;
+
+informationTable
+.append("th")
+.style("padding", "12px")
+.style("background", "orange")
+.text(function(d){
+  return d[0];
+})
+;
+
+informationTable
+.append("td")
+.style("padding", "12px")
+.style("background", "orange")
+.text(function(d){
+  return d[1];
+})
+;
+
+
+
+
 
 }
 
@@ -726,7 +793,6 @@ return taskInfo.taskFinishTime - taskInfo.taskStartTime;
 function taskOtherTime(taskInfo){
 return taskExecutionTime(taskInfo) - taskInfo.deserializeMilliSec - taskInfo.serializeMilliSec - taskInfo.JVMGCTime - taskInfo.shuffleReadTime - taskInfo.shuffleWriteTime;
 }
-
 function addDummyData(taskInfoArray){
 var stageIDCounter = 0;
 
@@ -826,8 +892,7 @@ var tabBody = tabs
 .append("div")
 .attr("id", tmpStr)
 .attr("class", "tab")
-.append("p")
- ;
+;
 
  return tabBody;
 }
@@ -835,8 +900,6 @@ var tabBody = tabs
 function main(){
 d3.csv("eventlog.txt", function(error, taskInfoArray) {
   addDummyData(taskInfoArray);
-
-  //showData(showDiv, taskInfoArray);
 
   var mainTabBox = d3
   .select("body")
