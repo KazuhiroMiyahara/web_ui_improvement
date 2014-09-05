@@ -3,12 +3,12 @@ main();
 function main(){
 d3.csv("eventlog.txt", function(error, taskInfoArray) {
   addDummyData(taskInfoArray);
+
   var executorInfoArray = d3
     .nest()
     .key(function(taskInfo) { return Number(taskInfo.executorID) })
     .entries(taskInfoArray)
     ;
-
 
   var mainTabBox = d3
   .select("body")
@@ -17,33 +17,41 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   .attr("id", "mainTabBox")
   ;
 
+  var tabsID = "mainTabs"
   var tabs = mainTabBox
   .append("p")
   .attr("class", "tabs")
-  .attr("id", "tabs")
+  .attr("id", tabsID)
   ;
 
-    appendTabName(tabs, "ProtoType", "ProtoType");
-    appendTabName(tabs, "AllExecutors", "AllExecutors");
-    appendTabName(tabs, "AllStages", "AllStages");
-    appendTabName(tabs, "Variable", "");
+  var tabProperties = ["ProtoType", "AllExecutors", "AllStages", "Variable", "taskTest", "executorTest"];
 
-  var tabProtoType = appendTabBody(tabs, "ProtoType");
-  var tabAllExecutors = appendTabBody(tabs, "AllExecutors");
-  var tabAllStages = appendTabBody(tabs, "AllStages");
-  var tabVariable = appendTabBody(tabs, "Variable");
+  tabProperties
+  .forEach(function (tabProperty){
+    appendTabName(tabsID, tabProperties, tabProperty, tabProperty);
+  })
+  ;
 
-  switchTab("Variable");
+  tabProperties
+  .forEach(function (tabProperty){
+    appendTabBody(tabs, tabProperty);
+  })
+  ;
+
+  switchTab(tabs, tabProperties, "executorTest");
+
+  var tabProtoType = d3
+  .select("#tabProtoType")
+  ;
 
   showExecutorTimeline(tabProtoType, taskInfoArray);
   showTaskTimeline(tabProtoType, taskInfoArray);
-  /*
+
   var taskInfo = taskInfoArray[2];
-  switchTaskInfoTab("Variable", taskInfo);
-  /*/
+  switchTaskInfoTab("taskTest", taskInfo);
+
   var executorInfo = executorInfoArray[0];
-  switchExecutorInfoTab("Variable", executorInfo);
-  //*/
+  switchExecutorInfoTab("executorTest", executorInfo);
 
 })
 ;

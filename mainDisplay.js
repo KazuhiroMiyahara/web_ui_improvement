@@ -30,26 +30,36 @@ function switchOnTab(tabs, tabProperty){
     ;
 }
 
-function switchTab(tabProperty){
-    var tabs = d3
-    .select("#mainTabBox")
-    .select("#tabs")
+function switchTab(tabs, tabProperties, tabProperty){
+    tabProperties
+    .forEach(function (tabP){
+        switchOffTab(tabs, tabP);
+    })
     ;
-
-    switchOffTab(tabs, "ProtoType");
-    switchOffTab(tabs, "AllExecutors");
-    switchOffTab(tabs, "AllStages");
-    switchOffTab(tabs, "Variable");
 
     switchOnTab(tabs, tabProperty);
 
     return false;
 }
 
-function appendTabName(tabs, tabProperty, tabText) {
+function switchTabJSON(tabsID, tabPropertiesJSON, tabProperty){
+    var tabs = d3
+    .select("#" + tabsID)
+    ;
+    var tabProperties = JSON.parse(tabPropertiesJSON);
+
+    switchTab(tabs, tabProperties, tabProperty);
+}
+
+function appendTabName(tabsID, tabProperties, tabProperty, tabText) {
+    var tabs = d3
+    .select("#" + tabsID)
+    ;
+    var tabPropertiesJSON = JSON.stringify(tabProperties);
+
     var tmpStr1 = "#tab" + tabProperty;
     var tmpStr2 = "tabName" + tabProperty;
-    var tmpStr3 = "return switchTab('" + tabProperty + "');";
+    var tmpStr3 = "switchTabJSON('" + tabsID + "','" + tabPropertiesJSON + "','" + tabProperty + "'); return false;";
 
   tabs
   .append("a")
@@ -97,6 +107,5 @@ function switchExecutorInfoTab(tabProperty, executorInfo){
   ;
 
   showExecutorInformation(tabBody, executorInfo);
-
 }
 

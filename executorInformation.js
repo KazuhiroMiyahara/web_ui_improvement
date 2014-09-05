@@ -115,6 +115,42 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
 }
 
 //-------------------------------------------------------------------------------------------------------------------
+function addExecutorResources(executorInfoArray, resourcesSpace, fontSize) {
+  var executorResourcesTabBox = resourcesSpace
+  .append("div")
+  .attr("class", "executorResourcesTabBox")
+  .attr("id", "executorResourcesTabBox")
+  ;
+
+  var tabsID = "resourcesTabs"
+  var tabs = executorResourcesTabBox
+  .append("p")
+  .attr("class", "tabs")
+  .attr("id", tabsID)
+  ;
+
+  var tabProperties = ["ReadBytes", "MemoryWriteBytes", "DiskWriteBytes", "ShuffleReadBytes", "ShuffleWriteBytes", "ExecTimes"];
+
+  tabProperties
+  .forEach(function (tabProperty){
+    appendTabName(tabsID, tabProperties, tabProperty, tabProperty);
+  })
+  ;
+
+  tabProperties
+  .forEach(function (tabProperty){
+    appendTabBody(tabs, tabProperty);
+  })
+  ;
+
+  switchTab(tabs, tabProperties, tabProperties[0]);
+
+
+}
+
+
+
+//-------------------------------------------------------------------------------------------------------------------
 
 function showExecutorInformation(showDiv, executorInfo){
 
@@ -134,56 +170,20 @@ var timelineSpace = timelineRow
 .style("padding", "12px")
 ;
 
-var histogramRow = mainTable
+var resourcesRow = mainTable
 .append("tr")
 ;
 
-var histogramSpace = histogramRow
+var resourcesSpace = resourcesRow
 .append("td")
 .style("padding", "12px")
-;
-
-var histogramTable = histogramSpace
-.append("table")
-.attr("border", "1")
-;
-
-var histogramFirstRow = histogramTable
-.append("tr")
-;
-
-var histogramFirstRowFirstCell = histogramFirstRow
-.append("td")
-;
-
-var histogramFirstRowSecondCell = histogramFirstRow
-.append("td")
-;
-
-var histogramFirstRowThirdCell = histogramFirstRow
-.append("td")
-;
-
-var histogramSecondRow = histogramTable
-.append("tr")
-;
-
-var histogramSecondRowFirstCell = histogramSecondRow
-.append("td")
-;
-
-var histogramSecondRowSecondCell = histogramSecondRow
-.append("td")
-;
-
-var histogramSecondRowThirdCell = histogramSecondRow
-.append("td")
 ;
 
 var executorInfoArray = [executorInfo];
 
 addExecutorTimeline(executorInfoArray, timelineSpace, fontSize);
 
+addExecutorResources(executorInfoArray, resourcesSpace, fontSize);
 
 
 
@@ -192,31 +192,6 @@ addExecutorTimeline(executorInfoArray, timelineSpace, fontSize);
 
 
 
-
-
-histogramFirstRowFirstCell
-.text("1,1")
-;
-
-histogramFirstRowSecondCell
-.text("1,2")
-;
-
-histogramFirstRowThirdCell
-.text("1,3")
-;
-
-histogramSecondRowFirstCell
-.text("2,1")
-;
-
-histogramSecondRowSecondCell
-.text("2,2")
-;
-
-histogramSecondRowThirdCell
-.text("2,3")
-;
 
 
 
