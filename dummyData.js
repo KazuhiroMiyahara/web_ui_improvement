@@ -10,6 +10,7 @@ function addDummyData(taskInfoArray){
 var stageIDCounter = 0;
 
 taskInfoArray.forEach(function (taskInfo) {
+taskInfo.stageID = (stageIDCounter++) % 3;
 taskInfo.gettingResultTime = taskExecutionTime(taskInfo) + taskInfo.taskStartTime;
 taskInfo.taskLocality = "nodelocal"
 
@@ -30,8 +31,8 @@ taskInfo.totalBlocksFetched = taskInfo.shuffleReadTime;
 taskInfo.remoteBlocksFetched = taskInfo.totalBlocksFetched * 0.3;
 taskInfo.localBlocksFetched = taskInfo.totalBlocksFetched - taskInfo.remoteBlocksFetched;
 taskInfo.shuffleBytesWritten = taskInfo.totalBlocksFetched * 0.8;
+taskInfo.remoteBytesRead = taskInfo.totalBlocksFetched;
 
-taskInfo.stageID = (stageIDCounter++) % 3;
 });
 }
 

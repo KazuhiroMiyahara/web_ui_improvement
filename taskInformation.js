@@ -183,6 +183,7 @@ var informationTable = mainTrRight
   ["taskLocality",taskInfo.taskLocality],
   ["taskStartTime",new Date(Number(taskInfo.taskStartTime))],
   ["taskFinishTime",new Date(Number(taskInfo.taskFinishTime))],
+  ["taskTime",(Number(taskInfo.taskFinishTime) - Number(taskInfo.taskStartTime)) + " [ms]"],
   ["gettingResultTime",new Date(Number(taskInfo.gettingResultTime))],
   ["JVMGCTime",taskInfo.JVMGCTime + " [ms]"],
   ["shuffleReadTime",taskInfo.shuffleReadTime + " [ms]"],
@@ -197,6 +198,7 @@ var informationTable = mainTrRight
   ["remoteBlocksFetched",taskInfo.remoteBlocksFetched + " [byte]"],
   ["localBlocksFetched",taskInfo.localBlocksFetched + " [byte]"],
   ["shuffleBytesWritten",taskInfo.shuffleBytesWritten + " [byte]"],
+  ["remoteBytesRead",taskInfo.remoteBytesRead + " [byte]"],
   ]
 })
 .enter()
