@@ -11,7 +11,7 @@ p {
 }
 
 .linkBar:hover {
-  fill: orange;
+  fill: darkorange;
 }
 
 .axis path,
@@ -24,6 +24,10 @@ p {
 .axis text {
    font-family: sans-serif;
    font-size: 15px;
+}
+
+.x.axis path {
+  display: none;
 }
 
 div.mainTabBox {

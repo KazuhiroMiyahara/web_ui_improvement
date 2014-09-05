@@ -23,24 +23,26 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   .attr("id", "tabs")
   ;
 
-    appendTabName(tabs, "ProtoType");
-    appendTabName(tabs, "AllExecutors");
-    appendTabName(tabs, "AllStages");
-    appendTabName(tabs, "Test");
+    appendTabName(tabs, "ProtoType", "ProtoType");
+    appendTabName(tabs, "AllExecutors", "AllExecutors");
+    appendTabName(tabs, "AllStages", "AllStages");
+    appendTabName(tabs, "Variable", "");
 
   var tabProtoType = appendTabBody(tabs, "ProtoType");
   var tabAllExecutors = appendTabBody(tabs, "AllExecutors");
   var tabAllStages = appendTabBody(tabs, "AllStages");
-  var tabTest = appendTabBody(tabs, "Test");
+  var tabVariable = appendTabBody(tabs, "Variable");
 
-  switchTab("Test");
+  switchTab("Variable");
 
   showExecutorTimeline(tabProtoType, taskInfoArray);
   showTaskTimeline(tabProtoType, taskInfoArray);
   /*
-  showTaskInformation(tabTest, taskInfoArray[2]);
+  var taskInfo = taskInfoArray[2];
+  switchTaskInfoTab("Variable", taskInfo);
   /*/
-  showExecutorInformation(tabTest, executorInfoArray[0]);
+  var executorInfo = executorInfoArray[0];
+  switchExecutorInfoTab("Variable", executorInfo);
   //*/
 
 })

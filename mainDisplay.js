@@ -39,14 +39,14 @@ function switchTab(tabProperty){
     switchOffTab(tabs, "ProtoType");
     switchOffTab(tabs, "AllExecutors");
     switchOffTab(tabs, "AllStages");
-    switchOffTab(tabs, "Test");
+    switchOffTab(tabs, "Variable");
 
     switchOnTab(tabs, tabProperty);
 
     return false;
 }
 
-function appendTabName(tabs, tabProperty) {
+function appendTabName(tabs, tabProperty, tabText) {
     var tmpStr1 = "#tab" + tabProperty;
     var tmpStr2 = "tabName" + tabProperty;
     var tmpStr3 = "return switchTab('" + tabProperty + "');";
@@ -57,7 +57,7 @@ function appendTabName(tabs, tabProperty) {
   .attr("id", tmpStr2)
   .attr("class", "tabNameOff")
   .attr("onClick", tmpStr3)
-  .text(tabProperty)
+  .text(tabText)
   ;
 }
 
@@ -71,5 +71,32 @@ var tabBody = tabs
 ;
 
  return tabBody;
+}
+
+function switchTaskInfoTab(tabProperty, taskInfo){
+  d3
+  .select("#tabName" + tabProperty)
+  .text("taskID:" + taskInfo.taskID)
+  ;
+
+  var tabBody = d3
+  .select("#tab" + tabProperty)
+  ;
+
+  showTaskInformation(tabBody, taskInfo);
+}
+
+function switchExecutorInfoTab(tabProperty, executorInfo){
+  d3
+  .select("#tabName" + tabProperty)
+  .text("executorID:" + executorInfo.key)
+  ;
+
+  var tabBody = d3
+  .select("#tab" + tabProperty)
+  ;
+
+  showExecutorInformation(tabBody, executorInfo);
+
 }
 

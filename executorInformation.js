@@ -1,96 +1,30 @@
 
-function showExecutorInformation(showDiv, executorInfo){
+function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
+  var timelineTable = timelineSpace
+  .append("table")
+  .style("font-size", fontSize + "px")
+  .style("border-collapse", "separate")
+  .style("border-spacing", "1px 1px")
+  .attr("cellpadding", 3)
+  ;
 
-  //showData(showDiv, executorInfo);
+  var timelineTableHeaderRow = timelineTable
+  .append("tr")
+  ;
 
-  var fontSize = 20;
+  var timelineTableExecutorIDNameCell = timelineTableHeaderRow
+  .append("th")
+  .text("executorID")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "tan")
+  ;
 
-var mainTable = showDiv
-.append("table")
-.attr("border", "1")
-;
+  var timelineTableAxisCell = timelineTableHeaderRow
+  .append("td")
+  .style("background", "tan")
+  ;
 
-var timelineRow = mainTable
-.append("tr")
-;
-
-var timelineSpace = timelineRow
-.append("td")
-.style("padding", "12px")
-;
-
-var histogramRow = mainTable
-.append("tr")
-;
-
-var histogramSpace = histogramRow
-.append("td")
-.style("padding", "12px")
-;
-
-var timelineTable = timelineSpace
-.append("table")
-.style("font-size", 20 + "px")
-.style("border-collapse", "separate")
-.style("border-spacing", "1px 1px")
-.attr("cellpadding", 3)
-;
-
-var timelineTableHeaderRow = timelineTable
-.append("tr")
-;
-
-var timelineTableExecutorIDNameCell = timelineTableHeaderRow
-.append("th")
-.text("executorID")
-.style("font-size", fontSize + "px")
-.style("padding", "12px")
-.style("background", "tan")
-;
-
-var timelineTableAxisCell = timelineTableHeaderRow
-.append("td")
-.style("background", "tan")
-;
-
-var histogramTable = histogramSpace
-.append("table")
-.attr("border", "1")
-;
-
-var histogramFirstRow = histogramTable
-.append("tr")
-;
-
-var histogramFirstRowFirstCell = histogramFirstRow
-.append("td")
-;
-
-var histogramFirstRowSecondCell = histogramFirstRow
-.append("td")
-;
-
-var histogramFirstRowThirdCell = histogramFirstRow
-.append("td")
-;
-
-var histogramSecondRow = histogramTable
-.append("tr")
-;
-
-var histogramSecondRowFirstCell = histogramSecondRow
-.append("td")
-;
-
-var histogramSecondRowSecondCell = histogramSecondRow
-.append("td")
-;
-
-var histogramSecondRowThirdCell = histogramSecondRow
-.append("td")
-;
-
-  var executorInfoArray = [executorInfo];
   var timelineWidth = 1500;
   var timelineGraphBarHeight = 20;
   var barStrokeWidth = 1;
@@ -145,7 +79,6 @@ var histogramSecondRowThirdCell = histogramSecondRow
 
   var timelineGraphBarCell = timelineRow
   .append("td")
-  .style("padding", "12px")
   .style("background", "wheat")
   ;
 
@@ -171,11 +104,6 @@ var histogramSecondRowThirdCell = histogramSecondRow
   .append("rect")
   .attr("id", "bar")
   .attr("class", "linkBar")
-  /*
-  .style("fill", "sienna")
-  .style("stroke", "white")
-  .style("stroke-width", barStrokeWidth)
-  */
   .attr("x", 0)
   .attr("y", 0)
   .attr("width", function(taskInfo) {
@@ -184,7 +112,77 @@ var histogramSecondRowThirdCell = histogramSecondRow
   .attr("height", timelineGraphBarHeight)
   ;
 
+}
 
+//-------------------------------------------------------------------------------------------------------------------
+
+function showExecutorInformation(showDiv, executorInfo){
+
+var fontSize = 20;
+
+var mainTable = showDiv
+.append("table")
+.attr("border", "1")
+;
+
+var timelineRow = mainTable
+.append("tr")
+;
+
+var timelineSpace = timelineRow
+.append("td")
+.style("padding", "12px")
+;
+
+var histogramRow = mainTable
+.append("tr")
+;
+
+var histogramSpace = histogramRow
+.append("td")
+.style("padding", "12px")
+;
+
+var histogramTable = histogramSpace
+.append("table")
+.attr("border", "1")
+;
+
+var histogramFirstRow = histogramTable
+.append("tr")
+;
+
+var histogramFirstRowFirstCell = histogramFirstRow
+.append("td")
+;
+
+var histogramFirstRowSecondCell = histogramFirstRow
+.append("td")
+;
+
+var histogramFirstRowThirdCell = histogramFirstRow
+.append("td")
+;
+
+var histogramSecondRow = histogramTable
+.append("tr")
+;
+
+var histogramSecondRowFirstCell = histogramSecondRow
+.append("td")
+;
+
+var histogramSecondRowSecondCell = histogramSecondRow
+.append("td")
+;
+
+var histogramSecondRowThirdCell = histogramSecondRow
+.append("td")
+;
+
+var executorInfoArray = [executorInfo];
+
+addExecutorTimeline(executorInfoArray, timelineSpace, fontSize);
 
 
 
