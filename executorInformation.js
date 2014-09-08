@@ -27,12 +27,13 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
   .text("executorID")
   .style("font-size", fontSize + "px")
   .style("padding", "12px")
-  .style("background", "tan")
+  .style("background", "sandybrown")
   ;
 
   var timelineTableAxisCell = timelineTableHeaderRow
   .append("td")
-  .style("background", "tan")
+  .style("background", "sandybrown")
+  .style("valign", "bottom")
   ;
 
   var timelineWidth = 1500;
