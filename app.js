@@ -1,5 +1,8 @@
 
 var MAIN_TAB_PROPERTIES = ["ProtoType", "AllExecutors", "AllStages", "Variable"/*, "taskTest", "executorTest"*/];
+var TASK_INFO_ARRAY = null;
+var EXECUTOR_INFO_ARRAY = null;
+var STAGE_INFO_ARRAY = null;
 
 main();
 
@@ -7,11 +10,15 @@ function main(){
 d3.csv("eventlog.txt", function(error, taskInfoArray) {
   addDummyData(taskInfoArray);
 
+  TASK_INFO_ARRAY = taskInfoArray;
+
   var executorInfoArray = d3
-    .nest()
-    .key(function(taskInfo) { return Number(taskInfo.executorID) })
-    .entries(taskInfoArray)
-    ;
+  .nest()
+  .key(function(taskInfo) { return Number(taskInfo.executorID) })
+  .entries(taskInfoArray)
+  ;
+
+  EXECUTOR_INFO_ARRAY = executorInfoArray;
 
   var mainTabBox = d3
   .select("body")
@@ -50,16 +57,13 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   showExecutorTimeline(tabProtoType, taskInfoArray);
   showTaskTimeline(tabProtoType, taskInfoArray);
 
+//*
+  var taskInfo = taskInfoArray[2];
+  setTaskInfoTab("Variable", taskInfo);
+/*/
   var executorInfo = executorInfoArray[0];
   setExecutorInfoTab("Variable", executorInfo);
-
-/*
-  var taskInfo = taskInfoArray[2];
-  setTaskInfoTab("taskTest", taskInfo);
-
-  var executorInfo = executorInfoArray[0];
-  setExecutorInfoTab("executorTest", executorInfo);
-  */
+  //*/
 
 })
 ;

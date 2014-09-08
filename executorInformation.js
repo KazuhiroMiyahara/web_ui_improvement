@@ -1,11 +1,11 @@
 
-function linkTaskInfo(taskInfo){
+function linkExecutorInfo(executorInfo){
         var tabs = d3
         .select("#mainTabs")
         ;
 
         removeContentOfTab(tabs, "Variable");
-        setTaskInfoTab("Variable", taskInfo);
+        setExecutorInfoTab("Variable", executorInfo);
         switchTab(tabs, MAIN_TAB_PROPERTIES, "Variable");
 }
 

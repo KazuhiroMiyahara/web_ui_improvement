@@ -1,3 +1,13 @@
+function linkTaskInfo(taskInfo){
+        var tabs = d3
+        .select("#mainTabs")
+        ;
+
+        removeContentOfTab(tabs, "Variable");
+        setTaskInfoTab("Variable", taskInfo);
+        switchTab(tabs, MAIN_TAB_PROPERTIES, "Variable");
+}
+
 function formatTaskTimes(taskInfo){
 var data = [];
 
@@ -66,9 +76,11 @@ var color = d3.scale.category20();
 var mainTr = showDiv
 .append("table")
 .append("tr")
+.attr("valign", "top")
 ;
 
 var mainTrLeft = mainTr.append("td");
+var mainTrCenter = mainTr.append("td");
 var mainTrRight = mainTr.append("td");
 
 var circleGraphSvg = mainTrLeft
@@ -166,7 +178,7 @@ dataPart
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var informationTable = mainTrRight
+var informationTable = mainTrCenter
 .append("div")
 .style("height", radius * 2 + "px")
 .style("overflow-y", "scroll")
@@ -228,6 +240,83 @@ informationTable
 })
 ;
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var buttonTable = mainTrRight
+.append("div")
+.append("table")
+;
+
+var executorButton = buttonTable
+.append("tr")
+.attr("align", "center")
+.attr("valign", "top")
+.append("td")
+.attr("width", "200px")
+.style("padding", "12px")
+.style("background", "crimson")
+.style("font-size", "20px")
+.style("font-weight", "bold")
+.style("color", "white")
+.text("go to executor")
+;
+
+executorButton
+.on("click", function(){
+    var executorInfo = EXECUTOR_INFO_ARRAY
+    .filter(function(executorInfo) { return executorInfo.key == taskInfo.executorID; })[0]
+    ;
+
+    linkExecutorInfo(executorInfo);
+})
+;
+
+var stageButton = buttonTable
+.append("tr")
+.attr("align", "center")
+.attr("valign", "top")
+.append("td")
+.attr("width", "200px")
+.style("padding", "12px")
+.style("background", "crimson")
+.style("font-size", "20px")
+.style("font-weight", "bold")
+.style("color", "white")
+.text("go to stage")
+;
+
+stageButton
+.on("click", function(){
+alert("coming soon");
+})
+;
+
+/*
+  var timelineGraphBarForEachTaskG = timelineGraphBarSvg
+  .selectAll(".g")
+  .data(function (executorInfo) {
+    return executorInfo.values;
+  })
+  .enter()
+  .append("g")
+  .attr("transform", function(taskInfo) {
+    return "translate(" + (executorTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
+  })
+  .on("click", linkTaskInfo)
+  ;
+
+  timelineGraphBarForEachTaskG
+  .append("rect")
+  .attr("id", "bar")
+  .attr("class", "linkBar")
+  .attr("x", 0)
+  .attr("y", 0)
+  .attr("width", function(taskInfo) {
+    return executorTimelineXScale(Number(taskInfo.taskFinishTime)) - executorTimelineXScale(Number(taskInfo.taskStartTime));
+  })
+  .attr("height", timelineGraphBarHeight)
+  ;
+*/
 
 
 
