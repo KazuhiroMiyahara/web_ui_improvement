@@ -1,5 +1,5 @@
 
-var MAIN_TAB_PROPERTIES = ["ProtoType", "AllExecutors", "AllStages", "Variable", "taskTest", "executorTest"];
+var MAIN_TAB_PROPERTIES = ["ProtoType", "AllExecutors", "AllStages", "Variable"/*, "taskTest", "executorTest"*/];
 
 main();
 
@@ -29,16 +29,6 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
 
   var tabProperties = MAIN_TAB_PROPERTIES;
 
-/*
-  tabs
-  .append("tabPropertiesWrapper")
-  .select(".tabProperties")
-  .data(tabProperties)
-  .enter()
-  .append("tabProperties")
-  ;
-  */
-
   tabProperties
   .forEach(function (tabProperty){
     appendTabName(tabsID, tabProperties, tabProperty, tabProperty);
@@ -51,7 +41,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   })
   ;
 
-  switchTab(tabs, tabProperties, "executorTest");
+  switchTab(tabs, tabProperties, "Variable");
 
   var tabProtoType = d3
   .select("#tabProtoType")
@@ -60,11 +50,16 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   showExecutorTimeline(tabProtoType, taskInfoArray);
   showTaskTimeline(tabProtoType, taskInfoArray);
 
+  var executorInfo = executorInfoArray[0];
+  setExecutorInfoTab("Variable", executorInfo);
+
+/*
   var taskInfo = taskInfoArray[2];
   setTaskInfoTab("taskTest", taskInfo);
 
   var executorInfo = executorInfoArray[0];
   setExecutorInfoTab("executorTest", executorInfo);
+  */
 
 })
 ;

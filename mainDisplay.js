@@ -1,3 +1,15 @@
+function removeContentOfTab(tabs, tabProperty){
+  var tabBody = d3
+  .select("#tab" + tabProperty)
+  ;
+
+  tabBody
+  .remove()
+  ;
+
+  appendTabBody(tabs, tabProperty);
+}
+
 function switchOffTab(tabs, tabProperty){
     var tmpStr = "#tab" + tabProperty;
 

@@ -3,7 +3,8 @@ function linkTaskInfo(taskInfo){
         var tabs = d3
         .select("#mainTabs")
         ;
-        
+
+        removeContentOfTab(tabs, "Variable");
         setTaskInfoTab("Variable", taskInfo);
         switchTab(tabs, MAIN_TAB_PROPERTIES, "Variable");
 }
