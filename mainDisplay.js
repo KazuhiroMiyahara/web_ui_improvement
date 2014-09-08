@@ -83,7 +83,7 @@ var tabBody = tabs
  return tabBody;
 }
 
-function switchTaskInfoTab(tabProperty, taskInfo){
+function setTaskInfoTab(tabProperty, taskInfo){
   d3
   .select("#tabName" + tabProperty)
   .text("taskID:" + taskInfo.taskID)
@@ -94,9 +94,10 @@ function switchTaskInfoTab(tabProperty, taskInfo){
   ;
 
   showTaskInformation(tabBody, taskInfo);
+
 }
 
-function switchExecutorInfoTab(tabProperty, executorInfo){
+function setExecutorInfoTab(tabProperty, executorInfo){
   d3
   .select("#tabName" + tabProperty)
   .text("executorID:" + executorInfo.key)

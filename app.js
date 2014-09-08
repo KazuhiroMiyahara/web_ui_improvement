@@ -1,3 +1,6 @@
+
+var MAIN_TAB_PROPERTIES = ["ProtoType", "AllExecutors", "AllStages", "Variable", "taskTest", "executorTest"];
+
 main();
 
 function main(){
@@ -24,7 +27,17 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   .attr("id", tabsID)
   ;
 
-  var tabProperties = ["ProtoType", "AllExecutors", "AllStages", "Variable", "taskTest", "executorTest"];
+  var tabProperties = MAIN_TAB_PROPERTIES;
+
+/*
+  tabs
+  .append("tabPropertiesWrapper")
+  .select(".tabProperties")
+  .data(tabProperties)
+  .enter()
+  .append("tabProperties")
+  ;
+  */
 
   tabProperties
   .forEach(function (tabProperty){
@@ -48,10 +61,10 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   showTaskTimeline(tabProtoType, taskInfoArray);
 
   var taskInfo = taskInfoArray[2];
-  switchTaskInfoTab("taskTest", taskInfo);
+  setTaskInfoTab("taskTest", taskInfo);
 
   var executorInfo = executorInfoArray[0];
-  switchExecutorInfoTab("executorTest", executorInfo);
+  setExecutorInfoTab("executorTest", executorInfo);
 
 })
 ;

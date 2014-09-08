@@ -1,4 +1,13 @@
 
+function linkTaskInfo(taskInfo){
+        var tabs = d3
+        .select("#mainTabs")
+        ;
+        
+        setTaskInfoTab("Variable", taskInfo);
+        switchTab(tabs, MAIN_TAB_PROPERTIES, "Variable");
+}
+
 function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
   var timelineTable = timelineSpace
   .append("table")
@@ -98,6 +107,7 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
   .attr("transform", function(taskInfo) {
     return "translate(" + (executorTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
   })
+  .on("click", linkTaskInfo)
   ;
 
   timelineGraphBarForEachTaskG
@@ -283,7 +293,6 @@ var fontSize = 20;
 
 var mainTable = showDiv
 .append("table")
-//.attr("border", "1")
 ;
 
 var timelineRow = mainTable
