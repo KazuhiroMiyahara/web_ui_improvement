@@ -122,3 +122,11 @@ function setExecutorInfoTab(tabProperty, executorInfo){
   showExecutorInformation(tabBody, executorInfo);
 }
 
+function setAllExecutorsInfoTab(executorInfoArray){
+  var tabBody = d3
+  .select("#tab" + "AllExecutors")
+  ;
+
+  showAllExecutorsInformation(tabBody, executorInfoArray);
+}
+

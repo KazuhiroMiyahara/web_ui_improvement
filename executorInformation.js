@@ -84,12 +84,23 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
   })
   .style("font-size", fontSize + "px")
   .style("padding", "12px")
-  .style("background", "wheat")
+  .style("background", function(executorInfo, index) {
+    return index % 2 == 0 ? "wheat" : "tan";
+  })
+  .on("click", linkExecutorInfo)
+  .on("mouseover", function(){
+    d3.select(this).style("background", "darkorange");
+  })
+  .on("mouseout", function(executorInfo, index){
+    d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
+  })
   ;
 
   var timelineGraphBarCell = timelineRow
   .append("td")
-  .style("background", "wheat")
+  .style("background", function(executorInfo, index) {
+    return index % 2 == 0 ? "wheat" : "tan";
+  })
   ;
 
   var timelineGraphBarSvg = timelineGraphBarCell
@@ -221,6 +232,7 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper){
     .data(sortedArray)
     .enter()
     .append("g")
+    .on("click", linkTaskInfo)
     ;
 
     bar
@@ -319,17 +331,6 @@ var executorInfoArray = [executorInfo];
 addExecutorTimeline(executorInfoArray, timelineSpace, fontSize);
 
 addExecutorResources(executorInfoArray, resourcesSpace, fontSize);
-
-
-
-
-
-
-
-
-
-
-
 
 
 
