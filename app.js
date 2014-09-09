@@ -75,7 +75,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   })
   ;
 
-  switchTab(tabs, tabProperties, "Variable");
+  switchTab(tabs, tabProperties, "AllStages");
 
   var tabProtoType = d3
   .select("#tabProtoType")
@@ -92,11 +92,14 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   var executorInfo = executorInfoArray[0];
   setExecutorInfoTab("Variable", executorInfo);
   */
+  /*
     var stageInfo = stageInfoArray[0];
     setStageInfoTab("Variable", stageInfo);
+    */
 
 
   setAllExecutorsInfoTab(executorInfoArray);
+  setAllStagesInfoTab(stageInfoArray);
 
 })
 ;

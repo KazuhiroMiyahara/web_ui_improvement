@@ -143,3 +143,11 @@ function setAllExecutorsInfoTab(executorInfoArray){
   showAllExecutorsInformation(tabBody, executorInfoArray);
 }
 
+function setAllStagesInfoTab(stageInfoArray){
+  var tabBody = d3
+  .select("#tab" + "AllStages")
+  ;
+
+  showAllStagesInformation(tabBody, stageInfoArray);
+}
+
