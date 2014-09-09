@@ -20,6 +20,33 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
 
   EXECUTOR_INFO_ARRAY = executorInfoArray;
 
+  var stageInfoArray = d3
+  .nest()
+  .key(function(taskInfo) { return Number(taskInfo.stageID) })
+  .entries(taskInfoArray)
+  ;
+
+  stageInfoArray.forEach(function(stageInfo, index){
+    stageInfo.submissionTime = d3.min(stageInfo.values, function(taskInfo) {
+        return Number(taskInfo.taskStartTime);
+    });
+    stageInfo.completionTime = d3.max(stageInfo.values, function(taskInfo) {
+        return Number(taskInfo.taskFinishTime);
+    });
+    stageInfo.failureReason = index % 2 == 0 ? null : "failure";
+    stageInfo.taskCount = stageInfo.values.length;
+    stageInfo.RDDs = [];
+    for(var i=0;i < 10;i++){
+        stageInfo.RDDs.push({
+            "id": Number(stageInfo.key) * 10 + i,
+            "memSize": 100 - (i - 5) * (i - 5),
+            "diskSize": 100 + (i - 5) * (i - 5) * (i - 5) * (i - 5)
+        });
+    }
+  });
+
+  STAGE_INFO_ARRAY = stageInfoArray;
+
   var mainTabBox = d3
   .select("body")
   .append("div")
@@ -48,7 +75,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   })
   ;
 
-  switchTab(tabs, tabProperties, "AllExecutors");
+  switchTab(tabs, tabProperties, "Variable");
 
   var tabProtoType = d3
   .select("#tabProtoType")
@@ -57,13 +84,17 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
   showExecutorTimeline(tabProtoType, taskInfoArray);
   showTaskTimeline(tabProtoType, taskInfoArray);
 
-//*
+/*
   var taskInfo = taskInfoArray[2];
   setTaskInfoTab("Variable", taskInfo);
-/*/
+*/
+/*
   var executorInfo = executorInfoArray[0];
   setExecutorInfoTab("Variable", executorInfo);
-  //*/
+  */
+    var stageInfo = stageInfoArray[0];
+    setStageInfoTab("Variable", stageInfo);
+
 
   setAllExecutorsInfoTab(executorInfoArray);
 

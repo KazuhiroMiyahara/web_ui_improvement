@@ -51,7 +51,7 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
 
   var executorTimelineMaxLength = d3.max(executorInfoArray, function(executorInfo) {
     return d3.max(executorInfo.values, function(taskInfo) {
-      return Number(taskInfo.taskStartTime);
+      return Number(taskInfo.taskFinishTime);
     });
   });
 
@@ -138,114 +138,6 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-function addBarGraphWithProperty(array, tabProperty, accessorFunction, xAxisMapper){
-    var tabBody = d3.
-    select("#tab" + tabProperty)
-    ;
-
-    tabBody
-    .style("overflow-x", "scroll")
-    ;
-
-
-    addBarGraph(array, tabBody, accessorFunction, xAxisMapper);
-}
-//-------------------------------------------------------------------------------------------------------------------
-function addBarGraph(array, space, accessorFunction, xAxisMapper){
-    var barGraphTable = space
-    .append("table")
-    .style("margin", "20px")
-    ;
-
-    var firstRow = barGraphTable
-    .append("tr")
-    ;
-
-    var secondRow = barGraphTable
-    .append("tr")
-    ;
-
-    var yAxisCell = firstRow
-    .append("td")
-    .attr("rowspan", 2)
-    .attr("valign", "top")
-    ;
-
-    var drawSpaceCell = firstRow
-    .append("td")
-    .style("background", "wheat")
-    ;
-
-    var xAxisCell = secondRow
-    .append("td")
-    ;
-
-    var height = 300;
-    var barWidth = 40;
-    var width = barWidth * array.length;
-
-    var sortedArray = array
-    .sort(function (a, b) { return d3.descending(accessorFunction(a), accessorFunction(b)); })
-    ;
-
-    var maxValue = d3.max(array, accessorFunction);
-    var yScale = d3
-    .scale
-    .linear()
-    .range([height, 0])
-    .domain([0, maxValue])
-    ;
-
-    var xScale = d3
-    .scale
-    .ordinal()
-    .rangeRoundBands([0, width], .1)
-    .domain(sortedArray.map(xAxisMapper))
-    ;
-
-    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-    var yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-    xAxisCell
-    .append("svg")
-    .attr("height", 30)
-    .attr("width", width)
-    .attr("transform", "translate(" + 0 + "," + 0 + ")")
-    .attr("class", "axis")
-    .call(xAxis)
-    ;
-
-    yAxisCell
-    .append("svg")
-    .attr("height", height + 20)
-    .attr("width", 100)
-    .attr("transform", "translate(" + 100 + "," + 0 + ")")
-    .attr("class", "axis")
-    .call(yAxis)
-    ;
-
-
-    var bar = drawSpaceCell
-    .append("svg")
-    .attr("height", height)
-    .attr("width", width)
-    .selectAll("g")
-    .data(sortedArray)
-    .enter()
-    .append("g")
-    .on("click", linkTaskInfo)
-    ;
-
-    bar
-    .append("rect")
-    .attr("x", function(d) { return xScale(xAxisMapper(d))})
-    .attr("y", function(d) { return yScale(accessorFunction(d));})
-    .attr("height", function(d) { return height - yScale(accessorFunction(d)); })
-    .attr("width", barWidth)
-    .attr("class", "linkBar")
-    ;
-
-}
 //-------------------------------------------------------------------------------------------------------------------
 function addExecutorResources(executorInfoArray, resourcesSpace, fontSize) {
   var executorResourcesTabBox = resourcesSpace
@@ -283,14 +175,14 @@ function addExecutorResources(executorInfoArray, resourcesSpace, fontSize) {
   })
   ;
 
-  switchTab(tabs, tabProperties, tabProperties[4]);
+  switchTab(tabs, tabProperties, tabProperties[0]);
 
     var executorInfo = executorInfoArray[0];
     tabProperties
     .forEach(function(tabProperty, i){
         addBarGraphWithProperty(executorInfo.values, tabProperties[i], accessorFunctions[i], function(taskInfo) {
             return taskInfo.taskID;
-        });
+        }, true);
     })
     ;
 

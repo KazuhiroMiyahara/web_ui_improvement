@@ -4,6 +4,12 @@ p {
    color: black;
 }
 
+.notLinkBar {
+  fill: peru;
+  stroke: white;
+  stroke-width: 1;
+}
+
 .linkBar {
   fill: sienna;
   stroke: white;
@@ -49,7 +55,7 @@ p.tabs a {
     margin: 0px 1px 0px 0px;
     padding: 10px;
     float: left;
-    width: 200px;
+    width: 180px;
     font-size: 20px;
     font-weight: bold;
 }

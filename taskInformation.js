@@ -299,7 +299,11 @@ var stageButton = buttonTable
 
 stageButton
 .on("click", function(){
-alert("coming soon");
+    var stageInfo = STAGE_INFO_ARRAY
+    .filter(function(stageInfo) { return stageInfo.key == taskInfo.stageID; })[0]
+    ;
+
+    linkStageInfo(stageInfo);
 })
 ;
 

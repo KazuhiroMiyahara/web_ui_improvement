@@ -122,6 +122,19 @@ function setExecutorInfoTab(tabProperty, executorInfo){
   showExecutorInformation(tabBody, executorInfo);
 }
 
+function setStageInfoTab(tabProperty, stageInfo){
+  d3
+  .select("#tabName" + tabProperty)
+  .text("stageID:" + stageInfo.key)
+  ;
+
+  var tabBody = d3
+  .select("#tab" + tabProperty)
+  ;
+
+  showStageInformation(tabBody, stageInfo);
+}
+
 function setAllExecutorsInfoTab(executorInfoArray){
   var tabBody = d3
   .select("#tab" + "AllExecutors")
