@@ -259,6 +259,12 @@ var executorButton = buttonTable
 .style("font-weight", "bold")
 .style("color", "white")
 .text("go to executor")
+.on("mouseover", function(){
+  d3.select(this).style("background", "deeppink");
+})
+.on("mouseout", function(executorInfo, index){
+  d3.select(this).style("background", "crimson");
+})
 ;
 
 executorButton
@@ -283,6 +289,12 @@ var stageButton = buttonTable
 .style("font-weight", "bold")
 .style("color", "white")
 .text("go to stage")
+.on("mouseover", function(){
+  d3.select(this).style("background", "deeppink");
+})
+.on("mouseout", function(executorInfo, index){
+  d3.select(this).style("background", "crimson");
+})
 ;
 
 stageButton
