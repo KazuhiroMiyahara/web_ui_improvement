@@ -59,6 +59,11 @@ p.tabs a.tabNameOff {
     color: white;
 }
 
+p.tabs a.tabNameOff:hover {
+    background-color: red;
+    color: white;
+}
+
 p.tabs a.tabNameOn {
     background-color: orange;
     color: black;
