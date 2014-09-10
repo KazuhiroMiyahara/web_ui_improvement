@@ -379,7 +379,7 @@ textTableBodyRow
   .style("font-size", fontSize + "px")
   .style("padding", "12px")
   .style("background", "wheat")
-.text(stageInfo.submissionTime)
+.text(dateToString(new Date(Number(stageInfo.submissionTime))))
 ;
 
 textTableBodyRow
@@ -387,7 +387,7 @@ textTableBodyRow
   .style("font-size", fontSize + "px")
   .style("padding", "12px")
   .style("background", "wheat")
-.text(stageInfo.completionTime)
+.text(dateToString(new Date(Number(stageInfo.completionTime))))
 ;
 
 textTableBodyRow
