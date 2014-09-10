@@ -29,14 +29,6 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .style("background", "sandybrown")
   ;
 
-  var timelineTableSuccessCell = timelineTableHeaderRow
-  .append("th")
-  .text("Success")
-  .style("font-size", fontSize + "px")
-  .style("padding", "12px")
-  .style("background", "sandybrown")
-  ;
-
   var timelineTableAxisCell = timelineTableHeaderRow
   .append("td")
   .style("background", "sandybrown")
@@ -100,18 +92,6 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   })
   ;
 
-  var timelineSuccessCell = timelineRow
-  .append("th")
-  .text(function (stageInfo){
-    return stageInfo.failureReason == null ? "OK" : "NG";
-  })
-  .style("font-size", fontSize + "px")
-  .style("padding", "12px")
-  .style("background", function(stageInfo, index) {
-    return stageInfo.failureReason == null ? (index % 2 == 0 ? "wheat" : "tan") : "orangered";
-  })
-  ;
-
   var timelineGraphBarCell = timelineRow
   .append("td")
   .style("background", function(stageInfo, index) {
@@ -136,7 +116,9 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   timelineGraphBarForEachTaskG
   .append("rect")
   .attr("id", "bar")
-  .attr("class", "linkBar")
+  .attr("class", function(stageInfo){
+    return stageInfo.failureReason == null ? "linkBar" : "failureLinkBar";
+  })
   .attr("x", 0)
   .attr("y", 0)
   .attr("width", function(stageInfo) {
