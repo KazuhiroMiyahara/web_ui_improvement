@@ -317,6 +317,95 @@ var mainTable = showDiv
 .append("table")
 ;
 
+var textTableRow = mainTable
+.append("tr")
+;
+
+var textTableSpace = textTableRow
+.append("td")
+.style("padding", "12px")
+;
+
+var textTable = textTableSpace
+.append("table")
+.style("font-size", fontSize + "px")
+.style("border-collapse", "separate")
+.style("border-spacing", "1px 1px")
+.attr("cellpadding", 3)
+;
+
+var textTableHeaderRow = textTable
+.append("tr")
+;
+
+textTableHeaderRow
+.append("th")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "sandybrown")
+.text("submissionTime")
+;
+
+textTableHeaderRow
+.append("th")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "sandybrown")
+.text("completionTime")
+;
+
+textTableHeaderRow
+.append("th")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "sandybrown")
+.text("failureReason")
+;
+
+textTableHeaderRow
+.append("th")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "sandybrown")
+.text("count of tasks")
+;
+
+var textTableBodyRow = textTable
+.append("tr")
+;
+
+textTableBodyRow
+.append("td")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "wheat")
+.text(stageInfo.submissionTime)
+;
+
+textTableBodyRow
+.append("td")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "wheat")
+.text(stageInfo.completionTime)
+;
+
+textTableBodyRow
+.append("td")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "wheat")
+.text(stageInfo.failureReason)
+;
+
+textTableBodyRow
+.append("td")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "wheat")
+.text(stageInfo.taskCount)
+;
+
 var timelineRow = mainTable
 .append("tr")
 ;

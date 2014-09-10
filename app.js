@@ -33,7 +33,7 @@ d3.csv("eventlog.txt", function(error, taskInfoArray) {
     stageInfo.completionTime = d3.max(stageInfo.values, function(taskInfo) {
         return Number(taskInfo.taskFinishTime);
     });
-    stageInfo.failureReason = index % 2 == 0 ? null : "failure";
+    stageInfo.failureReason = index % 10 !== 0 ? null : "failure";
     stageInfo.taskCount = stageInfo.values.length;
     stageInfo.RDDs = [];
     for(var i=0;i < 10;i++){
