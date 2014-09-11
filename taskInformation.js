@@ -88,6 +88,7 @@ var circleGraphSvg = mainTrLeft
 .attr("id", "circleGraphSvg")
 .attr("width", svgWidth)
 .attr("height", svgHeight)
+.append("g")
 .attr("transform", "translate(" + radius + "," + radius + ")")
 ;
 

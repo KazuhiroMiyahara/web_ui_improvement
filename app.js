@@ -3,6 +3,8 @@ var MAIN_TAB_PROPERTIES = ["ProtoType", "AllExecutors", "AllStages", "Variable"/
 var TASK_INFO_ARRAY = null;
 var EXECUTOR_INFO_ARRAY = null;
 var STAGE_INFO_ARRAY = null;
+var timeLineCellPaddingHeight = 2;
+var timeLineCellPaddingWidth = 60;
 
 main();
 

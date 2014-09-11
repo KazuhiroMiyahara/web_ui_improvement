@@ -32,6 +32,7 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
 
   var timelineTableAxisCell = timelineTableHeaderRow
   .append("td")
+  //.style("padding", timeLineCellPaddingHeight + "px " + timeLineCellPaddingWidth + "px")
   .style("background", "sandybrown")
   .style("valign", "bottom")
   ;
@@ -60,9 +61,10 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
 
   timelineTableAxisCell
   .append("svg")
-  .attr("height", timelineAxisHeight)
-  .attr("width", timelineAxisWidth)
-  .attr("transform", "translate(0," + timelineGraphBarHeight + ")")
+  .attr("height", timelineAxisHeight + 1)
+  .attr("width", timelineAxisWidth + 2 * timeLineCellPaddingWidth)
+  .append("g")
+  .attr("transform", "translate(" + timeLineCellPaddingWidth + "," + timelineGraphBarHeight + ")")
   .attr("class", "axis")
   .call(executorTimelineXAxis)
   .selectAll("text")
@@ -99,6 +101,7 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
 
   var timelineGraphBarCell = timelineRow
   .append("td")
+  .style("padding", timeLineCellPaddingHeight + "px " + timeLineCellPaddingWidth + "px")
   .style("background", function(executorInfo, index) {
     return index % 2 == 0 ? "wheat" : "tan";
   })

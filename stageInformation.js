@@ -32,6 +32,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
 
   var timelineTableAxisCell = timelineTableHeaderRow
   .append("td")
+  //.style("padding", timeLineCellPaddingHeight + "px " + timeLineCellPaddingWidth + "px")
   .style("background", "sandybrown")
   .style("valign", "bottom")
   ;
@@ -56,9 +57,10 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
 
   timelineTableAxisCell
   .append("svg")
-  .attr("height", timelineAxisHeight)
-  .attr("width", timelineAxisWidth)
-  .attr("transform", "translate(0," + timelineGraphBarHeight + ")")
+  .attr("height", timelineAxisHeight + 1)
+  .attr("width", timelineAxisWidth + 2 * timeLineCellPaddingWidth)
+  .append("g")
+  .attr("transform", "translate(" + timeLineCellPaddingWidth + "," + timelineGraphBarHeight + ")")
   .attr("class", "axis")
   .call(taskTimelineXAxis)
   .selectAll("text")
@@ -95,6 +97,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
 
   var timelineGraphBarCell = timelineRow
   .append("td")
+  .style("padding", timeLineCellPaddingHeight + "px " + timeLineCellPaddingWidth + "px")
   .style("background", function(executorInfo, index) {
     return index % 2 == 0 ? "wheat" : "tan";
   })
@@ -204,6 +207,7 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked)
     .append("svg")
     .attr("height", 30)
     .attr("width", width)
+    .append("g")
     .attr("transform", "translate(" + 0 + "," + 0 + ")")
     .attr("class", "axis")
     .call(xAxis)
@@ -213,6 +217,7 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked)
     .append("svg")
     .attr("height", height + 20)
     .attr("width", 100)
+    .append("g")
     .attr("transform", "translate(" + 100 + "," + 0 + ")")
     .attr("class", "axis")
     .call(yAxis)
