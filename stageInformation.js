@@ -135,7 +135,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-function addBarGraphWithProperty(array, tabProperty, accessorFunction, xAxisMapper, barsAreLinked){
+function addBarGraphWithProperty(array, tabProperty, accessorFunction, xAxisMapper, barsAreLinked, xAxisExplanation, yAxisExplanation){
     var tabBody = d3.
     select("#tab" + tabProperty)
     ;
@@ -145,10 +145,10 @@ function addBarGraphWithProperty(array, tabProperty, accessorFunction, xAxisMapp
     ;
 
 
-    addBarGraph(array, tabBody, accessorFunction, xAxisMapper, barsAreLinked);
+    addBarGraph(array, tabBody, accessorFunction, xAxisMapper, barsAreLinked, xAxisExplanation, yAxisExplanation);
 }
 //-------------------------------------------------------------------------------------------------------------------
-function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked){
+function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked, xAxisExplanation, yAxisExplanation){
     var barGraphTable = space
     .append("table")
     .style("margin", "20px")
@@ -162,19 +162,49 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked)
     .append("tr")
     ;
 
-    var yAxisCell = firstRow
+    var thirdRow = barGraphTable
+    .append("tr")
+    ;
+
+    var yAxisExplanationCell = firstRow
+    .append("td")
+    .attr("align", "right")
+    .text(yAxisExplanation)
+    .style("font-size", "20px")
+    ;
+
+    firstRow
+    .append("td")
+    ;
+
+    firstRow
+    .append("td")
+    ;
+
+    var yAxisCell = secondRow
     .append("td")
     .attr("rowspan", 2)
     .attr("valign", "top")
     ;
 
-    var drawSpaceCell = firstRow
+    var drawSpaceCell = secondRow
     .append("td")
     .style("background", "wheat")
     ;
 
-    var xAxisCell = secondRow
+    secondRow
     .append("td")
+    ;
+
+    var xAxisCell = thirdRow
+    .append("td")
+    ;
+
+    var xAxisExplanationCell = thirdRow
+    .append("td")
+    .attr("align", "left")
+    .text(xAxisExplanation)
+    .style("font-size", "20px")
     ;
 
     var height = 300;
@@ -279,6 +309,8 @@ function addStageResources(stageInfo, resourcesSpace, fontSize) {
   function(RDD) { return Number(RDD.diskSize);},
   function(RDD) { return Number(RDD.memSize) + Number(RDD.diskSize);},
   ];
+  var xAxisExplanationArray = ["Task ID", "Task ID", "Task ID", "Task ID", "Task ID", "Task ID", "RDD ID", "RDD ID", "RDD ID"];
+  var yAxisExplanationArray = ["[bytes]", "[bytes]", "[bytes]", "[bytes]", "[bytes]", "[ms]", "[bytes]", "[bytes]", "[bytes]"];
 
   tabProperties
   .forEach(function (tabProperty){
@@ -299,11 +331,11 @@ function addStageResources(stageInfo, resourcesSpace, fontSize) {
         if(i < 6){
             addBarGraphWithProperty(stageInfo.values, tabProperties[i], accessorFunctions[i], function(taskInfo) {
                 return taskInfo.taskID;
-            }, true);
+            }, true, xAxisExplanationArray[i], yAxisExplanationArray[i]);
         }else{
             addBarGraphWithProperty(stageInfo.RDDs, tabProperties[i], accessorFunctions[i], function(RDD) {
                 return RDD.id;
-            }, false);
+            }, false, xAxisExplanationArray[i], yAxisExplanationArray[i]);
         }
     })
     ;

@@ -5,7 +5,7 @@ var EXECUTOR_INFO_ARRAY = null;
 var STAGE_INFO_ARRAY = null;
 var timeLineCellPaddingHeight = 2;
 var timeLineCellPaddingWidth = 60;
-var resourcesCellPaddingUpper = 10;
+var resourcesCellPaddingUpper = 30;
 
 main();
 

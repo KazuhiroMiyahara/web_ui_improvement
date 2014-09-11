@@ -165,6 +165,8 @@ function addExecutorResources(executorInfoArray, resourcesSpace, fontSize) {
   function(taskInfo) { return Number(taskInfo.shuffleBytesWritten);},
   function(taskInfo) { return (Number(taskInfo.taskFinishTime) - Number(taskInfo.taskStartTime));},
   ];
+  var xAxisExplanationArray = ["Task ID", "Task ID", "Task ID", "Task ID", "Task ID", "Task ID"];
+  var yAxisExplanationArray = ["[bytes]", "[bytes]", "[bytes]", "[bytes]", "[bytes]", "[ms]"];
 
   tabProperties
   .forEach(function (tabProperty){
@@ -185,7 +187,7 @@ function addExecutorResources(executorInfoArray, resourcesSpace, fontSize) {
     .forEach(function(tabProperty, i){
         addBarGraphWithProperty(executorInfo.values, tabProperties[i], accessorFunctions[i], function(taskInfo) {
             return taskInfo.taskID;
-        }, true);
+        }, true, xAxisExplanationArray[i], yAxisExplanationArray[i]);
     })
     ;
 
