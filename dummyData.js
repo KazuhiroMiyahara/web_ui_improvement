@@ -11,7 +11,7 @@ var stageIDCounter = 0;
 
 taskInfoArray.forEach(function (taskInfo) {
 taskInfo.stageID = Math.floor((stageIDCounter++) / 5);
-taskInfo.gettingResultTime = taskExecutionTime(taskInfo) + taskInfo.taskStartTime;
+taskInfo.gettingResultTime = taskExecutionTime(taskInfo) * 0.8 + Number(taskInfo.taskStartTime);
 taskInfo.taskLocality = "nodelocal"
 
 taskInfo.JVMGCTime = 0.0;
