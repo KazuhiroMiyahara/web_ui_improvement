@@ -7,7 +7,7 @@ var STAGE_INFO_ARRAY = null;
 main();
 
 function main(){
-d3.csv("eventlog.txt", function(error, taskInfoArray) {
+d3.csv('http://localhost:12345/~penguin/eventlog.txt', function(error, taskInfoArray) {
   addDummyData(taskInfoArray);
 
   TASK_INFO_ARRAY = taskInfoArray;
