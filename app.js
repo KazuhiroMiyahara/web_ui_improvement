@@ -5,6 +5,7 @@ var EXECUTOR_INFO_ARRAY = null;
 var STAGE_INFO_ARRAY = null;
 var timeLineCellPaddingHeight = 2;
 var timeLineCellPaddingWidth = 60;
+var resourcesCellPaddingUpper = 10;
 
 main();
 
@@ -76,7 +77,7 @@ function main_inner(taskInfoArray){
   })
   ;
 
-  switchTab(tabs, tabProperties, "AllExecutors");
+  switchTab(tabs, tabProperties, "Variable");
 
   var tabProtoType = d3
   .select("#tabProtoType")
@@ -89,10 +90,10 @@ function main_inner(taskInfoArray){
   var taskInfo = taskInfoArray[2];
   setTaskInfoTab("Variable", taskInfo);
 */
-/*
+//*
   var executorInfo = executorInfoArray[0];
   setExecutorInfoTab("Variable", executorInfo);
-  */
+  //*/
   /*
     var stageInfo = stageInfoArray[0];
     setStageInfoTab("Variable", stageInfo);

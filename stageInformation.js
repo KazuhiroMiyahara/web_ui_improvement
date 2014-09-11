@@ -178,8 +178,9 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked)
     ;
 
     var height = 300;
-    var barWidth = 40;
-    var width = barWidth * array.length;
+    var barWidth = 30;
+    var spacePerBar = 40;
+    var width = spacePerBar * array.length;
 
     var sortedArray = array
     .sort(function (a, b) { return d3.descending(accessorFunction(a), accessorFunction(b)); })
@@ -208,17 +209,17 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked)
     .attr("height", 30)
     .attr("width", width)
     .append("g")
-    .attr("transform", "translate(" + 0 + "," + 0 + ")")
+    .attr("transform", "translate(" + 0 + "," + 1 + ")")
     .attr("class", "axis")
     .call(xAxis)
     ;
 
     yAxisCell
     .append("svg")
-    .attr("height", height + 20)
+    .attr("height", height + resourcesCellPaddingUpper + 20)
     .attr("width", 100)
     .append("g")
-    .attr("transform", "translate(" + 100 + "," + 0 + ")")
+    .attr("transform", "translate(" + (100 - 1) + "," + resourcesCellPaddingUpper + ")")
     .attr("class", "axis")
     .call(yAxis)
     ;
@@ -226,7 +227,7 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked)
 
     var bar = drawSpaceCell
     .append("svg")
-    .attr("height", height)
+    .attr("height", height + resourcesCellPaddingUpper)
     .attr("width", width)
     .selectAll("g")
     .data(sortedArray)
@@ -242,7 +243,7 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked)
     bar
     .append("rect")
     .attr("x", function(d) { return xScale(xAxisMapper(d))})
-    .attr("y", function(d) { return yScale(accessorFunction(d));})
+    .attr("y", function(d) { return resourcesCellPaddingUpper + yScale(accessorFunction(d));})
     .attr("height", function(d) { return height - yScale(accessorFunction(d)); })
     .attr("width", barWidth)
     .attr("class", function(){
