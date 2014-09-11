@@ -6,8 +6,7 @@ var STAGE_INFO_ARRAY = null;
 
 main();
 
-function main(){
-d3.csv('http://localhost:12345/~penguin/eventlog.txt', function(error, taskInfoArray) {
+function main_inner(taskInfoArray){
   addDummyData(taskInfoArray);
 
   TASK_INFO_ARRAY = taskInfoArray;
@@ -101,6 +100,34 @@ d3.csv('http://localhost:12345/~penguin/eventlog.txt', function(error, taskInfoA
   setAllExecutorsInfoTab(executorInfoArray);
   setAllStagesInfoTab(stageInfoArray);
 
+}
+
+function main(){
+if(navigator.userAgent.indexOf("Opera") != -1){ //Opera
+}
+else if(navigator.userAgent.indexOf("MSIE") != -1){ //Internet Explorer
+}
+else if(navigator.userAgent.indexOf("Firefox") != -1){ //Firefox
+d3.csv('eventlog.txt', function(error, taskInfoArray) {
+    main_inner(taskInfoArray);
 })
 ;
+}
+else if(navigator.userAgent.indexOf("Netscape") != -1){ //Netscape
+}
+else if(navigator.userAgent.indexOf("Chrome") != -1){ //Chrome
+d3.csv('eventlog.txt', function(error, taskInfoArray) {
+    main_inner(taskInfoArray);
+})
+;
+}
+else if(navigator.userAgent.indexOf("Safari") != -1){ //Safari
+}
+else{
+d3.csv('http://localhost:12345/~penguin/eventlog.txt', function(error, taskInfoArray) {
+    main_inner(taskInfoArray);
+})
+;
+}
+
 }
