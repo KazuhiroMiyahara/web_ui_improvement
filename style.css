@@ -20,16 +20,6 @@ p {
   fill: darkorange;
 }
 
-.failureLinkBar {
-  fill: red;
-  stroke: white;
-  stroke-width: 1;
-}
-
-.failureLinkBar:hover {
-  fill: yellow;
-}
-
 .linkIDSpace:hover {
   background: darkorange;
 }
