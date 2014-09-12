@@ -77,7 +77,7 @@ function main_inner(taskInfoArray){
   })
   ;
 
-  switchTab(tabs, tabProperties, "Variable");
+  switchTab(tabs, tabProperties, "AllStages");
 
   var tabProtoType = d3
   .select("#tabProtoType")
@@ -86,7 +86,7 @@ function main_inner(taskInfoArray){
   showExecutorTimeline(tabProtoType, taskInfoArray);
   showTaskTimeline(tabProtoType, taskInfoArray);
 
-//*
+/*
   var taskInfo = taskInfoArray[2];
   setTaskInfoTab("Variable", taskInfo);
   //*/
@@ -94,7 +94,7 @@ function main_inner(taskInfoArray){
   var executorInfo = executorInfoArray[0];
   setExecutorInfoTab("Variable", executorInfo);
   //*/
-  /*
+  //*
     var stageInfo = stageInfoArray[0];
     setStageInfoTab("Variable", stageInfo);
   //*/

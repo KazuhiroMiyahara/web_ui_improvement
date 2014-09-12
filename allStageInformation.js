@@ -83,14 +83,14 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .style("font-size", fontSize + "px")
   .style("padding", "12px")
   .style("background", function(stageInfo, index) {
-    return index % 2 == 0 ? "wheat" : "tan";
+    return stageInfo.failureReason != null ? "tomato" : (index % 2 == 0 ? "wheat" : "tan");
   })
   .on("click", linkStageInfo)
   .on("mouseover", function(){
     d3.select(this).style("background", "darkorange");
   })
   .on("mouseout", function(stageInfo, index){
-    d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
+    d3.select(this).style("background", stageInfo.failureReason != null ? "tomato" : (index % 2 == 0 ? "wheat" : "tan"));
   })
   ;
 
@@ -98,7 +98,7 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .append("td")
   .style("padding", timeLineCellPaddingHeight + "px " + timeLineCellPaddingWidth + "px")
   .style("background", function(stageInfo, index) {
-    return index % 2 == 0 ? "wheat" : "tan";
+    return stageInfo.failureReason != null ? "tomato" : (index % 2 == 0 ? "wheat" : "tan");
   })
   ;
 
@@ -119,9 +119,7 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   timelineGraphBarForEachTaskG
   .append("rect")
   .attr("id", "bar")
-  .attr("class", function(stageInfo){
-    return stageInfo.failureReason == null ? "linkBar" : "failureLinkBar";
-  })
+  .attr("class", "linkBar")
   .attr("x", 0)
   .attr("y", 0)
   .attr("width", function(stageInfo) {
