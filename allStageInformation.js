@@ -75,6 +75,8 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .append("tr")
   ;
 
+  var failureColor = "salmon";
+
   var timelineStageIDCell = timelineRow
   .append("th")
   .text(function (stageInfo){
@@ -83,14 +85,14 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .style("font-size", fontSize + "px")
   .style("padding", "12px")
   .style("background", function(stageInfo, index) {
-    return stageInfo.failureReason != null ? "tomato" : (index % 2 == 0 ? "wheat" : "tan");
+    return stageInfo.failureReason != null ? failureColor : (index % 2 == 0 ? "wheat" : "tan");
   })
   .on("click", linkStageInfo)
   .on("mouseover", function(){
-    d3.select(this).style("background", "darkorange");
+    d3.select(this).style("background", "orangered");
   })
   .on("mouseout", function(stageInfo, index){
-    d3.select(this).style("background", stageInfo.failureReason != null ? "tomato" : (index % 2 == 0 ? "wheat" : "tan"));
+    d3.select(this).style("background", stageInfo.failureReason != null ? failureColor : (index % 2 == 0 ? "wheat" : "tan"));
   })
   ;
 
@@ -98,7 +100,7 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .append("td")
   .style("padding", timeLineCellPaddingHeight + "px " + timeLineCellPaddingWidth + "px")
   .style("background", function(stageInfo, index) {
-    return stageInfo.failureReason != null ? "tomato" : (index % 2 == 0 ? "wheat" : "tan");
+    return stageInfo.failureReason != null ? failureColor : (index % 2 == 0 ? "wheat" : "tan");
   })
   ;
 

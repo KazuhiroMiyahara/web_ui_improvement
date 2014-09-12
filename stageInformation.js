@@ -88,7 +88,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
   })
   .on("click", linkTaskInfo)
   .on("mouseover", function(){
-    d3.select(this).style("background", "darkorange");
+    d3.select(this).style("background", "orangered");
   })
   .on("mouseout", function(taskInfo, index){
     d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");

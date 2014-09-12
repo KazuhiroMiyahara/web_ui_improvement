@@ -92,7 +92,7 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
   })
   .on("click", linkExecutorInfo)
   .on("mouseover", function(){
-    d3.select(this).style("background", "darkorange");
+    d3.select(this).style("background", "orangered");
   })
   .on("mouseout", function(executorInfo, index){
     d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");

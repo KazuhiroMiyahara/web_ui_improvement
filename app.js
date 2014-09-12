@@ -35,7 +35,7 @@ function main_inner(taskInfoArray){
     stageInfo.completionTime = d3.max(stageInfo.values, function(taskInfo) {
         return Number(taskInfo.taskFinishTime);
     });
-    stageInfo.failureReason = index % 10 !== 0 ? null : "failure";
+    stageInfo.failureReason = index % 7 !== 0 ? null : "failure";
     stageInfo.taskCount = stageInfo.values.length;
     stageInfo.RDDs = [];
     for(var i=0;i < 10;i++){
@@ -77,7 +77,7 @@ function main_inner(taskInfoArray){
   })
   ;
 
-  switchTab(tabs, tabProperties, "Variable");
+  switchTab(tabs, tabProperties, "AllStages");
 
   var tabProtoType = d3
   .select("#tabProtoType")
