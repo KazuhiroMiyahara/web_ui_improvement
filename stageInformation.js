@@ -314,12 +314,12 @@ function addStageResources(stageInfo, resourcesSpace, fontSize) {
   .attr("id", tabsID)
   ;
 
-  var tabProperties = ["ReadBytes", "MemoryWriteBytes", "DiskWriteBytes", "RemoteReadBytes", "ShuffleWriteBytes", "ExecTimes", "RDDMemSize", "RDDDiskSize", "RDDSumSize"];
+  var tabProperties = ["ReadBytes", "RemoteReadBytes", "MemoryWriteBytes", "DiskWriteBytes", "ShuffleWriteBytes", "ExecTimes", "RDDMemSize", "RDDDiskSize", "RDDSumSize"];
   var accessorFunctions = [
   function(taskInfo) { return Number(taskInfo.bytesRead);},
+  function(taskInfo) { return Number(taskInfo.remoteBytesRead);},
   function(taskInfo) { return Number(taskInfo.memoryBytesSpilled);},
   function(taskInfo) { return Number(taskInfo.diskBytesSpilled);},
-  function(taskInfo) { return Number(taskInfo.remoteBytesRead);},
   function(taskInfo) { return Number(taskInfo.shuffleBytesWritten);},
   function(taskInfo) { return (Number(taskInfo.taskFinishTime) - Number(taskInfo.taskStartTime));},
   function(RDD) { return Number(RDD.memSize);},
