@@ -122,14 +122,21 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
 
   timelineGraphBarForEachTaskG
   .append("rect")
-  .attr("id", "bar")
-  .attr("class", "linkBar")
+  .attr("class", function(taskInfo) {
+    return "linkBar taskID" + taskInfo.taskID;
+  })
   .attr("x", 0)
   .attr("y", 0)
   .attr("width", function(taskInfo) {
     return taskTimelineXScale(Number(taskInfo.taskFinishTime)) - taskTimelineXScale(Number(taskInfo.taskStartTime));
   })
   .attr("height", timelineGraphBarHeight)
+  .on("mouseover", function(taskInfo){
+      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
+  })
+  .on("mouseout", function(taskInfo){
+      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+  })
   ;
 
 }
@@ -276,8 +283,18 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .attr("y", function(d) { return resourcesCellPaddingUpper + yScale(accessorFunction(d));})
     .attr("height", function(d) { return height - yScale(accessorFunction(d)); })
     .attr("width", barWidth)
-    .attr("class", function(){
-        return barsAreLinked ? "linkBar" : "notLinkBar";
+    .attr("class", function(taskOrRDDInfo) {
+      return barsAreLinked ? ("linkBar taskID" + taskOrRDDInfo.taskID) : "notLinkBar";
+    })
+    .on("mouseover", function(taskOrRDDInfo){
+        if(barsAreLinked){
+            d3.selectAll(".taskID" + taskOrRDDInfo.taskID).attr("class", "linkBarHover taskID" + taskOrRDDInfo.taskID);
+        }
+    })
+    .on("mouseout", function(taskOrRDDInfo){
+        if(barsAreLinked){
+            d3.selectAll(".taskID" + taskOrRDDInfo.taskID).attr("class", "linkBar taskID" + taskOrRDDInfo.taskID);
+        }
     })
     ;
 

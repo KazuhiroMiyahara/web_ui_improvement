@@ -128,14 +128,21 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
 
   timelineGraphBarForEachTaskG
   .append("rect")
-  .attr("id", "bar")
-  .attr("class", "linkBar")
+  .attr("class", function(taskInfo) {
+    return "linkBar taskID" + taskInfo.taskID;
+  })
   .attr("x", 0)
   .attr("y", 0)
   .attr("width", function(taskInfo) {
     return executorTimelineXScale(Number(taskInfo.taskFinishTime)) - executorTimelineXScale(Number(taskInfo.taskStartTime));
   })
   .attr("height", timelineGraphBarHeight)
+  .on("mouseover", function(taskInfo){
+      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
+  })
+  .on("mouseout", function(taskInfo){
+      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+  })
   ;
 
 }

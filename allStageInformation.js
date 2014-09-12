@@ -118,7 +118,6 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
 
   timelineGraphBarForEachTaskG
   .append("rect")
-  .attr("id", "bar")
   .attr("class", "linkBar")
   .attr("x", 0)
   .attr("y", 0)

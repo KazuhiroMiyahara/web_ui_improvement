@@ -16,6 +16,12 @@ p {
   stroke-width: 1;
 }
 
+.linkBarHover {
+  fill: darkorange;
+  stroke: white;
+  stroke-width: 1;
+}
+
 .linkBar:hover {
   fill: darkorange;
 }
