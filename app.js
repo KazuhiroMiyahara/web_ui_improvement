@@ -77,7 +77,7 @@ function main_inner(taskInfoArray){
   })
   ;
 
-  switchTab(tabs, tabProperties, "AllExecutors");
+  switchTab(tabs, tabProperties, "Variable");
 
   var tabProtoType = d3
   .select("#tabProtoType")
@@ -86,7 +86,7 @@ function main_inner(taskInfoArray){
   showExecutorTimeline(tabProtoType, taskInfoArray);
   showTaskTimeline(tabProtoType, taskInfoArray);
 
-/*
+//*
   var taskInfo = taskInfoArray[2];
   setTaskInfoTab("Variable", taskInfo);
   //*/

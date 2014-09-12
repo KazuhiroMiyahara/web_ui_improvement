@@ -71,7 +71,6 @@ var timeFormat = formatTaskTimes(taskInfo);
 var radius = 300;
 var svgHeight = 2 * radius;
 var svgWidth = 2 * radius + 100;
-var color = d3.scale.category20();
 
 var mainTr = showDiv
 .append("table")
@@ -122,6 +121,13 @@ var arc = d3
 ;
 
 var dataPart = partition.nodes(timeFormat).slice(1);
+var color = [];
+var tmpCategory = d3.scale.category20();
+dataPart
+.forEach(function(d,i) {
+    color[d.type] = tmpCategory(i);
+})
+;
 
 var arcs = circleGraphSvg
 .selectAll(".arc")
@@ -136,8 +142,8 @@ arcs
 .attr("d", function(d) {
    return arc(d);
 })
-.style("fill", function(d, i) {
-  return color(i);
+.style("fill", function(d) {
+  return color[d.type];
 })
 .attr("stroke", "white")
 .attr("stroke-width", "5")
@@ -198,12 +204,13 @@ var informationTable = mainTrCenter
   ["taskFinishTime",new Date(Number(taskInfo.taskFinishTime))],
   ["taskTime",(Number(taskInfo.taskFinishTime) - Number(taskInfo.taskStartTime)) + " [ms]"],
   ["gettingResultTime",new Date(Number(taskInfo.gettingResultTime))],
-  ["JVMGCTime",taskInfo.JVMGCTime + " [ms]"],
-  ["shuffleReadTime",taskInfo.shuffleReadTime + " [ms]"],
-  ["fetchWaitTime",taskInfo.fetchWaitTime + " [ms]"],
-  ["shuffleWriteTime",taskInfo.shuffleWriteTime + " [ms]"],
-  ["serializeMilliSec",taskInfo.serializeMilliSec + " [ms]"],
-  ["deserializeMilliSec",taskInfo.deserializeMilliSec + " [ms]"],
+  ["execute",taskOtherTime(taskInfo) + " [ms]"],
+  ["JVMGC",taskInfo.JVMGCTime + " [ms]"],
+  ["shuffle read",taskInfo.shuffleReadTime + " [ms]"],
+  ["fetch wait",taskInfo.fetchWaitTime + " [ms]"],
+  ["shuffle write",taskInfo.shuffleWriteTime + " [ms]"],
+  ["serialize",taskInfo.serializeMilliSec + " [ms]"],
+  ["deserialize",taskInfo.deserializeMilliSec + " [ms]"],
   ["bytesRead",taskInfo.bytesRead + " [byte]"],
   ["memoryBytesSpilled",taskInfo.memoryBytesSpilled + " [byte]"],
   ["diskBytesSpilled",taskInfo.diskBytesSpilled + " [byte]"],
@@ -217,6 +224,16 @@ var informationTable = mainTrCenter
 .enter()
 .append("tr")
 .attr("align", "right")
+;
+
+var explanatoryNoteWidth = 20;
+
+informationTable
+.append("td")
+.attr("width", explanatoryNoteWidth)
+.style("background", function(d) {
+    return color[d[0]];
+})
 ;
 
 informationTable
