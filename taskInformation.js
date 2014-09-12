@@ -146,7 +146,7 @@ arcs
   return color[d.type];
 })
 .attr("stroke", "white")
-.attr("stroke-width", "5")
+.attr("stroke-width", "2")
 ;
 
 var maxDepth = d3.max(dataPart, function(d) {return d.depth;});
@@ -159,14 +159,14 @@ dataPart
   circleGraphSvg
   .append("text")
   .attr("x", tmpAngle < 90 ? tmpX : -tmpX)
-  .attr("y", 0)
+  .attr("y", 5)
   .attr("transform", "rotate(" + (tmpAngle < 90 ? tmpAngle : tmpAngle - 180) + ")")
   .attr("text-anchor", "middle")
   .attr("fill", "black")
   .attr("font-size", "20")
   .style("font-weight", "bold")
   .text(function() {
-     return d.type;
+     return d.dx > Math.PI / 24 ? d.type : "";
   })
   ;
 })
