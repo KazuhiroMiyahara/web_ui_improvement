@@ -142,7 +142,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-function addBarGraphWithProperty(array, tabProperty, accessorFunction, xAxisMapper, barsAreLinked, xAxisExplanation, yAxisExplanation){
+function addBarGraphWithProperty(array, tabProperty, accessorFunction, xAxisMapper, barsAreLinked, xAxisExplanation, yAxisExplanation, fontSize){
     var tabBody = d3.
     select("#tab" + tabProperty)
     ;
@@ -152,12 +152,23 @@ function addBarGraphWithProperty(array, tabProperty, accessorFunction, xAxisMapp
     ;
 
 
-    addBarGraph(array, tabBody, accessorFunction, xAxisMapper, barsAreLinked, xAxisExplanation, yAxisExplanation);
+    addBarGraph(array, tabBody, accessorFunction, xAxisMapper, barsAreLinked, xAxisExplanation, yAxisExplanation, fontSize);
 }
 //-------------------------------------------------------------------------------------------------------------------
-function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked, xAxisExplanation, yAxisExplanation){
+function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked, xAxisExplanation, yAxisExplanation, fontSize){
+
+    var sortedArray = array
+    .sort(function (a, b) { return d3.descending(accessorFunction(a), accessorFunction(b)); })
+    ;
+
+    var yAxisUnderPadding = 5;
+
     var barGraphTable = space
     .append("table")
+    .style("font-size", fontSize + "px")
+    .style("border-collapse", "separate")
+    .style("border-spacing", "1px 1px")
+    .attr("cellpadding", 3)
     .style("margin", "20px")
     ;
 
@@ -173,55 +184,55 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .append("tr")
     ;
 
-    var yAxisExplanationCell = firstRow
-    .append("td")
-    .attr("align", "right")
-    .text(yAxisExplanation)
-    .style("font-size", "20px")
-    ;
-
-    firstRow
-    .append("td")
-    ;
-
-    firstRow
-    .append("td")
-    ;
-
-    var yAxisCell = secondRow
+    var yAxisCell = firstRow
     .append("td")
     .attr("rowspan", 2)
+    .style("background", "sandybrown")
     .attr("valign", "top")
+    .attr("align", "right")
     ;
 
-    var drawSpaceCell = secondRow
+    var drawSpaceCell = firstRow
+    .selectAll(".foo")
+    .data(sortedArray)
+    .enter()
     .append("td")
-    .style("background", "wheat")
+    .style("padding", "0px")
+    .style("background", function(executorInfo, index) {
+      return index % 2 == 0 ? "wheat" : "tan";
+    })
     ;
 
     secondRow
+    .selectAll(".foo")
+    .data(sortedArray)
+    .enter()
     .append("td")
-    ;
-
-    var xAxisCell = thirdRow
-    .append("td")
+    .style("background", function(executorInfo, index) {
+      return index % 2 == 0 ? "wheat" : "tan";
+    })
+    .attr("height",yAxisUnderPadding)
     ;
 
     var xAxisExplanationCell = thirdRow
-    .append("td")
-    .attr("align", "left")
+    .append("th")
+    .attr("align", "center")
     .text(xAxisExplanation)
     .style("font-size", "20px")
+    .style("background", "sandybrown")
+    ;
+
+    var xAxisCell = thirdRow
+    .selectAll(".foo")
+    .data(sortedArray)
+    .enter()
+    .append("th")
+    .attr("align", "center")
     ;
 
     var height = 300;
     var barWidth = 30;
     var spacePerBar = 40;
-    var width = spacePerBar * array.length;
-
-    var sortedArray = array
-    .sort(function (a, b) { return d3.descending(accessorFunction(a), accessorFunction(b)); })
-    ;
 
     var maxValue = d3.max(array, accessorFunction);
     var yScale = d3
@@ -231,45 +242,51 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .domain([0, maxValue])
     ;
 
-    var xScale = d3
-    .scale
-    .ordinal()
-    .rangeRoundBands([0, width], .1)
-    .domain(sortedArray.map(xAxisMapper))
-    ;
-
-    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
     var yAxis = d3.svg.axis().scale(yScale).orient("left");
 
     xAxisCell
-    .append("svg")
-    .attr("height", 30)
-    .attr("width", width)
-    .append("g")
-    .attr("transform", "translate(" + 0 + "," + 1 + ")")
-    .attr("class", "axis")
-    .call(xAxis)
+    .text(function (data) {
+        return xAxisMapper(data);
+    })
+    .style("font-size", fontSize + "px")
+    .style("padding", "12px")
+    .style("background", function(taskInfo, index) {
+      return index % 2 == 0 ? "wheat" : "tan";
+    })
+    .on("click", linkTaskInfo)
+    .on("mouseover", function(){
+      d3.select(this).style("background", "orangered");
+    })
+    .on("mouseout", function(taskInfo, index){
+      d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
+    })
     ;
+
+    var yAxisWidth = 50;
 
     yAxisCell
     .append("svg")
-    .attr("height", height + resourcesCellPaddingUpper + 20)
-    .attr("width", 100)
+    .attr("height", height + resourcesCellPaddingUpper + yAxisUnderPadding)
+    .attr("width", yAxisWidth)
     .append("g")
-    .attr("transform", "translate(" + (100 - 1) + "," + resourcesCellPaddingUpper + ")")
+    .attr("transform", "translate(" + (yAxisWidth - 1) + "," + (resourcesCellPaddingUpper - 4) + ")")
     .attr("class", "axis")
     .call(yAxis)
+    .append("text")
+    .text(yAxisExplanation)
+    .attr("y", -10)
+    .style("font-size", "15px")
+    .style("text-anchor", "end")
     ;
+
 
 
     var bar = drawSpaceCell
     .append("svg")
     .attr("height", height + resourcesCellPaddingUpper)
-    .attr("width", width)
-    .selectAll("g")
-    .data(sortedArray)
-    .enter()
+    .attr("width", spacePerBar)
     .append("g")
+    .attr("transform", "translate(" + (spacePerBar - barWidth) / 2 + "," + 0 + ")")
     .on("click", function(taskInfo){
       if(barsAreLinked){
           linkTaskInfo(taskInfo);
@@ -279,7 +296,6 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
 
     bar
     .append("rect")
-    .attr("x", function(d) { return xScale(xAxisMapper(d))})
     .attr("y", function(d) { return resourcesCellPaddingUpper + yScale(accessorFunction(d));})
     .attr("height", function(d) { return height - yScale(accessorFunction(d)); })
     .attr("width", barWidth)
@@ -348,11 +364,11 @@ function addStageResources(stageInfo, resourcesSpace, fontSize) {
         if(i < 6){
             addBarGraphWithProperty(stageInfo.values, tabProperties[i], accessorFunctions[i], function(taskInfo) {
                 return taskInfo.taskID;
-            }, true, xAxisExplanationArray[i], yAxisExplanationArray[i]);
+            }, true, xAxisExplanationArray[i], yAxisExplanationArray[i], fontSize);
         }else{
             addBarGraphWithProperty(stageInfo.RDDs, tabProperties[i], accessorFunctions[i], function(RDD) {
                 return RDD.id;
-            }, false, xAxisExplanationArray[i], yAxisExplanationArray[i]);
+            }, false, xAxisExplanationArray[i], yAxisExplanationArray[i], fontSize);
         }
     })
     ;

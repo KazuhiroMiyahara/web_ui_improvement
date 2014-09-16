@@ -194,7 +194,7 @@ function addExecutorResources(executorInfoArray, resourcesSpace, fontSize) {
     .forEach(function(tabProperty, i){
         addBarGraphWithProperty(executorInfo.values, tabProperties[i], accessorFunctions[i], function(taskInfo) {
             return taskInfo.taskID;
-        }, true, xAxisExplanationArray[i], yAxisExplanationArray[i]);
+        }, true, xAxisExplanationArray[i], yAxisExplanationArray[i], fontSize);
     })
     ;
 
