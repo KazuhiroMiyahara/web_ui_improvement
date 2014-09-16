@@ -162,6 +162,10 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     ;
 
     var yAxisUnderPadding = 5;
+    var height = 300;
+    var barWidth = 30;
+    var spacePerBar = 60;
+
 
     var barGraphTable = space
     .append("table")
@@ -201,6 +205,8 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .style("background", function(executorInfo, index) {
       return index % 2 == 0 ? "wheat" : "tan";
     })
+    .attr("align", "center")
+    .attr("width", spacePerBar)
     ;
 
     secondRow
@@ -220,6 +226,7 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .text(xAxisExplanation)
     .style("font-size", "20px")
     .style("background", "sandybrown")
+    .style("padding", "12px")
     ;
 
     var xAxisCell = thirdRow
@@ -229,10 +236,6 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .append("th")
     .attr("align", "center")
     ;
-
-    var height = 300;
-    var barWidth = 30;
-    var spacePerBar = 40;
 
     var maxValue = d3.max(array, accessorFunction);
     var yScale = d3
