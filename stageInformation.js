@@ -314,6 +314,14 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     })
     ;
 
+    bar
+    .append("text")
+    .attr("x", 5)
+    .attr("y", function(d) { return resourcesCellPaddingUpper + yScale(accessorFunction(d)) + 18;})
+    .text(function(d) { return d3.round(accessorFunction(d),2); })
+    .attr("transform", function(d) { return "rotate(-90, 0, " + (resourcesCellPaddingUpper + yScale(accessorFunction(d))) + ")";})
+    ;
+
 }
 //-------------------------------------------------------------------------------------------------------------------
 function addStageResources(stageInfo, resourcesSpace, fontSize) {
