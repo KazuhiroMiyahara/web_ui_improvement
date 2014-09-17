@@ -141,6 +141,50 @@ var mainTable = showDiv
 .append("table")
 ;
 
+var menuButtonRow = mainTable
+.append("tr")
+;
+
+var menuButtonSpace = menuButtonRow
+.append("td")
+.style("padding", "12px")
+;
+
+var menuButtons = menuButtonSpace
+.append("ul")
+.attr("id", "menuButtons")
+;
+
+var sortMenu = menuButtons
+.append("li")
+.text("SORT BY ...")
+.style("font-size", fontSize + "px")
+.append("ul")
+;
+
+var IDSortButton = sortMenu
+.append("li")
+.append("a")
+.attr("href", "#")
+.text("ID")
+;
+
+var submissionTimeSortButton = sortMenu
+.append("li")
+.append("a")
+.attr("href", "#")
+.text("Submission Time")
+;
+
+var runTimeSortButton = sortMenu
+.append("li")
+.append("a")
+.attr("href", "#")
+.text("Run Time")
+;
+
+
+
 var timelineRow = mainTable
 .append("tr")
 ;

@@ -265,7 +265,7 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     })
     ;
 
-    var yAxisWidth = 50;
+    var yAxisWidth = 80;
 
     yAxisCell
     .append("svg")
