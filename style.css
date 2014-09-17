@@ -138,6 +138,7 @@ a.graphLabel {
 #menuButtons li:hover ul {
   display: block;
   padding: 0px;
+  text-align: right;
 }
 
 #menuButtons li ul li {
@@ -147,22 +148,6 @@ a.graphLabel {
   border: none;
   width: 300px;
 }
-
-#menuButtons li ul li a {
-  position: absolute;
-  right: 0;
-  padding: 5px;
-  color: white;
-}
-
-#menuButtons li ul li:hover a {
-  color: black;
-}
-
-
-
-
-
 
 
 

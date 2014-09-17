@@ -164,22 +164,19 @@ var sortMenu = menuButtons
 
 var IDSortButton = sortMenu
 .append("li")
-.append("a")
-.attr("href", "#")
+.attr("onClick", "sortStagesOfAllStageInformationByID();")
 .text("ID")
 ;
 
 var submissionTimeSortButton = sortMenu
 .append("li")
-.append("a")
-.attr("href", "#")
+.attr("onClick", "sortStagesOfAllStageInformationBySubmissionTime();")
 .text("Submission Time")
 ;
 
 var runTimeSortButton = sortMenu
 .append("li")
-.append("a")
-.attr("href", "#")
+.attr("onClick", "sortStagesOfAllStageInformationByRunTime();")
 .text("Run Time")
 ;
 
