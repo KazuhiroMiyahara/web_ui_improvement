@@ -193,3 +193,46 @@ var timelineSpace = timelineRow
 
 addStageTimeline(stageInfoArray, timelineSpace, fontSize);
 }
+
+function sortStagesOfAllStageInformationByID(){
+    var tabs = d3
+    .select("#mainTabs")
+    ;
+
+    removeContentOfTab(tabs, "AllStages");
+
+    STAGE_INFO_ARRAY = STAGE_INFO_ARRAY
+    .sort(function (a, b) { return d3.ascending(Number(a.key), Number(b.key)); })
+    ;
+
+    setAllStagesInfoTab(STAGE_INFO_ARRAY);
+}
+
+function sortStagesOfAllStageInformationBySubmissionTime(){
+    var tabs = d3
+    .select("#mainTabs")
+    ;
+
+    removeContentOfTab(tabs, "AllStages");
+
+    STAGE_INFO_ARRAY = STAGE_INFO_ARRAY
+    .sort(function (a, b) { return d3.ascending(Number(a.submissionTime), Number(b.submissionTime)); })
+    ;
+
+    setAllStagesInfoTab(STAGE_INFO_ARRAY);
+}
+
+function sortStagesOfAllStageInformationByRunTime(){
+    var tabs = d3
+    .select("#mainTabs")
+    ;
+
+    removeContentOfTab(tabs, "AllStages");
+
+    STAGE_INFO_ARRAY = STAGE_INFO_ARRAY
+    .sort(function (a, b) { return d3.descending(Number(a.completionTime) - Number(a.submissionTime), Number(b.completionTime) - Number(b.submissionTime)); })
+    ;
+
+    setAllStagesInfoTab(STAGE_INFO_ARRAY);
+}
+

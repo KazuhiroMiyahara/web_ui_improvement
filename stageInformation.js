@@ -30,14 +30,29 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
   .style("background", "sandybrown")
   ;
 
+  var timelineTableExecutorIDNameCell = timelineTableHeaderRow
+  .append("th")
+  .text("ExecutorID")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "sandybrown")
+  ;
+
+  var timelineTableHostNameNameCell = timelineTableHeaderRow
+  .append("th")
+  .text("HostName")
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", "sandybrown")
+  ;
+
   var timelineTableAxisCell = timelineTableHeaderRow
   .append("td")
-  //.style("padding", timeLineCellPaddingHeight + "px " + timeLineCellPaddingWidth + "px")
   .style("background", "sandybrown")
   .style("valign", "bottom")
   ;
 
-  var timelineWidth = 1500;
+  var timelineWidth = 1200;
   var timelineGraphBarHeight = 20;
   var barStrokeWidth = 1;
 
@@ -92,6 +107,30 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
   })
   .on("mouseout", function(taskInfo, index){
     d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
+  })
+  ;
+
+  var timelineExecutorIDCell = timelineRow
+  .append("th")
+  .text(function (taskInfo){
+    return taskInfo.executorID;
+  })
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", function(taskInfo, index) {
+    return index % 2 == 0 ? "wheat" : "tan";
+  })
+  ;
+
+  var timelineHostNameCell = timelineRow
+  .append("th")
+  .text(function (taskInfo){
+    return taskInfo.hostName;
+  })
+  .style("font-size", fontSize + "px")
+  .style("padding", "12px")
+  .style("background", function(taskInfo, index) {
+    return index % 2 == 0 ? "wheat" : "tan";
   })
   ;
 
@@ -387,6 +426,102 @@ function addStageResources(stageInfo, resourcesSpace, fontSize) {
 
 }
 
+//-------------------------------------------------------------------------------------------------------------------
+
+function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize){
+    timelineSpace.select("table").remove();
+
+    var taskInfoArray = stageInfo.values;
+    taskInfoArray = taskInfoArray
+    .sort(function (a, b) { return d3.ascending(Number(a.taskID), Number(b.taskID));})
+    ;
+    stageInfo.values = taskInfoArray;
+
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+
+}
+
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSize){
+    timelineSpace.select("table").remove();
+
+    var taskInfoArray = stageInfo.values;
+    taskInfoArray = taskInfoArray
+    .sort(function (a, b) { return d3.ascending(Number(a.taskStartTime), Number(b.taskStartTime));})
+    ;
+    stageInfo.values = taskInfoArray;
+
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+
+}
+
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize){
+    timelineSpace.select("table").remove();
+
+    var taskInfoArray = stageInfo.values;
+    taskInfoArray = taskInfoArray
+    .sort(function (a, b) { return d3.descending(Number(a.taskFinishTime) - Number(a.taskStartTime), Number(b.taskFinishTime) - Number(b.taskStartTime));})
+    ;
+    stageInfo.values = taskInfoArray;
+
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+
+}
+
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontSize){
+    timelineSpace.select("table").remove();
+
+    var taskInfoArray = stageInfo.values;
+    taskInfoArray = taskInfoArray
+    .sort(function (a, b) { return d3.ascending(Number(a.executorID), Number(b.executorID));})
+    ;
+    stageInfo.values = taskInfoArray;
+
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+
+}
+
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSize){
+    timelineSpace.select("table").remove();
+
+    var taskInfoArray = stageInfo.values;
+    taskInfoArray = taskInfoArray
+    .sort(function (a, b) { return d3.ascending(a.hostName, b.hostName);})
+    ;
+    stageInfo.values = taskInfoArray;
+
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+
+}
+
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timelineSpace, fontSize){
+    alert("comming soon !");
+
+    timelineSpace.select("table").remove();
+
+    var taskInfoArray = stageInfo.values;
+    taskInfoArray = taskInfoArray
+    .sort(function (a, b) { return d3.ascending(a.hostName, b.hostName);})
+    ;
+    stageInfo.values = taskInfoArray;
+
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+
+}
 
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -487,6 +622,79 @@ textTableBodyRow
   .style("background", "wheat")
 .text(stageInfo.taskCount)
 ;
+
+//-------------------------------------------------------------------------------
+
+var menuButtonRow = mainTable
+.append("tr")
+;
+
+var menuButtonSpace = menuButtonRow
+.append("td")
+.style("padding", "12px")
+;
+
+var menuButtons = menuButtonSpace
+.append("ul")
+.attr("id", "menuButtons")
+;
+
+var sortMenu = menuButtons
+.append("li")
+.text("SORT BY ...")
+.style("font-size", fontSize + "px")
+.append("ul")
+;
+
+var IDSortButton = sortMenu
+.append("li")
+.on("click", function(){
+    sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize);
+})
+.text("ID")
+;
+
+var startTimeSortButton = sortMenu
+.append("li")
+.on("click", function(){
+    sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSize);
+})
+.text("Start Time")
+;
+
+var runTimeSortButton = sortMenu
+.append("li")
+.on("click", function(){
+    sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize);
+})
+.text("Run Time")
+;
+
+var executorIDSortButton = sortMenu
+.append("li")
+.on("click", function(){
+    sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontSize);
+})
+.text("Executor ID")
+;
+
+var hostNameSortButton = sortMenu
+.append("li")
+.on("click", function(){
+    sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSize);
+})
+.text("Host Name")
+;
+
+var sumSortButton = sortMenu
+.append("li")
+.on("click", function(){
+    sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timelineSpace, fontSize);
+})
+.text("Sum of Checked Parameters")
+;
+
+//-------------------------------------------------------------------------------
 
 var timelineRow = mainTable
 .append("tr")

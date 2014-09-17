@@ -10,6 +10,7 @@ function addDummyData(taskInfoArray){
 var stageIDCounter = 0;
 
 taskInfoArray.forEach(function (taskInfo) {
+taskInfo.hostName = taskInfo.executorID % 3 == 0 ? "host0" : taskInfo.executorID % 3 == 1 ? "host1" : "host2";
 taskInfo.stageID = Math.floor((stageIDCounter++) / 7);
 taskInfo.gettingResultTime = taskExecutionTime(taskInfo) * 0.8 + Number(taskInfo.taskStartTime);
 taskInfo.taskLocality = "nodelocal"

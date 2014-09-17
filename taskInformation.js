@@ -199,6 +199,7 @@ var informationTable = mainTrCenter
   return [["taskID",taskInfo.taskID],
   ["executorID",taskInfo.executorID],
   ["stageID",taskInfo.stageID],
+  ["host name", taskInfo.hostName],
   ["taskLocality",taskInfo.taskLocality],
   ["taskStartTime",new Date(Number(taskInfo.taskStartTime))],
   ["taskFinishTime",new Date(Number(taskInfo.taskFinishTime))],
