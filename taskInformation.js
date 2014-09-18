@@ -64,6 +64,22 @@ return {"type ": "times", "data": data};
 }
 
 //--------------------------------------------------------------------------------------------------------------------
+
+function makeColorsOfTaskElements(dataPart){
+    var color = [];
+    var tmpCategory = d3.scale.category20();
+
+    dataPart
+    .forEach(function(d,i) {
+        color[d.type] = tmpCategory(i);
+    })
+    ;
+
+    return color;
+}
+
+//--------------------------------------------------------------------------------------------------------------------
+
 function showTaskInformation(showDiv, taskInfo){
 
 var timeFormat = formatTaskTimes(taskInfo);
@@ -101,7 +117,8 @@ var partition = d3
 .value(function(d) {
   return d.time;
 })
-.size([2 * Math.PI, radius]);
+.size([2 * Math.PI, radius])
+;
 
 var arc = d3
 .svg
@@ -121,13 +138,7 @@ var arc = d3
 ;
 
 var dataPart = partition.nodes(timeFormat).slice(1);
-var color = [];
-var tmpCategory = d3.scale.category20();
-dataPart
-.forEach(function(d,i) {
-    color[d.type] = tmpCategory(i);
-})
-;
+var color = makeColorsOfTaskElements(dataPart);
 
 var arcs = circleGraphSvg
 .selectAll(".arc")

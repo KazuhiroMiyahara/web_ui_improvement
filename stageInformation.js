@@ -526,6 +526,80 @@ function sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timeline
 
 //-------------------------------------------------------------------------------------------------------------------
 
+function addCheckBox(checkBoxRow, typeName, property){
+
+var checkBoxSpace = checkBoxRow
+.append("td")
+.append("label")
+.attr("for", property + "CheckBox")
+.style("display", "block")
+.style("width", "100%")
+.style("height", "100%")
+.style("padding", "12px")
+.style("background", "sienna")
+.style("color", "white")
+.style("font-weight", "bold")
+.style("border", "solid 1px white")
+.attr("id", property + "CheckBoxSpace")
+.append("tr")
+;
+
+var checkBox = checkBoxSpace
+.append("td")
+.append("input")
+.attr("type", "checkbox")
+.attr("id", property + "CheckBox")
+.on("click", function(){
+                 if(this.checked){
+                     d3
+                     .select("#" + property + "CheckBoxSpace")
+                     .style("background", makeColorsOfTaskElementsWithoutPartition()[typeName])
+                     .style("color", "black")
+                     ;
+                 }else{
+                     d3
+                     .select("#" + property + "CheckBoxSpace")
+                     .style("background", "sienna")
+                     .style("color", "white")
+                     ;
+                 }
+             }
+)
+;
+
+checkBoxSpace
+.append("td")
+.text(typeName)
+;
+
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function makeColorsOfTaskElementsWithoutPartition(){
+
+    var timeFormat = formatTaskTimes(TASK_INFO_ARRAY[0]);
+
+    var partition = d3
+    .layout
+    .partition()
+    .sort(null)
+    .children(function(d, depth) {
+      return d.data !== void(0) ? d.data : null;
+    })
+    .value(function(d) {
+      return d.time;
+    })
+    ;
+
+    var dataPart = partition.nodes(timeFormat).slice(1);
+    var color = makeColorsOfTaskElements(dataPart);
+
+    return color;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+
 function showStageInformation(showDiv, stageInfo){
 
 var fontSize = 20;
@@ -696,6 +770,62 @@ var sumSortButton = sortMenu
 
 //-------------------------------------------------------------------------------
 
+var checkBoxTableRow = mainTable
+.append("tr")
+;
+
+var checkBoxTableSpace = checkBoxTableRow
+.append("td")
+.style("padding", "12px")
+;
+
+var checkBoxTable = checkBoxTableSpace
+.append("table")
+.style("font-size", fontSize + "px")
+.style("border-collapse", "separate")
+.style("border-spacing", "1px 1px")
+.attr("cellpadding", 3)
+;
+
+var checkBoxRow = checkBoxTable
+.append("tr")
+;
+
+var checkBoxAttributes = [
+    {
+        "typeName" : "execute",
+        "property" : "execute"
+    },
+    {
+        "typeName" : "JVMGC",
+        "property" : "JVMGC"
+    },
+    {
+        "typeName" : "shuffle read",
+        "property" : "shuffleRead"
+    },
+    {
+        "typeName" : "shuffle write",
+        "property" : "shuffleWrite"
+    },
+    {
+        "typeName" : "serialize",
+        "property" : "serialize"
+    },
+    {
+        "typeName" : "deserialize",
+        "property" : "deserialize"
+    },
+]
+;
+
+checkBoxAttributes
+.forEach(function(attribute){
+    addCheckBox(checkBoxRow, attribute.typeName, attribute.property);
+})
+
+//-------------------------------------------------------------------------------
+
 var timelineRow = mainTable
 .append("tr")
 ;
@@ -705,6 +835,8 @@ var timelineSpace = timelineRow
 .style("padding", "12px")
 ;
 
+//-------------------------------------------------------------------------------
+
 var resourcesRow = mainTable
 .append("tr")
 ;
@@ -713,6 +845,8 @@ var resourcesSpace = resourcesRow
 .append("td")
 .style("padding", "12px")
 ;
+
+//-------------------------------------------------------------------------------
 
 addTaskTimeline(stageInfo.values.sort(function (a, b) { return d3.ascending(a.taskFinishTime, b.taskFinishTime);}), timelineSpace, fontSize);
 
