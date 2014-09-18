@@ -9,7 +9,7 @@ function linkStageInfo(stageInfo){
         switchTab(tabs, MAIN_TAB_PROPERTIES, "Variable");
 }
 
-function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
+function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes){
   var timelineTable = timelineSpace
   .append("table")
   .style("font-size", fontSize + "px")
@@ -157,8 +157,16 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
     return "translate(" + (taskTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
   })
   .on("click", linkTaskInfo)
+  .on("mouseover", function(taskInfo){
+      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
+  })
+  .on("mouseout", function(taskInfo){
+      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+  })
   ;
 
+
+//add whole time bar
   timelineGraphBarForEachTaskG
   .append("rect")
   .attr("class", function(taskInfo) {
@@ -170,14 +178,66 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize){
     return taskTimelineXScale(Number(taskInfo.taskFinishTime)) - taskTimelineXScale(Number(taskInfo.taskStartTime));
   })
   .attr("height", timelineGraphBarHeight)
-  .on("mouseover", function(taskInfo){
-      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
-  })
-  .on("mouseout", function(taskInfo){
-      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
-  })
   ;
 
+//add partial time bar
+          timelineGraphBarForEachTaskG
+          .selectAll(".foo")
+          .data(function(taskInfo) {
+            return formatTaskInfoForCheckBoxStack(taskInfo, checkBoxAttributes);
+          })
+          .enter()
+          .append("rect")
+          .style("fill", function(format){
+            return format.color;
+          })
+          .style("stroke", "white")
+          .style("stroke-width", "1")
+          .attr("x", function(format) {
+            return taskTimelineXScale(format.start) - taskTimelineXScale(format.taskStartTime);
+          })
+          .attr("y", 0)
+          .attr("width", function(format) {
+            return taskTimelineXScale(format.end) - taskTimelineXScale(format.start);
+          })
+          .attr("height", timelineGraphBarHeight)
+          ;
+
+
+}
+
+
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function formatTaskInfoForCheckBoxStack(taskInfo, checkBoxAttributes){
+    var tmpSumTime = Number(taskInfo.taskStartTime);
+    var retArray = [];
+
+    checkBoxAttributes
+    .forEach(function(attribute){
+
+        var isChecked = document
+        .getElementById(attribute.property + "CheckBox")
+        .checked
+        ;
+
+        if(isChecked){
+            retArray
+            .push({
+                "taskStartTime" : Number(taskInfo.taskStartTime),
+                "color" : makeColorsOfTaskElementsWithoutPartition()[attribute.typeName],
+               "start" : tmpSumTime,
+               "end" : tmpSumTime + attribute.accessor(taskInfo),
+            })
+            ;
+
+            tmpSumTime += attribute.accessor(taskInfo);
+        }
+    })
+    ;
+
+     return retArray;
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -428,7 +488,14 @@ function addStageResources(stageInfo, resourcesSpace, fontSize) {
 
 //-------------------------------------------------------------------------------------------------------------------
 
-function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize){
+function resetTimelineOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
+    timelineSpace.select("table").remove();
+    addTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
     timelineSpace.select("table").remove();
 
     var taskInfoArray = stageInfo.values;
@@ -437,14 +504,14 @@ function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize){
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
 
 //-------------------------------------------------------------------------------------------------------------------
 
-function sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSize){
+function sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
     timelineSpace.select("table").remove();
 
     var taskInfoArray = stageInfo.values;
@@ -453,14 +520,14 @@ function sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSi
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
 
 //-------------------------------------------------------------------------------------------------------------------
 
-function sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize){
+function sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
     timelineSpace.select("table").remove();
 
     var taskInfoArray = stageInfo.values;
@@ -469,14 +536,14 @@ function sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
 
 //-------------------------------------------------------------------------------------------------------------------
 
-function sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontSize){
+function sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
     timelineSpace.select("table").remove();
 
     var taskInfoArray = stageInfo.values;
@@ -485,14 +552,14 @@ function sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontS
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
 
 //-------------------------------------------------------------------------------------------------------------------
 
-function sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSize){
+function sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
     timelineSpace.select("table").remove();
 
     var taskInfoArray = stageInfo.values;
@@ -501,14 +568,14 @@ function sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSiz
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
 
 //-------------------------------------------------------------------------------------------------------------------
 
-function sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timelineSpace, fontSize){
+function sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
     alert("comming soon !");
 
     timelineSpace.select("table").remove();
@@ -519,14 +586,14 @@ function sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timeline
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize);
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
 
 //-------------------------------------------------------------------------------------------------------------------
 
-function addCheckBox(checkBoxRow, typeName, property){
+function addCheckBox(checkBoxRow, typeName, property, stageInfo, timelineSpace, fontSize, checkBoxAttributes){
 
 var checkBoxSpace = checkBoxRow
 .append("td")
@@ -550,20 +617,23 @@ var checkBox = checkBoxSpace
 .attr("type", "checkbox")
 .attr("id", property + "CheckBox")
 .on("click", function(){
-                 if(this.checked){
-                     d3
-                     .select("#" + property + "CheckBoxSpace")
-                     .style("background", makeColorsOfTaskElementsWithoutPartition()[typeName])
-                     .style("color", "black")
-                     ;
-                 }else{
-                     d3
-                     .select("#" + property + "CheckBoxSpace")
-                     .style("background", "sienna")
-                     .style("color", "white")
-                     ;
-                 }
-             }
+         if(this.checked){
+             d3
+             .select("#" + property + "CheckBoxSpace")
+             .style("background", makeColorsOfTaskElementsWithoutPartition()[typeName])
+             .style("color", "black")
+             ;
+         }else{
+             d3
+             .select("#" + property + "CheckBoxSpace")
+             .style("background", "sienna")
+             .style("color", "white")
+             ;
+         }
+
+         resetTimelineOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes);
+
+     }
 )
 ;
 
@@ -723,7 +793,7 @@ var sortMenu = menuButtons
 var IDSortButton = sortMenu
 .append("li")
 .on("click", function(){
-    sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize);
+    sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize, checkBoxAttributes);
 })
 .text("ID")
 ;
@@ -731,7 +801,7 @@ var IDSortButton = sortMenu
 var startTimeSortButton = sortMenu
 .append("li")
 .on("click", function(){
-    sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSize);
+    sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSize, checkBoxAttributes);
 })
 .text("Start Time")
 ;
@@ -739,7 +809,7 @@ var startTimeSortButton = sortMenu
 var runTimeSortButton = sortMenu
 .append("li")
 .on("click", function(){
-    sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize);
+    sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize, checkBoxAttributes);
 })
 .text("Run Time")
 ;
@@ -747,7 +817,7 @@ var runTimeSortButton = sortMenu
 var executorIDSortButton = sortMenu
 .append("li")
 .on("click", function(){
-    sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontSize);
+    sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontSize, checkBoxAttributes);
 })
 .text("Executor ID")
 ;
@@ -755,7 +825,7 @@ var executorIDSortButton = sortMenu
 var hostNameSortButton = sortMenu
 .append("li")
 .on("click", function(){
-    sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSize);
+    sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSize, checkBoxAttributes);
 })
 .text("Host Name")
 ;
@@ -763,7 +833,7 @@ var hostNameSortButton = sortMenu
 var sumSortButton = sortMenu
 .append("li")
 .on("click", function(){
-    sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timelineSpace, fontSize);
+    sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timelineSpace, fontSize, checkBoxAttributes);
 })
 .text("Sum of Checked Parameters")
 ;
@@ -791,38 +861,40 @@ var checkBoxRow = checkBoxTable
 .append("tr")
 ;
 
+
 var checkBoxAttributes = [
     {
         "typeName" : "execute",
-        "property" : "execute"
+        "property" : "execute",
+        "accessor" : function(taskInfo) {return taskOtherTime(taskInfo);},
     },
     {
         "typeName" : "JVMGC",
-        "property" : "JVMGC"
+        "property" : "JVMGC",
+        "accessor" : function(taskInfo) {return Number(taskInfo.JVMGCTime);},
     },
     {
         "typeName" : "shuffle read",
-        "property" : "shuffleRead"
+        "property" : "shuffleRead",
+        "accessor" : function(taskInfo) {return Number(taskInfo.shuffleReadTime);},
     },
     {
         "typeName" : "shuffle write",
-        "property" : "shuffleWrite"
+        "property" : "shuffleWrite",
+        "accessor" : function(taskInfo) {return Number(taskInfo.shuffleWriteTime);},
     },
     {
         "typeName" : "serialize",
-        "property" : "serialize"
+        "property" : "serialize",
+        "accessor" : function(taskInfo) {return Number(taskInfo.serializeMilliSec);},
     },
     {
         "typeName" : "deserialize",
-        "property" : "deserialize"
+        "property" : "deserialize",
+        "accessor" : function(taskInfo) {return Number(taskInfo.deserializeMilliSec);},
     },
 ]
 ;
-
-checkBoxAttributes
-.forEach(function(attribute){
-    addCheckBox(checkBoxRow, attribute.typeName, attribute.property);
-})
 
 //-------------------------------------------------------------------------------
 
@@ -834,6 +906,11 @@ var timelineSpace = timelineRow
 .append("td")
 .style("padding", "12px")
 ;
+
+checkBoxAttributes
+.forEach(function(attribute){
+    addCheckBox(checkBoxRow, attribute.typeName, attribute.property, stageInfo, timelineSpace, fontSize, checkBoxAttributes);
+})
 
 //-------------------------------------------------------------------------------
 
@@ -848,9 +925,9 @@ var resourcesSpace = resourcesRow
 
 //-------------------------------------------------------------------------------
 
-addTaskTimeline(stageInfo.values.sort(function (a, b) { return d3.ascending(a.taskFinishTime, b.taskFinishTime);}), timelineSpace, fontSize);
-
 addStageResources(stageInfo, resourcesSpace, fontSize);
+
+addTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 
 
 

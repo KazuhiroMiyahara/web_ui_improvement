@@ -124,6 +124,12 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
     return "translate(" + (executorTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
   })
   .on("click", linkTaskInfo)
+  .on("mouseover", function(taskInfo){
+      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
+  })
+  .on("mouseout", function(taskInfo){
+      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+  })
   ;
 
   timelineGraphBarForEachTaskG
@@ -137,12 +143,6 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
     return executorTimelineXScale(Number(taskInfo.taskFinishTime)) - executorTimelineXScale(Number(taskInfo.taskStartTime));
   })
   .attr("height", timelineGraphBarHeight)
-  .on("mouseover", function(taskInfo){
-      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
-  })
-  .on("mouseout", function(taskInfo){
-      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
-  })
   ;
 
 }
