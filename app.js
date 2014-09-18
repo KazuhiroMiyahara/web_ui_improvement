@@ -95,7 +95,7 @@ function main_inner(taskInfoArray){
   setExecutorInfoTab("Variable", executorInfo);
   //*/
   //*
-    var stageInfo = stageInfoArray[1];
+    var stageInfo = stageInfoArray[0];
     setStageInfoTab("Variable", stageInfo);
   //*/
 

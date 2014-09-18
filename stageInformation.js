@@ -184,21 +184,21 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
           timelineGraphBarForEachTaskG
           .selectAll(".foo")
           .data(function(taskInfo) {
-            return formatTaskInfoForCheckBoxStack(taskInfo, checkBoxAttributes);
+            return formatTaskInfoForCheckBoxStack(taskInfo, checkBoxAttributes).stackInfoArray;
           })
           .enter()
           .append("rect")
-          .style("fill", function(format){
-            return format.color;
+          .style("fill", function(stackInfo){
+            return stackInfo.color;
           })
           .style("stroke", "white")
           .style("stroke-width", "1")
-          .attr("x", function(format) {
-            return taskTimelineXScale(format.start) - taskTimelineXScale(format.taskStartTime);
+          .attr("x", function(stackInfo) {
+            return taskTimelineXScale(stackInfo.start) - taskTimelineXScale(stackInfo.taskStartTime);
           })
           .attr("y", 0)
-          .attr("width", function(format) {
-            return taskTimelineXScale(format.end) - taskTimelineXScale(format.start);
+          .attr("width", function(stackInfo) {
+            return taskTimelineXScale(stackInfo.end) - taskTimelineXScale(stackInfo.start);
           })
           .attr("height", timelineGraphBarHeight)
           ;
@@ -211,8 +211,8 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
 //-------------------------------------------------------------------------------------------------------------------
 
 function formatTaskInfoForCheckBoxStack(taskInfo, checkBoxAttributes){
-    var tmpSumTime = Number(taskInfo.taskStartTime);
-    var retArray = [];
+    var sumTime = Number(taskInfo.taskStartTime);
+    var stackInfoArray = [];
 
     checkBoxAttributes
     .forEach(function(attribute){
@@ -223,21 +223,28 @@ function formatTaskInfoForCheckBoxStack(taskInfo, checkBoxAttributes){
         ;
 
         if(isChecked){
-            retArray
+            stackInfoArray
             .push({
                 "taskStartTime" : Number(taskInfo.taskStartTime),
                 "color" : makeColorsOfTaskElementsWithoutPartition()[attribute.typeName],
-               "start" : tmpSumTime,
-               "end" : tmpSumTime + attribute.accessor(taskInfo),
+               "start" : sumTime,
+               "end" : sumTime + attribute.accessor(taskInfo),
             })
             ;
 
-            tmpSumTime += attribute.accessor(taskInfo);
+            sumTime += attribute.accessor(taskInfo);
         }
     })
     ;
 
-     return retArray;
+    var ret = {
+        "stackInfoArray" : stackInfoArray,
+        "sumTime" : sumTime - Number(taskInfo.taskStartTime),
+    }
+    ;
+
+
+     return ret;
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -576,13 +583,12 @@ function sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSiz
 //-------------------------------------------------------------------------------------------------------------------
 
 function sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
-    alert("comming soon !");
 
     timelineSpace.select("table").remove();
 
     var taskInfoArray = stageInfo.values;
     taskInfoArray = taskInfoArray
-    .sort(function (a, b) { return d3.ascending(a.hostName, b.hostName);})
+    .sort(function (a, b) { return d3.descending(formatTaskInfoForCheckBoxStack(a, checkBoxAttributes).sumTime, formatTaskInfoForCheckBoxStack(b, checkBoxAttributes).sumTime);})
     ;
     stageInfo.values = taskInfoArray;
 
