@@ -79,11 +79,13 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
   .attr("width", timelineTableAxisCellSvgWidth)
   ;
 
-  timelineTableAxisCellSvg
+  var timelineTableAxisCellSvgG = timelineTableAxisCellSvg
   .append("g")
   .attr("transform", "translate(" + timeLineCellPaddingWidth + "," + timelineGraphBarHeight + ")")
   .attr("class", "axis")
-  .attr("id", "timelineTableAxisCellSvgAxis")
+  ;
+
+  timelineTableAxisCellSvgG
   .call(taskTimelineXAxis)
   .selectAll("text")
   .text(function(text) {
@@ -230,8 +232,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
         taskTimelineXScale.domain([taskTimelineMinLength, taskTimelineMaxLength]).range([0, timelineWidth]);
         taskTimelineXAxis.scale(taskTimelineXScale);
 
-        d3
-        .select("#timelineTableAxisCellSvgAxis")
+        timelineTableAxisCellSvgG
         .call(taskTimelineXAxis)
         .selectAll("text")
         .text(function(text) {
@@ -288,8 +289,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
         taskTimelineXScale.domain([taskTimelineMinLength, taskTimelineMaxLength]).range([0, timelineWidth]);
         taskTimelineXAxis.scale(taskTimelineXScale);
 
-        d3
-        .select("#timelineTableAxisCellSvgAxis")
+        timelineTableAxisCellSvgG
         .call(taskTimelineXAxis)
         .selectAll("text")
         .text(function(text) {
