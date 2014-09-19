@@ -267,19 +267,25 @@ var sortMenu = menuButtons
 
 var IDSortButton = sortMenu
 .append("li")
-.attr("onClick", "sortStagesOfAllStageInformationByID();")
+.on("click", function(){
+    sortStagesOfAllStageInformationByID(timelineSpace, fontSize);
+})
 .text("ID")
 ;
 
 var submissionTimeSortButton = sortMenu
 .append("li")
-.attr("onClick", "sortStagesOfAllStageInformationBySubmissionTime();")
+.on("click", function(){
+    sortStagesOfAllStageInformationBySubmissionTime(timelineSpace, fontSize);
+})
 .text("Submission Time")
 ;
 
 var runTimeSortButton = sortMenu
 .append("li")
-.attr("onClick", "sortStagesOfAllStageInformationByRunTime();")
+.on("click", function(){
+    sortStagesOfAllStageInformationByRunTime(timelineSpace, fontSize);
+})
 .text("Run Time")
 ;
 
@@ -297,45 +303,30 @@ var timelineSpace = timelineRow
 addStageTimeline(stageInfoArray, timelineSpace, fontSize);
 }
 
-function sortStagesOfAllStageInformationByID(){
-    var tabs = d3
-    .select("#mainTabs")
-    ;
+function sortStagesOfAllStageInformationByID(timelineSpace, fontSize){
 
-    removeContentOfTab(tabs, "AllStages");
+    sortStagesOfAllStageInformation(timelineSpace, fontSize, function(a){ return Number(a.key)});
 
-    STAGE_INFO_ARRAY = STAGE_INFO_ARRAY
-    .sort(function (a, b) { return d3.ascending(Number(a.key), Number(b.key)); })
-    ;
-
-    setAllStagesInfoTab(STAGE_INFO_ARRAY);
 }
 
-function sortStagesOfAllStageInformationBySubmissionTime(){
-    var tabs = d3
-    .select("#mainTabs")
-    ;
+function sortStagesOfAllStageInformationBySubmissionTime(timelineSpace, fontSize){
 
-    removeContentOfTab(tabs, "AllStages");
+    sortStagesOfAllStageInformation(timelineSpace, fontSize, function(a){ return Number(a.submissionTime)});
 
-    STAGE_INFO_ARRAY = STAGE_INFO_ARRAY
-    .sort(function (a, b) { return d3.ascending(Number(a.submissionTime), Number(b.submissionTime)); })
-    ;
-
-    setAllStagesInfoTab(STAGE_INFO_ARRAY);
 }
 
-function sortStagesOfAllStageInformationByRunTime(){
-    var tabs = d3
-    .select("#mainTabs")
-    ;
+function sortStagesOfAllStageInformationByRunTime(timelineSpace, fontSize){
 
-    removeContentOfTab(tabs, "AllStages");
+    sortStagesOfAllStageInformation(timelineSpace, fontSize, function(a){ return -(Number(a.completionTime) - Number(a.submissionTime))});
 
-    STAGE_INFO_ARRAY = STAGE_INFO_ARRAY
-    .sort(function (a, b) { return d3.descending(Number(a.completionTime) - Number(a.submissionTime), Number(b.completionTime) - Number(b.submissionTime)); })
-    ;
-
-    setAllStagesInfoTab(STAGE_INFO_ARRAY);
 }
 
+function sortStagesOfAllStageInformation(timelineSpace, fontSize, accessor){
+    timelineSpace.select("table").remove();
+
+    STAGE_INFO_ARRAY = STAGE_INFO_ARRAY
+    .sort(function (a, b) { return d3.ascending(accessor(a), accessor(b)); })
+    ;
+
+    addStageTimeline(STAGE_INFO_ARRAY, timelineSpace, fontSize);
+}
