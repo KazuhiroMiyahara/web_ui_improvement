@@ -211,7 +211,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
     .attr("height", timelineGraphBarHeight)
     ;
 
-//--------------------------------------------------------------------------------------------------
+//--------------------------------- zoom ---------------------------------------------
     var prevScale = 1.0;
 
     var zoom = d3
@@ -220,13 +220,13 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
     .on("zoom", function() {
         var mousePoint = d3.mouse(this)[0] - timeLineCellPaddingWidth;
 
-        //var timeOfMousePoint = (taskTimelineMaxLength + taskTimelineMinLength) / 2;
         var timeOfMousePoint = taskTimelineXScale.invert(mousePoint);
         var scaleRate = d3.event.scale / prevScale;
-        prevScale *= scaleRate;
+        prevScale = d3.event.scale;
 
         taskTimelineMinLength = timeOfMousePoint - (timeOfMousePoint - taskTimelineMinLength) * scaleRate;
         taskTimelineMaxLength = timeOfMousePoint + (taskTimelineMaxLength - timeOfMousePoint) * scaleRate;
+
         taskTimelineXScale.domain([taskTimelineMinLength, taskTimelineMaxLength]).range([0, timelineWidth]);
         taskTimelineXAxis.scale(taskTimelineXScale);
 
@@ -273,6 +273,67 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
     timelineGraphBarCell
     .call(zoom)
     ;
+
+//--------------------------------- drag ---------------------------------------------
+
+    var drag = d3
+    .behavior
+    .drag()
+    .on("drag", function(){
+        var taskTimelineDiffLength = d3.event.dx * (taskTimelineXScale.invert(1) - taskTimelineXScale.invert(0));
+
+        taskTimelineMinLength -= taskTimelineDiffLength;
+        taskTimelineMaxLength -= taskTimelineDiffLength;
+
+        taskTimelineXScale.domain([taskTimelineMinLength, taskTimelineMaxLength]).range([0, timelineWidth]);
+        taskTimelineXAxis.scale(taskTimelineXScale);
+
+        d3
+        .select("#timelineTableAxisCellSvgAxis")
+        .call(taskTimelineXAxis)
+        .selectAll("text")
+        .text(function(text) {
+            return dateToString(new Date(Number(text)));
+        })
+        ;
+
+        timelineGraphBarForEachTaskG
+        .attr("transform", function(taskInfo) {
+        return "translate(" + (taskTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
+        })
+        ;
+
+        timelineGraphBarForEachTaskGWholeRect
+        .attr("width", function(taskInfo) {
+        return taskTimelineXScale(Number(taskInfo.taskFinishTime)) - taskTimelineXScale(Number(taskInfo.taskStartTime));
+        })
+        .attr("height", timelineGraphBarHeight)
+        ;
+
+        timelineGraphBarForEachTaskGPartialRect
+        .attr("x", function(stackInfo) {
+        return taskTimelineXScale(stackInfo.start) - taskTimelineXScale(stackInfo.taskStartTime);
+        })
+        .attr("y", 0)
+        .attr("width", function(stackInfo) {
+        return taskTimelineXScale(stackInfo.end) - taskTimelineXScale(stackInfo.start);
+        })
+        .attr("height", timelineGraphBarHeight)
+        ;
+
+    })
+    ;
+
+    timelineTableAxisCell
+    .call(drag)
+    ;
+
+    timelineGraphBarCell
+    .call(drag)
+    ;
+
+
+
 
 
 }
