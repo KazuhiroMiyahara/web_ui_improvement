@@ -31,7 +31,6 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
 
   var timelineTableAxisCell = timelineTableHeaderRow
   .append("td")
-  //.style("padding", timeLineCellPaddingHeight + "px " + timeLineCellPaddingWidth + "px")
   .style("background", "sandybrown")
   .style("valign", "bottom")
   ;
@@ -54,13 +53,19 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   var stageTimelineXScale = d3.scale.linear().domain([stageTimelineMinLength, stageTimelineMaxLength]).range([0, timelineWidth]);
   var stageTimelineXAxis = d3.svg.axis().scale(stageTimelineXScale).orient("top");
 
-  timelineTableAxisCell
+  var timelineTableAxisCellSvg = timelineTableAxisCell
   .append("svg")
   .attr("height", timelineAxisHeight + 1)
   .attr("width", timelineAxisWidth + 2 * timeLineCellPaddingWidth)
+  ;
+
+  var timelineTableAxisCellSvgG = timelineTableAxisCellSvg
   .append("g")
   .attr("transform", "translate(" + timeLineCellPaddingWidth + "," + timelineGraphBarHeight + ")")
   .attr("class", "axis")
+  ;
+
+  timelineTableAxisCellSvgG
   .call(stageTimelineXAxis)
   .selectAll("text")
   .text(function(text) {
@@ -108,6 +113,7 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .append("svg")
   .attr("height", timelineGraphBarHeight)
   .attr("width", timelineWidth)
+  .attr("overflow", "hidden")
   ;
 
   var timelineGraphBarForEachTaskG = timelineGraphBarSvg
@@ -118,7 +124,7 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .on("click", linkStageInfo)
   ;
 
-  timelineGraphBarForEachTaskG
+  var timelineGraphBarForEachTaskGRect = timelineGraphBarForEachTaskG
   .append("rect")
   .attr("class", "linkBar")
   .attr("x", 0)
@@ -128,6 +134,103 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   })
   .attr("height", timelineGraphBarHeight)
   ;
+
+//--------------------------------- zoom ---------------------------------------------
+    var prevScale = 1.0;
+
+    var zoom = d3
+    .behavior
+    .zoom()
+    .on("zoom", function() {
+        var mousePoint = d3.mouse(this)[0] - timeLineCellPaddingWidth;
+
+        var timeOfMousePoint = stageTimelineXScale.invert(mousePoint);
+        var scaleRate = d3.event.scale / prevScale;
+        prevScale = d3.event.scale;
+
+        stageTimelineMinLength = timeOfMousePoint - (timeOfMousePoint - stageTimelineMinLength) * scaleRate;
+        stageTimelineMaxLength = timeOfMousePoint + (stageTimelineMaxLength - timeOfMousePoint) * scaleRate;
+
+        stageTimelineXScale.domain([stageTimelineMinLength, stageTimelineMaxLength]).range([0, timelineWidth]);
+        stageTimelineXAxis.scale(stageTimelineXScale);
+
+        timelineTableAxisCellSvgG
+        .call(stageTimelineXAxis)
+        .selectAll("text")
+        .text(function(text) {
+            return dateToString(new Date(Number(text)));
+        })
+        ;
+
+        timelineGraphBarForEachTaskG
+        .attr("transform", function(stageInfo) {
+        return "translate(" + (stageTimelineXScale(Number(stageInfo.submissionTime))) + ", " + 0 + ")";
+        })
+        ;
+
+        timelineGraphBarForEachTaskGRect
+        .attr("width", function(stageInfo) {
+        return stageTimelineXScale(Number(stageInfo.completionTime)) - stageTimelineXScale(Number(stageInfo.submissionTime));
+        })
+        .attr("height", timelineGraphBarHeight)
+        ;
+
+    })
+    ;
+
+    timelineTableAxisCell
+    .call(zoom)
+    ;
+
+    timelineGraphBarCell
+    .call(zoom)
+    ;
+
+//--------------------------------- drag ---------------------------------------------
+
+    var drag = d3
+    .behavior
+    .drag()
+    .on("drag", function(){
+        var stageTimelineDiffLength = d3.event.dx * (stageTimelineXScale.invert(1) - stageTimelineXScale.invert(0));
+
+        stageTimelineMinLength -= stageTimelineDiffLength;
+        stageTimelineMaxLength -= stageTimelineDiffLength;
+
+        stageTimelineXScale.domain([stageTimelineMinLength, stageTimelineMaxLength]).range([0, timelineWidth]);
+        stageTimelineXAxis.scale(stageTimelineXScale);
+
+        timelineTableAxisCellSvgG
+        .call(stageTimelineXAxis)
+        .selectAll("text")
+        .text(function(text) {
+            return dateToString(new Date(Number(text)));
+        })
+        ;
+
+        timelineGraphBarForEachTaskG
+        .attr("transform", function(stageInfo) {
+        return "translate(" + (stageTimelineXScale(Number(stageInfo.submissionTime))) + ", " + 0 + ")";
+        })
+        ;
+
+        timelineGraphBarForEachTaskGRect
+        .attr("width", function(stageInfo) {
+        return stageTimelineXScale(Number(stageInfo.completionTime)) - stageTimelineXScale(Number(stageInfo.submissionTime));
+        })
+        .attr("height", timelineGraphBarHeight)
+        ;
+
+    })
+    ;
+
+    timelineTableAxisCell
+    .call(drag)
+    ;
+
+    timelineGraphBarCell
+    .call(drag)
+    ;
 
 }
 
