@@ -784,6 +784,77 @@ checkBoxSpace
 
 //-------------------------------------------------------------------------------------------------------------------
 
+function addAllCheckBox(checkBoxRow, stageInfo, checkBoxAttributes){
+var property = "all";
+
+var checkBoxSpace = checkBoxRow
+.append("td")
+.append("label")
+.attr("for", property + "CheckBox")
+.style("display", "block")
+.style("width", "100%")
+.style("height", "100%")
+.style("padding", "12px")
+.style("background", "sienna")
+.style("color", "white")
+.style("font-weight", "bold")
+.style("border", "solid 1px white")
+.attr("id", property + "CheckBoxSpace")
+.append("tr")
+;
+
+var checkBox = checkBoxSpace
+.append("td")
+.append("input")
+.attr("type", "checkbox")
+.attr("id", property + "CheckBox")
+.on("click", function(){
+    var allChecked = this.checked;
+
+    if(allChecked){
+        d3
+        .select("#" + property + "CheckBoxSpace")
+        .style("background", "white")
+        .style("border", "solid 1px black")
+        .style("color", "black")
+        ;
+    }else{
+        d3
+        .select("#" + property + "CheckBoxSpace")
+        .style("background", "sienna")
+        .style("border", "solid 1px white")
+        .style("color", "white")
+        ;
+    }
+
+    checkBoxAttributes
+    .forEach(function(attribute){
+        var checked = document
+        .getElementById(attribute.property + "CheckBox")
+        .checked
+        ;
+
+        if(checked != allChecked){
+            document
+            .getElementById(attribute.property + "CheckBox")
+            .click()
+            ;
+        }
+    })
+    ;
+
+})
+;
+
+var checkBoxTextSpace = checkBoxSpace
+.append("td")
+.text("all")
+;
+
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+
 function makeColorsOfTaskElementsWithoutPartition(){
 
     var timeFormat = formatTaskTimes(TASK_INFO_ARRAY[0]);
@@ -1049,6 +1120,7 @@ checkBoxAttributes
 .forEach(function(attribute){
     addCheckBox(checkBoxRow, attribute.typeName, attribute.property, stageInfo, timelineSpace, fontSize, checkBoxAttributes);
 })
+addAllCheckBox(checkBoxRow, stageInfo, checkBoxAttributes);
 
 //-------------------------------------------------------------------------------
 

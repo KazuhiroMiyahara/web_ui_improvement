@@ -77,7 +77,7 @@ function main_inner(taskInfoArray){
   })
   ;
 
-  switchTab(tabs, tabProperties, "AllStages");
+  switchTab(tabs, tabProperties, "Variable");
 
   var tabProtoType = d3
   .select("#tabProtoType")
