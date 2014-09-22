@@ -1,10 +1,22 @@
 
 function mouseOverTaskGraphBar(taskInfo){
     d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBar").attr("class", "linkBarHover");
+    d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".partialBar")
+    .style("fill", function(stackInfo){
+        return d3.rgb(stackInfo.color).brighter();
+    })
+    .style("stroke", "dimgray")
+    ;
 }
 
 function mouseOutTaskGraphBar(taskInfo){
     d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar");
+    d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".partialBar")
+    .style("fill", function(stackInfo){
+        return d3.rgb(stackInfo.color);
+    })
+    .style("stroke", "white")
+    ;
 }
 
 
@@ -210,22 +222,22 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
     var timelineGraphBarForEachTaskGPartialRect = timelineGraphBarForEachTaskG
     .selectAll(".foo")
     .data(function(taskInfo) {
-    return formatTaskInfoForCheckBoxStack(taskInfo, checkBoxAttributes).stackInfoArray;
+        return formatTaskInfoForCheckBoxStack(taskInfo, checkBoxAttributes).stackInfoArray;
     })
     .enter()
     .append("rect")
     .attr("class", "partialBar")
     .style("fill", function(stackInfo){
-    return stackInfo.color;
+        return stackInfo.color;
     })
     .style("stroke", "white")
     .style("stroke-width", "1")
     .attr("x", function(stackInfo) {
-    return taskTimelineXScale(stackInfo.start) - taskTimelineXScale(stackInfo.taskStartTime);
+        return taskTimelineXScale(stackInfo.start) - taskTimelineXScale(stackInfo.taskStartTime);
     })
     .attr("y", 0)
     .attr("width", function(stackInfo) {
-    return taskTimelineXScale(stackInfo.end) - taskTimelineXScale(stackInfo.start);
+        return taskTimelineXScale(stackInfo.end) - taskTimelineXScale(stackInfo.start);
     })
     .attr("height", timelineGraphBarHeight)
     ;
