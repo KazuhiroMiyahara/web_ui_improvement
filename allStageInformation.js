@@ -92,7 +92,10 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .style("background", function(stageInfo, index) {
     return stageInfo.failureReason != null ? failureColor : (index % 2 == 0 ? "wheat" : "tan");
   })
-  .on("click", linkStageInfo)
+  .on("click", function(stageInfo, index){
+    d3.select(this).style("background", stageInfo.failureReason != null ? failureColor : (index % 2 == 0 ? "wheat" : "tan"));
+    linkStageInfo(stageInfo);
+  })
   .on("mouseover", function(){
     d3.select(this).style("background", "orangered");
   })

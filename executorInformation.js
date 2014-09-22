@@ -95,7 +95,10 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
   .style("background", function(executorInfo, index) {
     return index % 2 == 0 ? "wheat" : "tan";
   })
-  .on("click", linkExecutorInfo)
+  .on("click", function(executorInfo, index){
+    d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
+    linkExecutorInfo(executorInfo);
+  })
   .on("mouseover", function(){
     d3.select(this).style("background", "orangered");
   })
@@ -119,24 +122,27 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
   .attr("overflow", "hidden")
   ;
 
-  var timelineGraphBarForEachTaskG = timelineGraphBarSvg
-  .selectAll(".g")
-  .data(function (executorInfo) {
-    return executorInfo.values;
-  })
-  .enter()
-  .append("g")
-  .attr("transform", function(taskInfo) {
-    return "translate(" + (executorTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
-  })
-  .on("click", linkTaskInfo)
-  .on("mouseover", function(taskInfo){
-      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
-  })
-  .on("mouseout", function(taskInfo){
-      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
-  })
-  ;
+    var timelineGraphBarForEachTaskG = timelineGraphBarSvg
+    .selectAll(".g")
+    .data(function (executorInfo) {
+        return executorInfo.values;
+    })
+    .enter()
+    .append("g")
+    .attr("transform", function(taskInfo) {
+        return "translate(" + (executorTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
+    })
+    .on("click", function(taskInfo){
+        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+        linkTaskInfo(taskInfo);
+    })
+    .on("mouseover", function(taskInfo){
+        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
+    })
+    .on("mouseout", function(taskInfo){
+        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+    })
+    ;
 
   var timelineGraphBarForEachTaskGRect = timelineGraphBarForEachTaskG
   .append("rect")

@@ -110,7 +110,10 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
   .style("background", function(taskInfo, index) {
     return index % 2 == 0 ? "wheat" : "tan";
   })
-  .on("click", linkTaskInfo)
+  .on("click", function(taskInfo, index){
+    d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
+    linkTaskInfo(taskInfo);
+  })
   .on("mouseover", function(){
     d3.select(this).style("background", "orangered");
   })
@@ -158,22 +161,25 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
   .attr("overflow", "hidden")
   ;
 
-  var timelineGraphBarForEachTaskG = timelineGraphBarSvg
-  .selectAll(".g")
-  .data(function (taskInfo) {return [taskInfo];})
-  .enter()
-  .append("g")
-  .attr("transform", function(taskInfo) {
+    var timelineGraphBarForEachTaskG = timelineGraphBarSvg
+    .selectAll(".g")
+    .data(function (taskInfo) {return [taskInfo];})
+    .enter()
+    .append("g")
+    .attr("transform", function(taskInfo) {
     return "translate(" + (taskTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
-  })
-  .on("click", linkTaskInfo)
-  .on("mouseover", function(taskInfo){
-      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
-  })
-  .on("mouseout", function(taskInfo){
-      d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
-  })
-  ;
+    })
+    .on("click", function(taskInfo){
+        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+        linkTaskInfo(taskInfo);
+    })
+    .on("mouseover", function(taskInfo){
+        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
+    })
+    .on("mouseout", function(taskInfo){
+        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+    })
+    ;
 
 
 //add whole time bar
@@ -470,7 +476,10 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .style("background", function(taskInfo, index) {
       return index % 2 == 0 ? "wheat" : "tan";
     })
-    .on("click", linkTaskInfo)
+    .on("click", function(taskInfo, index){
+        d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
+        linkTaskInfo(taskInfo);
+    })
     .on("mouseover", function(){
       d3.select(this).style("background", "orangered");
     })
@@ -504,9 +513,10 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .attr("width", spacePerBar)
     .append("g")
     .attr("transform", "translate(" + (spacePerBar - barWidth) / 2 + "," + 0 + ")")
-    .on("click", function(taskInfo){
+    .on("click", function(taskOrRDDInfo){
       if(barsAreLinked){
-          linkTaskInfo(taskInfo);
+            d3.selectAll(".taskID" + taskOrRDDInfo.taskID).attr("class", "linkBar taskID" + taskOrRDDInfo.taskID);
+            linkTaskInfo(taskOrRDDInfo);
       }
     })
     ;
