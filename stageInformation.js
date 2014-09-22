@@ -1,4 +1,13 @@
 
+function mouseOverTaskGraphBar(taskInfo){
+    d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBar").attr("class", "linkBarHover");
+}
+
+function mouseOutTaskGraphBar(taskInfo){
+    d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar");
+}
+
+
 function linkStageInfo(stageInfo){
         var tabs = d3
         .select("#mainTabs")
@@ -173,14 +182,14 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
     return "translate(" + (taskTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
     })
     .on("click", function(taskInfo){
-        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar");
+        mouseOutTaskGraphBar(taskInfo);
         linkTaskInfo(taskInfo);
     })
     .on("mouseover", function(taskInfo){
-        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBar").attr("class", "linkBarHover");
+        mouseOverTaskGraphBar(taskInfo);
     })
     .on("mouseout", function(taskInfo){
-        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar");
+        mouseOutTaskGraphBar(taskInfo);
     })
     ;
 
@@ -526,9 +535,19 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .attr("transform", "translate(" + (spacePerBar - barWidth) / 2 + "," + 0 + ")")
     .on("click", function(taskOrRDDInfo){
       if(barsAreLinked){
-            d3.selectAll(".graphBarG_taskID" + taskOrRDDInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar taskID" + taskOrRDDInfo.taskID);
+            mouseOutTaskGraphBar(taskOrRDDInfo);
             linkTaskInfo(taskOrRDDInfo);
       }
+    })
+    .on("mouseover", function(taskOrRDDInfo){
+        if(barsAreLinked){
+            mouseOverTaskGraphBar(taskOrRDDInfo);
+        }
+    })
+    .on("mouseout", function(taskOrRDDInfo){
+        if(barsAreLinked){
+            mouseOutTaskGraphBar(taskOrRDDInfo);
+        }
     })
     ;
 
@@ -539,16 +558,6 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .attr("width", barWidth)
     .attr("class", function(taskOrRDDInfo) {
       return barsAreLinked ? "linkBar" : "notLinkBar";
-    })
-    .on("mouseover", function(taskOrRDDInfo){
-        if(barsAreLinked){
-            d3.selectAll(".graphBarG_taskID" + taskOrRDDInfo.taskID).selectAll(".linkBar").attr("class", "linkBarHover taskID" + taskOrRDDInfo.taskID);
-        }
-    })
-    .on("mouseout", function(taskOrRDDInfo){
-        if(barsAreLinked){
-            d3.selectAll(".graphBarG_taskID" + taskOrRDDInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar taskID" + taskOrRDDInfo.taskID);
-        }
     })
     ;
 
@@ -1138,7 +1147,7 @@ addStageResources(stageInfo, resourcesSpace, fontSize);
 
 addTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 
-/*
+//*
             document
             .getElementById("allCheckBox")
             .click()

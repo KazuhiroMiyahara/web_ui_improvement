@@ -1,3 +1,11 @@
+function mouseOverStageGraphBar(stageInfo){
+    d3.selectAll(".graphBarG_stageID" + stageInfo.key).selectAll(".linkBar").attr("class", "linkBarHover");
+}
+
+function mouseOutStageGraphBar(stageInfo){
+    d3.selectAll(".graphBarG_stageID" + stageInfo.key).selectAll(".linkBarHover").attr("class", "linkBar");
+}
+
 function linkStageInfo(stageInfo){
         var tabs = d3
         .select("#mainTabs")
@@ -128,14 +136,14 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
         return "translate(" + (stageTimelineXScale(Number(stageInfo.submissionTime))) + ", " + 0 + ")";
     })
     .on("click", function(stageInfo){
-        d3.selectAll(".graphBarG_stageID" + stageInfo.key).selectAll(".linkBarHover").attr("class", "linkBar");
+        mouseOutStageGraphBar(stageInfo);
         linkStageInfo(stageInfo);
     })
     .on("mouseover", function(stageInfo){
-        d3.selectAll(".graphBarG_stageID" + stageInfo.key).selectAll(".linkBar").attr("class", "linkBarHover");
+        mouseOverStageGraphBar(stageInfo);
     })
     .on("mouseout", function(stageInfo){
-        d3.selectAll(".graphBarG_stageID" + stageInfo.key).selectAll(".linkBarHover").attr("class", "linkBar");
+        mouseOutStageGraphBar(stageInfo);
     })
     ;
 

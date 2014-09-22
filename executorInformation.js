@@ -136,14 +136,14 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
         return "graphBarG_taskID" + taskInfo.taskID;
     })
     .on("click", function(taskInfo){
-        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar");
+        mouseOutTaskGraphBar(taskInfo);
         linkTaskInfo(taskInfo);
     })
     .on("mouseover", function(taskInfo){
-        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBar").attr("class", "linkBarHover");
+        mouseOverTaskGraphBar(taskInfo);
     })
     .on("mouseout", function(taskInfo){
-        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar");
+        mouseOutTaskGraphBar(taskInfo);
     })
     ;
 
