@@ -82,7 +82,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
   var timelineTableAxisCellSvgG = timelineTableAxisCellSvg
   .append("g")
   .attr("transform", "translate(" + timeLineCellPaddingWidth + "," + timelineGraphBarHeight + ")")
-  .attr("class", "axis timelineTableAxisCellSvgG")
+  .attr("class", "axis")
   ;
 
   timelineTableAxisCellSvgG
@@ -166,7 +166,6 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
   .attr("transform", function(taskInfo) {
     return "translate(" + (taskTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
   })
-  .attr("class", "timelineGraphBarForEachTaskG")
   .on("click", linkTaskInfo)
   .on("mouseover", function(taskInfo){
       d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
@@ -179,8 +178,6 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
 
 //add whole time bar
   var timelineGraphBarForEachTaskGWholeRect = timelineGraphBarForEachTaskG
-  .append("g")
-  .attr("class", "timelineGraphBarForEachTaskGWholeRectWrapper")
   .append("rect")
   .attr("class", function(taskInfo) {
     return "linkBar taskID" + taskInfo.taskID;
@@ -200,8 +197,6 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
     return formatTaskInfoForCheckBoxStack(taskInfo, checkBoxAttributes).stackInfoArray;
     })
     .enter()
-    .append("g")
-    .attr("class", "timelineGraphBarForEachTaskGPartialRectWrapper")
     .append("rect")
     .style("fill", function(stackInfo){
     return stackInfo.color;
@@ -216,53 +211,6 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
     return taskTimelineXScale(stackInfo.end) - taskTimelineXScale(stackInfo.start);
     })
     .attr("height", timelineGraphBarHeight)
-    ;
-
-//-------------------------------- add repaint method -------------------------------------
-
-    timelineSpace
-    .repaint = function(){
-
-        this
-        .selectAll(".timelineTableAxisCellSvgG")
-        .call(taskTimelineXAxis)
-        .selectAll("text")
-        .text(function(text) {
-            return dateToString(new Date(Number(text)));
-        })
-        ;
-
-        this
-        .selectAll(".timelineGraphBarForEachTaskG")
-        .attr("transform", function(taskInfo) {
-        return "translate(" + (taskTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
-        })
-        ;
-
-//*
-        timelineGraphBarForEachTaskGWholeRect
-        /*/
-        this
-        .selectAll(".timelineGraphBarForEachTaskGWholeRect")
-        .selectAll("rect")
-        //*/
-        .attr("width", function(taskInfo) {
-        return taskTimelineXScale(Number(taskInfo.taskFinishTime)) - taskTimelineXScale(Number(taskInfo.taskStartTime));
-        })
-        .attr("height", timelineGraphBarHeight)
-        ;
-
-        timelineGraphBarForEachTaskGPartialRect
-        .attr("x", function(stackInfo) {
-        return taskTimelineXScale(stackInfo.start) - taskTimelineXScale(stackInfo.taskStartTime);
-        })
-        .attr("y", 0)
-        .attr("width", function(stackInfo) {
-        return taskTimelineXScale(stackInfo.end) - taskTimelineXScale(stackInfo.start);
-        })
-        .attr("height", timelineGraphBarHeight)
-        ;
-    }
     ;
 
 //--------------------------------- zoom ---------------------------------------------
@@ -284,7 +232,6 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
         taskTimelineXScale.domain([taskTimelineMinLength, taskTimelineMaxLength]).range([0, timelineWidth]);
         taskTimelineXAxis.scale(taskTimelineXScale);
 
-/*
         timelineTableAxisCellSvgG
         .call(taskTimelineXAxis)
         .selectAll("text")
@@ -316,9 +263,6 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
         })
         .attr("height", timelineGraphBarHeight)
         ;
-        */
-
-        timelineSpace.repaint();
 
     })
     ;
@@ -345,7 +289,6 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
         taskTimelineXScale.domain([taskTimelineMinLength, taskTimelineMaxLength]).range([0, timelineWidth]);
         taskTimelineXAxis.scale(taskTimelineXScale);
 
-/*
         timelineTableAxisCellSvgG
         .call(taskTimelineXAxis)
         .selectAll("text")
@@ -377,9 +320,6 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
         })
         .attr("height", timelineGraphBarHeight)
         ;
-        */
-
-        timelineSpace.repaint();
 
     })
     ;
@@ -688,7 +628,6 @@ function addStageResources(stageInfo, resourcesSpace, fontSize) {
 //-------------------------------------------------------------------------------------------------------------------
 
 function resetTimelineOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
-
     timelineSpace.select("table").remove();
     addTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 }
