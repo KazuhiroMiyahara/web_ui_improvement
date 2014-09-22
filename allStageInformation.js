@@ -135,25 +135,8 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .attr("height", timelineGraphBarHeight)
   ;
 
-//--------------------------------- zoom ---------------------------------------------
-    var prevScale = 1.0;
-
-    var zoom = d3
-    .behavior
-    .zoom()
-    .on("zoom", function() {
-        var mousePoint = d3.mouse(this)[0] - timeLineCellPaddingWidth;
-
-        var timeOfMousePoint = stageTimelineXScale.invert(mousePoint);
-        var scaleRate = d3.event.scale / prevScale;
-        prevScale = d3.event.scale;
-
-        stageTimelineMinLength = timeOfMousePoint - (timeOfMousePoint - stageTimelineMinLength) * scaleRate;
-        stageTimelineMaxLength = timeOfMousePoint + (stageTimelineMaxLength - timeOfMousePoint) * scaleRate;
-
-        stageTimelineXScale.domain([stageTimelineMinLength, stageTimelineMaxLength]).range([0, timelineWidth]);
-        stageTimelineXAxis.scale(stageTimelineXScale);
-
+//--------------------------------- repaint ---------------------------------------------
+function repaint(){
         timelineTableAxisCellSvgG
         .call(stageTimelineXAxis)
         .selectAll("text")
@@ -174,6 +157,28 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
         })
         .attr("height", timelineGraphBarHeight)
         ;
+}
+
+//--------------------------------- zoom ---------------------------------------------
+    var prevScale = 1.0;
+
+    var zoom = d3
+    .behavior
+    .zoom()
+    .on("zoom", function() {
+        var mousePoint = d3.mouse(this)[0] - timeLineCellPaddingWidth;
+
+        var timeOfMousePoint = stageTimelineXScale.invert(mousePoint);
+        var scaleRate = d3.event.scale / prevScale;
+        prevScale = d3.event.scale;
+
+        stageTimelineMinLength = timeOfMousePoint - (timeOfMousePoint - stageTimelineMinLength) * scaleRate;
+        stageTimelineMaxLength = timeOfMousePoint + (stageTimelineMaxLength - timeOfMousePoint) * scaleRate;
+
+        stageTimelineXScale.domain([stageTimelineMinLength, stageTimelineMaxLength]).range([0, timelineWidth]);
+        stageTimelineXAxis.scale(stageTimelineXScale);
+
+        repaint();
 
     })
     ;
@@ -200,26 +205,7 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
         stageTimelineXScale.domain([stageTimelineMinLength, stageTimelineMaxLength]).range([0, timelineWidth]);
         stageTimelineXAxis.scale(stageTimelineXScale);
 
-        timelineTableAxisCellSvgG
-        .call(stageTimelineXAxis)
-        .selectAll("text")
-        .text(function(text) {
-            return dateToString(new Date(Number(text)));
-        })
-        ;
-
-        timelineGraphBarForEachTaskG
-        .attr("transform", function(stageInfo) {
-        return "translate(" + (stageTimelineXScale(Number(stageInfo.submissionTime))) + ", " + 0 + ")";
-        })
-        ;
-
-        timelineGraphBarForEachTaskGRect
-        .attr("width", function(stageInfo) {
-        return stageTimelineXScale(Number(stageInfo.completionTime)) - stageTimelineXScale(Number(stageInfo.submissionTime));
-        })
-        .attr("height", timelineGraphBarHeight)
-        ;
+        repaint();
 
     })
     ;

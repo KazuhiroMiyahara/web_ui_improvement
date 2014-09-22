@@ -151,25 +151,9 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
   .attr("height", timelineGraphBarHeight)
   ;
 
-//--------------------------------- zoom ---------------------------------------------
-    var prevScale = 1.0;
+//--------------------------------- repaint ---------------------------------------------
 
-    var zoom = d3
-    .behavior
-    .zoom()
-    .on("zoom", function() {
-        var mousePoint = d3.mouse(this)[0] - timeLineCellPaddingWidth;
-
-        var timeOfMousePoint = executorTimelineXScale.invert(mousePoint);
-        var scaleRate = d3.event.scale / prevScale;
-        prevScale = d3.event.scale;
-
-        executorTimelineMinLength = timeOfMousePoint - (timeOfMousePoint - executorTimelineMinLength) * scaleRate;
-        executorTimelineMaxLength = timeOfMousePoint + (executorTimelineMaxLength - timeOfMousePoint) * scaleRate;
-
-        executorTimelineXScale.domain([executorTimelineMinLength, executorTimelineMaxLength]).range([0, timelineWidth]);
-        executorTimelineXAxis.scale(executorTimelineXScale);
-
+function repaint(){
         timelineTableAxisCellSvgG
         .call(executorTimelineXAxis)
         .selectAll("text")
@@ -190,6 +174,28 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
         })
         .attr("height", timelineGraphBarHeight)
         ;
+}
+
+//--------------------------------- zoom ---------------------------------------------
+    var prevScale = 1.0;
+
+    var zoom = d3
+    .behavior
+    .zoom()
+    .on("zoom", function() {
+        var mousePoint = d3.mouse(this)[0] - timeLineCellPaddingWidth;
+
+        var timeOfMousePoint = executorTimelineXScale.invert(mousePoint);
+        var scaleRate = d3.event.scale / prevScale;
+        prevScale = d3.event.scale;
+
+        executorTimelineMinLength = timeOfMousePoint - (timeOfMousePoint - executorTimelineMinLength) * scaleRate;
+        executorTimelineMaxLength = timeOfMousePoint + (executorTimelineMaxLength - timeOfMousePoint) * scaleRate;
+
+        executorTimelineXScale.domain([executorTimelineMinLength, executorTimelineMaxLength]).range([0, timelineWidth]);
+        executorTimelineXAxis.scale(executorTimelineXScale);
+
+        repaint();
 
     })
     ;
@@ -216,26 +222,7 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
         executorTimelineXScale.domain([executorTimelineMinLength, executorTimelineMaxLength]).range([0, timelineWidth]);
         executorTimelineXAxis.scale(executorTimelineXScale);
 
-        timelineTableAxisCellSvgG
-        .call(executorTimelineXAxis)
-        .selectAll("text")
-        .text(function(text) {
-            return dateToString(new Date(Number(text)));
-        })
-        ;
-
-        timelineGraphBarForEachTaskG
-        .attr("transform", function(taskInfo) {
-        return "translate(" + (executorTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
-        })
-        ;
-
-        timelineGraphBarForEachTaskGRect
-        .attr("width", function(taskInfo) {
-        return executorTimelineXScale(Number(taskInfo.taskFinishTime)) - executorTimelineXScale(Number(taskInfo.taskStartTime));
-        })
-        .attr("height", timelineGraphBarHeight)
-        ;
+        repaint();
 
     })
     ;
