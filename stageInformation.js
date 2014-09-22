@@ -679,15 +679,23 @@ function repaintTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAtt
 
 //-------------------------------------------------------------------------------------------------------------------
 
-function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
+function sortTasksOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes, accessor){
 
     var taskInfoArray = stageInfo.values;
     taskInfoArray = taskInfoArray
-    .sort(function (a, b) { return d3.ascending(Number(a.taskID), Number(b.taskID));})
+    .sort(function (a, b) { return d3.ascending(accessor(a), accessor(b));})
     ;
     stageInfo.values = taskInfoArray;
 
     repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
+
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
+
+    sortTasksOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes, function(a) { return Number(a.taskID); })
 
 }
 
@@ -696,13 +704,8 @@ function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize, che
 
 function sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
 
-    var taskInfoArray = stageInfo.values;
-    taskInfoArray = taskInfoArray
-    .sort(function (a, b) { return d3.ascending(Number(a.taskStartTime), Number(b.taskStartTime));})
-    ;
-    stageInfo.values = taskInfoArray;
+    sortTasksOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes, function(a) { return Number(a.taskStartTime); })
 
-    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
@@ -711,13 +714,7 @@ function sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSi
 
 function sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
 
-    var taskInfoArray = stageInfo.values;
-    taskInfoArray = taskInfoArray
-    .sort(function (a, b) { return d3.descending(Number(a.taskFinishTime) - Number(a.taskStartTime), Number(b.taskFinishTime) - Number(b.taskStartTime));})
-    ;
-    stageInfo.values = taskInfoArray;
-
-    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
+    sortTasksOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes, function(a) { return -(Number(a.taskFinishTime) - Number(a.taskStartTime)); })
 
 }
 
@@ -726,13 +723,7 @@ function sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize
 
 function sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
 
-    var taskInfoArray = stageInfo.values;
-    taskInfoArray = taskInfoArray
-    .sort(function (a, b) { return d3.ascending(Number(a.executorID), Number(b.executorID));})
-    ;
-    stageInfo.values = taskInfoArray;
-
-    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
+    sortTasksOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes, function(a) { return Number(a.executorID); })
 
 }
 
@@ -741,13 +732,7 @@ function sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontS
 
 function sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
 
-    var taskInfoArray = stageInfo.values;
-    taskInfoArray = taskInfoArray
-    .sort(function (a, b) { return d3.ascending(a.hostName, b.hostName);})
-    ;
-    stageInfo.values = taskInfoArray;
-
-    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
+    sortTasksOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes, function(a) { return a.hostName; })
 
 }
 
@@ -756,13 +741,7 @@ function sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSiz
 
 function sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
 
-    var taskInfoArray = stageInfo.values;
-    taskInfoArray = taskInfoArray
-    .sort(function (a, b) { return d3.descending(formatTaskInfoForCheckBoxStack(a, checkBoxAttributes).sumTime, formatTaskInfoForCheckBoxStack(b, checkBoxAttributes).sumTime);})
-    ;
-    stageInfo.values = taskInfoArray;
-
-    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
+    sortTasksOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes, function(a) { return - formatTaskInfoForCheckBoxStack(a, checkBoxAttributes).sumTime; })
 
 }
 
