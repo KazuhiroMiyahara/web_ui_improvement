@@ -1,4 +1,7 @@
 
+var EXECUTOR_TIMELINE_MIN_LENGTH = null;
+var EXECUTOR_TIMELINE_MAX_LENGTH = null;
+
 function linkExecutorInfo(executorInfo){
         var tabs = d3
         .select("#mainTabs")
@@ -43,13 +46,13 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
   var timelineAxisHeight = timelineGraphBarHeight;
   var timelineAxisWidth = timelineWidth;
 
-  var executorTimelineMinLength = d3.min(executorInfoArray, function(executorInfo) {
+  var executorTimelineMinLength = EXECUTOR_TIMELINE_MIN_LENGTH != null ? EXECUTOR_TIMELINE_MIN_LENGTH : d3.min(executorInfoArray, function(executorInfo) {
     return d3.min(executorInfo.values, function(taskInfo) {
       return Number(taskInfo.taskStartTime);
     });
   });
 
-  var executorTimelineMaxLength = d3.max(executorInfoArray, function(executorInfo) {
+  var executorTimelineMaxLength = EXECUTOR_TIMELINE_MAX_LENGTH != null ? EXECUTOR_TIMELINE_MAX_LENGTH : d3.max(executorInfoArray, function(executorInfo) {
     return d3.max(executorInfo.values, function(taskInfo) {
       return Number(taskInfo.taskFinishTime);
     });
@@ -150,7 +153,7 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
   var timelineGraphBarForEachTaskGRect = timelineGraphBarForEachTaskG
   .append("rect")
   .attr("class", function(taskInfo) {
-    return "linkBar taskID" + taskInfo.taskID;
+    return "linkBar";
   })
   .attr("x", 0)
   .attr("y", 0)
@@ -201,6 +204,9 @@ function repaint(){
         executorTimelineMinLength = timeOfMousePoint - (timeOfMousePoint - executorTimelineMinLength) * scaleRate;
         executorTimelineMaxLength = timeOfMousePoint + (executorTimelineMaxLength - timeOfMousePoint) * scaleRate;
 
+        EXECUTOR_TIMELINE_MIN_LENGTH = executorTimelineMinLength;
+        EXECUTOR_TIMELINE_MAX_LENGTH = executorTimelineMaxLength;
+
         executorTimelineXScale.domain([executorTimelineMinLength, executorTimelineMaxLength]).range([0, timelineWidth]);
         executorTimelineXAxis.scale(executorTimelineXScale);
 
@@ -227,6 +233,9 @@ function repaint(){
 
         executorTimelineMinLength -= executorTimelineDiffLength;
         executorTimelineMaxLength -= executorTimelineDiffLength;
+
+        EXECUTOR_TIMELINE_MIN_LENGTH = executorTimelineMinLength;
+        EXECUTOR_TIMELINE_MAX_LENGTH = executorTimelineMaxLength;
 
         executorTimelineXScale.domain([executorTimelineMinLength, executorTimelineMaxLength]).range([0, timelineWidth]);
         executorTimelineXAxis.scale(executorTimelineXScale);
@@ -300,6 +309,13 @@ function addExecutorResources(executorInfoArray, resourcesSpace, fontSize) {
 
 }
 
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function repaintExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
+    timelineSpace.select("table").remove();
+    addExecutorTimeline(executorInfoArray, timelineSpace, fontSize);
+}
 
 
 //-------------------------------------------------------------------------------------------------------------------

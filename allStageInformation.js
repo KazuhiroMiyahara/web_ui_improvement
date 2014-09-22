@@ -1,3 +1,13 @@
+
+
+
+
+
+
+var STAGE_TIMELINE_MIN_LENGTH = null;
+var STAGE_TIMELINE_MAX_LENGTH = null;
+
+
 function mouseOverStageGraphBar(stageInfo){
     d3.selectAll(".graphBarG_stageID" + stageInfo.key).selectAll(".linkBar").attr("class", "linkBarHover");
 }
@@ -50,11 +60,11 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   var timelineAxisHeight = timelineGraphBarHeight;
   var timelineAxisWidth = timelineWidth;
 
-  var stageTimelineMinLength = d3.min(stageInfoArray, function(stageInfo) {
+  var stageTimelineMinLength = STAGE_TIMELINE_MIN_LENGTH != null ? STAGE_TIMELINE_MIN_LENGTH : d3.min(stageInfoArray, function(stageInfo) {
       return Number(stageInfo.submissionTime);
   });
 
-  var stageTimelineMaxLength = d3.max(stageInfoArray, function(stageInfo) {
+  var stageTimelineMaxLength = STAGE_TIMELINE_MAX_LENGTH != null ? STAGE_TIMELINE_MAX_LENGTH : d3.max(stageInfoArray, function(stageInfo) {
       return Number(stageInfo.completionTime);
   });
 
@@ -198,6 +208,9 @@ function repaint(){
         stageTimelineMinLength = timeOfMousePoint - (timeOfMousePoint - stageTimelineMinLength) * scaleRate;
         stageTimelineMaxLength = timeOfMousePoint + (stageTimelineMaxLength - timeOfMousePoint) * scaleRate;
 
+        STAGE_TIMELINE_MIN_LENGTH = stageTimelineMinLength;
+        STAGE_TIMELINE_MAX_LENGTH = stageTimelineMaxLength;
+
         stageTimelineXScale.domain([stageTimelineMinLength, stageTimelineMaxLength]).range([0, timelineWidth]);
         stageTimelineXAxis.scale(stageTimelineXScale);
 
@@ -331,11 +344,17 @@ function sortStagesOfAllStageInformationByRunTime(timelineSpace, fontSize){
 }
 
 function sortStagesOfAllStageInformation(timelineSpace, fontSize, accessor){
-    timelineSpace.select("table").remove();
-
     STAGE_INFO_ARRAY = STAGE_INFO_ARRAY
     .sort(function (a, b) { return d3.ascending(accessor(a), accessor(b)); })
     ;
 
-    addStageTimeline(STAGE_INFO_ARRAY, timelineSpace, fontSize);
+    repaintStageTimeline(STAGE_INFO_ARRAY, timelineSpace, fontSize);
 }
+
+function repaintStageTimeline(stageInfoArray, timelineSpace, fontSize){
+    timelineSpace.select("table").remove();
+    addStageTimeline(stageInfoArray, timelineSpace, fontSize);
+}
+
+
+

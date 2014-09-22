@@ -1,4 +1,7 @@
 
+var TASK_TIMELINE_MIN_LENGTH = null;
+var TASK_TIMELINE_MAX_LENGTH = null;
+
 function mouseOverTaskGraphBar(taskInfo){
     d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBar").attr("class", "linkBarHover");
     d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".partialBar")
@@ -30,7 +33,10 @@ function linkStageInfo(stageInfo){
         switchTab(tabs, MAIN_TAB_PROPERTIES, "Variable");
 }
 
+//----------------------------------------------------------------------------------------------------------------
+
 function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes){
+
   var timelineTable = timelineSpace
   .append("table")
   .style("font-size", fontSize + "px")
@@ -80,11 +86,11 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
   var timelineAxisHeight = timelineGraphBarHeight;
   var timelineAxisWidth = timelineWidth;
 
-  var taskTimelineMinLength = d3.min(taskInfoArray, function(taskInfo) {
+  var taskTimelineMinLength = TASK_TIMELINE_MIN_LENGTH != null ? TASK_TIMELINE_MIN_LENGTH : d3.min(taskInfoArray, function(taskInfo) {
       return Number(taskInfo.taskStartTime);
   });
 
-  var taskTimelineMaxLength = d3.max(taskInfoArray, function(taskInfo) {
+  var taskTimelineMaxLength = TASK_TIMELINE_MAX_LENGTH != null ? TASK_TIMELINE_MAX_LENGTH : d3.max(taskInfoArray, function(taskInfo) {
       return Number(taskInfo.taskFinishTime);
   });
 
@@ -244,7 +250,8 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
 
 //--------------------------------- repaint ---------------------------------------------
 
-function repaint(){
+var repaint = function (){
+
         timelineTableAxisCellSvgG
         .call(taskTimelineXAxis)
         .selectAll("text")
@@ -255,24 +262,24 @@ function repaint(){
 
         timelineGraphBarForEachTaskG
         .attr("transform", function(taskInfo) {
-        return "translate(" + (taskTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
+            return "translate(" + (taskTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
         })
         ;
 
         timelineGraphBarForEachTaskGWholeRect
         .attr("width", function(taskInfo) {
-        return taskTimelineXScale(Number(taskInfo.taskFinishTime)) - taskTimelineXScale(Number(taskInfo.taskStartTime));
+            return taskTimelineXScale(Number(taskInfo.taskFinishTime)) - taskTimelineXScale(Number(taskInfo.taskStartTime));
         })
         .attr("height", timelineGraphBarHeight)
         ;
 
         timelineGraphBarForEachTaskGPartialRect
         .attr("x", function(stackInfo) {
-        return taskTimelineXScale(stackInfo.start) - taskTimelineXScale(stackInfo.taskStartTime);
+            return taskTimelineXScale(stackInfo.start) - taskTimelineXScale(stackInfo.taskStartTime);
         })
         .attr("y", 0)
         .attr("width", function(stackInfo) {
-        return taskTimelineXScale(stackInfo.end) - taskTimelineXScale(stackInfo.start);
+            return taskTimelineXScale(stackInfo.end) - taskTimelineXScale(stackInfo.start);
         })
         .attr("height", timelineGraphBarHeight)
         ;
@@ -293,6 +300,9 @@ function repaint(){
 
         taskTimelineMinLength = timeOfMousePoint - (timeOfMousePoint - taskTimelineMinLength) * scaleRate;
         taskTimelineMaxLength = timeOfMousePoint + (taskTimelineMaxLength - timeOfMousePoint) * scaleRate;
+
+        TASK_TIMELINE_MIN_LENGTH = taskTimelineMinLength;
+        TASK_TIMELINE_MAX_LENGTH = taskTimelineMaxLength;
 
         taskTimelineXScale.domain([taskTimelineMinLength, taskTimelineMaxLength]).range([0, timelineWidth]);
         taskTimelineXAxis.scale(taskTimelineXScale);
@@ -321,6 +331,9 @@ function repaint(){
         taskTimelineMinLength -= taskTimelineDiffLength;
         taskTimelineMaxLength -= taskTimelineDiffLength;
 
+        TASK_TIMELINE_MIN_LENGTH = taskTimelineMinLength;
+        TASK_TIMELINE_MAX_LENGTH = taskTimelineMaxLength;
+
         taskTimelineXScale.domain([taskTimelineMinLength, taskTimelineMaxLength]).range([0, timelineWidth]);
         taskTimelineXAxis.scale(taskTimelineXScale);
 
@@ -337,7 +350,7 @@ function repaint(){
     .call(drag)
     ;
 
-
+//--------------------------------------------------------------------------------------
 
 
 
@@ -647,15 +660,26 @@ function addStageResources(stageInfo, resourcesSpace, fontSize) {
 
 //-------------------------------------------------------------------------------------------------------------------
 
-function resetTimelineOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
+function resetTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes){
+    TASK_TIMELINE_MIN_LENGTH = null;
+    TASK_TIMELINE_MAX_LENGTH = null;
+
     timelineSpace.select("table").remove();
-    addTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
 }
 
 //-------------------------------------------------------------------------------------------------------------------
 
-function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
+function repaintTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes){
     timelineSpace.select("table").remove();
+    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
+}
+
+
+
+//-------------------------------------------------------------------------------------------------------------------
+
+function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
 
     var taskInfoArray = stageInfo.values;
     taskInfoArray = taskInfoArray
@@ -663,7 +687,7 @@ function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize, che
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
+    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
@@ -671,7 +695,6 @@ function sortTasksOfStageInformationByID(stageInfo, timelineSpace, fontSize, che
 //-------------------------------------------------------------------------------------------------------------------
 
 function sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
-    timelineSpace.select("table").remove();
 
     var taskInfoArray = stageInfo.values;
     taskInfoArray = taskInfoArray
@@ -679,7 +702,7 @@ function sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSi
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
+    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
@@ -687,7 +710,6 @@ function sortTasksOfStageInformationByStartTime(stageInfo, timelineSpace, fontSi
 //-------------------------------------------------------------------------------------------------------------------
 
 function sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
-    timelineSpace.select("table").remove();
 
     var taskInfoArray = stageInfo.values;
     taskInfoArray = taskInfoArray
@@ -695,7 +717,7 @@ function sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
+    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
@@ -703,7 +725,6 @@ function sortTasksOfStageInformationByRunTime(stageInfo, timelineSpace, fontSize
 //-------------------------------------------------------------------------------------------------------------------
 
 function sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
-    timelineSpace.select("table").remove();
 
     var taskInfoArray = stageInfo.values;
     taskInfoArray = taskInfoArray
@@ -711,7 +732,7 @@ function sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontS
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
+    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
@@ -719,7 +740,6 @@ function sortTasksOfStageInformationByExecutorID(stageInfo, timelineSpace, fontS
 //-------------------------------------------------------------------------------------------------------------------
 
 function sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
-    timelineSpace.select("table").remove();
 
     var taskInfoArray = stageInfo.values;
     taskInfoArray = taskInfoArray
@@ -727,7 +747,7 @@ function sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSiz
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
+    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
@@ -736,15 +756,13 @@ function sortTasksOfStageInformationByHostName(stageInfo, timelineSpace, fontSiz
 
 function sortTasksOfStageInformationBySumOfCheckedParameters(stageInfo, timelineSpace, fontSize, checkBoxAttributes){
 
-    timelineSpace.select("table").remove();
-
     var taskInfoArray = stageInfo.values;
     taskInfoArray = taskInfoArray
     .sort(function (a, b) { return d3.descending(formatTaskInfoForCheckBoxStack(a, checkBoxAttributes).sumTime, formatTaskInfoForCheckBoxStack(b, checkBoxAttributes).sumTime);})
     ;
     stageInfo.values = taskInfoArray;
 
-    addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttributes);
+    repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 
 }
 
@@ -775,23 +793,23 @@ var checkBox = checkBoxSpace
 .attr("type", "checkbox")
 .attr("id", property + "CheckBox")
 .on("click", function(){
-         if(this.checked){
-             d3
-             .select("#" + property + "CheckBoxSpace")
-             .style("background", makeColorsOfTaskElementsWithoutPartition()[typeName])
-             .style("color", "black")
-             ;
-         }else{
-             d3
-             .select("#" + property + "CheckBoxSpace")
-             .style("background", "sienna")
-             .style("color", "white")
-             ;
-         }
-
-         resetTimelineOfStageInformation(stageInfo, timelineSpace, fontSize, checkBoxAttributes);
-
+     if(this.checked){
+         d3
+         .select("#" + property + "CheckBoxSpace")
+         .style("background", makeColorsOfTaskElementsWithoutPartition()[typeName])
+         .style("color", "black")
+         ;
+     }else{
+         d3
+         .select("#" + property + "CheckBoxSpace")
+         .style("background", "sienna")
+         .style("color", "white")
+         ;
      }
+
+     repaintTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
+
+    }
 )
 ;
 
@@ -1142,6 +1160,7 @@ checkBoxAttributes
 })
 addAllCheckBox(checkBoxRow, stageInfo, checkBoxAttributes);
 
+
 //-------------------------------------------------------------------------------
 
 var resourcesRow = mainTable
@@ -1165,8 +1184,6 @@ addTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
             .click()
             ;
 //*/
-
-
 
 
 
