@@ -473,18 +473,24 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     })
     .style("font-size", fontSize + "px")
     .style("padding", "12px")
-    .style("background", function(taskInfo, index) {
+    .style("background", function(taskOrRDDInfo, index) {
       return index % 2 == 0 ? "wheat" : "tan";
     })
-    .on("click", function(taskInfo, index){
-        d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
-        linkTaskInfo(taskInfo);
+    .on("click", function(taskOrRDDInfo, index){
+        if(barsAreLinked){
+            d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
+            linkTaskInfo(taskOrRDDInfo);
+        }
     })
     .on("mouseover", function(){
-      d3.select(this).style("background", "orangered");
+        if(barsAreLinked){
+            d3.select(this).style("background", "orangered");
+        }
     })
     .on("mouseout", function(taskInfo, index){
-      d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
+        if(barsAreLinked){
+            d3.select(this).style("background", index % 2 == 0 ? "wheat" : "tan");
+        }
     })
     ;
 
@@ -550,7 +556,9 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     ;
 
 }
+
 //-------------------------------------------------------------------------------------------------------------------
+
 function addStageResources(stageInfo, resourcesSpace, fontSize) {
   var stageResourcesTabBox = resourcesSpace
   .append("div")
