@@ -119,13 +119,25 @@ function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
   .attr("overflow", "hidden")
   ;
 
-  var timelineGraphBarForEachTaskG = timelineGraphBarSvg
-  .append("g")
-  .attr("transform", function(stageInfo) {
-    return "translate(" + (stageTimelineXScale(Number(stageInfo.submissionTime))) + ", " + 0 + ")";
-  })
-  .on("click", linkStageInfo)
-  ;
+    var timelineGraphBarForEachTaskG = timelineGraphBarSvg
+    .append("g")
+    .attr("class", function(stageInfo){
+        return "graphBarG_stageID" + stageInfo.key;
+    })
+    .attr("transform", function(stageInfo) {
+        return "translate(" + (stageTimelineXScale(Number(stageInfo.submissionTime))) + ", " + 0 + ")";
+    })
+    .on("click", function(stageInfo){
+        d3.selectAll(".graphBarG_stageID" + stageInfo.key).selectAll(".linkBarHover").attr("class", "linkBar");
+        linkStageInfo(stageInfo);
+    })
+    .on("mouseover", function(stageInfo){
+        d3.selectAll(".graphBarG_stageID" + stageInfo.key).selectAll(".linkBar").attr("class", "linkBarHover");
+    })
+    .on("mouseout", function(stageInfo){
+        d3.selectAll(".graphBarG_stageID" + stageInfo.key).selectAll(".linkBarHover").attr("class", "linkBar");
+    })
+    ;
 
   var timelineGraphBarForEachTaskGRect = timelineGraphBarForEachTaskG
   .append("rect")

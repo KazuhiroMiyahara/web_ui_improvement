@@ -132,15 +132,18 @@ function addExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
     .attr("transform", function(taskInfo) {
         return "translate(" + (executorTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
     })
+    .attr("class", function(taskInfo){
+        return "graphBarG_taskID" + taskInfo.taskID;
+    })
     .on("click", function(taskInfo){
-        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar");
         linkTaskInfo(taskInfo);
     })
     .on("mouseover", function(taskInfo){
-        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
+        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBar").attr("class", "linkBarHover");
     })
     .on("mouseout", function(taskInfo){
-        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar");
     })
     ;
 

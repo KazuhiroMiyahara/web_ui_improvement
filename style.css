@@ -23,7 +23,10 @@ p {
 }
 
 .linkBar:hover {
+    fill: yellow;
+/*
   fill: orangered;
+  */
 }
 
 .linkIDSpace:hover {

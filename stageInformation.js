@@ -166,18 +166,21 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
     .data(function (taskInfo) {return [taskInfo];})
     .enter()
     .append("g")
+    .attr("class", function(taskInfo){
+        return "graphBarG_taskID" + taskInfo.taskID;
+    })
     .attr("transform", function(taskInfo) {
     return "translate(" + (taskTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
     })
     .on("click", function(taskInfo){
-        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar");
         linkTaskInfo(taskInfo);
     })
     .on("mouseover", function(taskInfo){
-        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBarHover taskID" + taskInfo.taskID);
+        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBar").attr("class", "linkBarHover");
     })
     .on("mouseout", function(taskInfo){
-        d3.selectAll(".taskID" + taskInfo.taskID).attr("class", "linkBar taskID" + taskInfo.taskID);
+        d3.selectAll(".graphBarG_taskID" + taskInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar");
     })
     ;
 
@@ -185,9 +188,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
 //add whole time bar
   var timelineGraphBarForEachTaskGWholeRect = timelineGraphBarForEachTaskG
   .append("rect")
-  .attr("class", function(taskInfo) {
-    return "linkBar taskID" + taskInfo.taskID;
-  })
+  .attr("class", "linkBar")
   .attr("x", 0)
   .attr("y", 0)
   .attr("width", function(taskInfo) {
@@ -204,6 +205,7 @@ function addTaskTimeline(taskInfoArray, timelineSpace, fontSize, checkBoxAttribu
     })
     .enter()
     .append("rect")
+    .attr("class", "partialBar")
     .style("fill", function(stackInfo){
     return stackInfo.color;
     })
@@ -518,10 +520,13 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .attr("height", height + resourcesCellPaddingUpper)
     .attr("width", spacePerBar)
     .append("g")
+    .attr("class", function(taskInfo){
+        return "graphBarG_taskID" + taskInfo.taskID;
+    })
     .attr("transform", "translate(" + (spacePerBar - barWidth) / 2 + "," + 0 + ")")
     .on("click", function(taskOrRDDInfo){
       if(barsAreLinked){
-            d3.selectAll(".taskID" + taskOrRDDInfo.taskID).attr("class", "linkBar taskID" + taskOrRDDInfo.taskID);
+            d3.selectAll(".graphBarG_taskID" + taskOrRDDInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar taskID" + taskOrRDDInfo.taskID);
             linkTaskInfo(taskOrRDDInfo);
       }
     })
@@ -533,16 +538,16 @@ function addBarGraph(array, space, accessorFunction, xAxisMapper, barsAreLinked,
     .attr("height", function(d) { return height - yScale(accessorFunction(d)); })
     .attr("width", barWidth)
     .attr("class", function(taskOrRDDInfo) {
-      return barsAreLinked ? ("linkBar taskID" + taskOrRDDInfo.taskID) : "notLinkBar";
+      return barsAreLinked ? "linkBar" : "notLinkBar";
     })
     .on("mouseover", function(taskOrRDDInfo){
         if(barsAreLinked){
-            d3.selectAll(".taskID" + taskOrRDDInfo.taskID).attr("class", "linkBarHover taskID" + taskOrRDDInfo.taskID);
+            d3.selectAll(".graphBarG_taskID" + taskOrRDDInfo.taskID).selectAll(".linkBar").attr("class", "linkBarHover taskID" + taskOrRDDInfo.taskID);
         }
     })
     .on("mouseout", function(taskOrRDDInfo){
         if(barsAreLinked){
-            d3.selectAll(".taskID" + taskOrRDDInfo.taskID).attr("class", "linkBar taskID" + taskOrRDDInfo.taskID);
+            d3.selectAll(".graphBarG_taskID" + taskOrRDDInfo.taskID).selectAll(".linkBarHover").attr("class", "linkBar taskID" + taskOrRDDInfo.taskID);
         }
     })
     ;
@@ -1132,6 +1137,13 @@ var resourcesSpace = resourcesRow
 addStageResources(stageInfo, resourcesSpace, fontSize);
 
 addTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
+
+/*
+            document
+            .getElementById("allCheckBox")
+            .click()
+            ;
+//*/
 
 
 
