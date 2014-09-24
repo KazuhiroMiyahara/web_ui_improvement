@@ -81,6 +81,7 @@ function makeColorsOfTaskElements(dataPart){
 //--------------------------------------------------------------------------------------------------------------------
 
 function showTaskInformation(showDiv, taskInfo){
+fontSize = 20;
 
 var timeFormat = formatTaskTimes(taskInfo);
 
@@ -88,15 +89,64 @@ var radius = 300;
 var svgHeight = 2 * radius;
 var svgWidth = 2 * radius + 100;
 
-var mainTr = showDiv
+var mainTable = showDiv
 .append("table")
+;
+
+var menuButtonRow = mainTable
+.append("tr")
+;
+
+var menuButtonSpace = menuButtonRow
+.append("td")
+.style("padding", "12px")
+;
+
+var menuButtons = menuButtonSpace
+.append("ul")
+.attr("id", "menuButtons")
+;
+
+var goToMenu = menuButtons
+.append("li")
+.text("Go To ...")
+.style("font-size", fontSize + "px")
+.append("ul")
+;
+
+var goToExecutorButton = goToMenu
+.append("li")
+.on("click", function(){
+    var executorInfo = EXECUTOR_INFO_ARRAY
+    .filter(function(executorInfo) { return executorInfo.key == taskInfo.executorID; })[0]
+    ;
+
+    linkExecutorInfo(executorInfo);
+})
+.text("Executor")
+;
+
+var goToStageButton = goToMenu
+.append("li")
+.on("click", function(){
+    var stageInfo = STAGE_INFO_ARRAY
+    .filter(function(stageInfo) { return stageInfo.key == taskInfo.stageID; })[0]
+    ;
+
+    linkStageInfo(stageInfo);
+})
+.text("Stage")
+;
+
+
+var mainTr = mainTable
 .append("tr")
 .attr("valign", "top")
 ;
 
 var mainTrLeft = mainTr.append("td");
 var mainTrCenter = mainTr.append("td");
-var mainTrRight = mainTr.append("td");
+//var mainTrRight = mainTr.append("td");
 
 var circleGraphSvg = mainTrLeft
 .append("svg")
@@ -271,100 +321,6 @@ informationTable
 ;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-var buttonTable = mainTrRight
-.append("div")
-.append("table")
-;
-
-var executorButton = buttonTable
-.append("tr")
-.attr("align", "center")
-.attr("valign", "top")
-.append("td")
-.attr("width", "200px")
-.style("padding", "12px")
-.style("background", "crimson")
-.style("font-size", "20px")
-.style("font-weight", "bold")
-.style("color", "white")
-.text("go to executor")
-.on("mouseover", function(){
-  d3.select(this).style("background", "deeppink");
-})
-.on("mouseout", function(executorInfo, index){
-  d3.select(this).style("background", "crimson");
-})
-;
-
-executorButton
-.on("click", function(){
-    var executorInfo = EXECUTOR_INFO_ARRAY
-    .filter(function(executorInfo) { return executorInfo.key == taskInfo.executorID; })[0]
-    ;
-
-    linkExecutorInfo(executorInfo);
-})
-;
-
-var stageButton = buttonTable
-.append("tr")
-.attr("align", "center")
-.attr("valign", "top")
-.append("td")
-.attr("width", "200px")
-.style("padding", "12px")
-.style("background", "crimson")
-.style("font-size", "20px")
-.style("font-weight", "bold")
-.style("color", "white")
-.text("go to stage")
-.on("mouseover", function(){
-  d3.select(this).style("background", "deeppink");
-})
-.on("mouseout", function(executorInfo, index){
-  d3.select(this).style("background", "crimson");
-})
-;
-
-stageButton
-.on("click", function(){
-    var stageInfo = STAGE_INFO_ARRAY
-    .filter(function(stageInfo) { return stageInfo.key == taskInfo.stageID; })[0]
-    ;
-
-    linkStageInfo(stageInfo);
-})
-;
-
-/*
-  var timelineGraphBarForEachTaskG = timelineGraphBarSvg
-  .selectAll(".g")
-  .data(function (executorInfo) {
-    return executorInfo.values;
-  })
-  .enter()
-  .append("g")
-  .attr("transform", function(taskInfo) {
-    return "translate(" + (executorTimelineXScale(Number(taskInfo.taskStartTime))) + ", " + 0 + ")";
-  })
-  .on("click", linkTaskInfo)
-  ;
-
-  timelineGraphBarForEachTaskG
-  .append("rect")
-  .attr("id", "bar")
-  .attr("class", "linkBar")
-  .attr("x", 0)
-  .attr("y", 0)
-  .attr("width", function(taskInfo) {
-    return executorTimelineXScale(Number(taskInfo.taskFinishTime)) - executorTimelineXScale(Number(taskInfo.taskStartTime));
-  })
-  .attr("height", timelineGraphBarHeight)
-  ;
-*/
-
-
 
 
 }

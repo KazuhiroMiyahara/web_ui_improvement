@@ -1172,7 +1172,7 @@ addStageResources(stageInfo, resourcesSpace, fontSize);
 
 addTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
 
-//*
+/*
             document
             .getElementById("allCheckBox")
             .click()
