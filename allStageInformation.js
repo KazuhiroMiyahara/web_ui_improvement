@@ -311,6 +311,16 @@ var runTimeSortButton = sortMenu
 .text("Run Time")
 ;
 
+var resetScaleMenu = menuButtons
+.append("li")
+.text("Reset Time Line Scale")
+.style("font-size", fontSize + "px")
+.on("click", function(){
+    resetStageTimeline(STAGE_INFO_ARRAY, timelineSpace, fontSize);
+})
+.append("ul")
+;
+
 
 
 var timelineRow = mainTable
@@ -352,6 +362,14 @@ function sortStagesOfAllStageInformation(timelineSpace, fontSize, accessor){
 }
 
 function repaintStageTimeline(stageInfoArray, timelineSpace, fontSize){
+    timelineSpace.select("table").remove();
+    addStageTimeline(stageInfoArray, timelineSpace, fontSize);
+}
+
+function resetStageTimeline(stageInfoArray, timelineSpace, fontSize){
+    STAGE_TIMELINE_MAX_LENGTH = null;
+    STAGE_TIMELINE_MIN_LENGTH = null;
+
     timelineSpace.select("table").remove();
     addStageTimeline(stageInfoArray, timelineSpace, fontSize);
 }

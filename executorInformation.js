@@ -317,6 +317,14 @@ function repaintExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
     addExecutorTimeline(executorInfoArray, timelineSpace, fontSize);
 }
 
+function resetExecutorTimeline(executorInfoArray, timelineSpace, fontSize){
+    EXECUTOR_TIMELINE_MAX_LENGTH = null;
+    EXECUTOR_TIMELINE_MIN_LENGTH = null;
+
+    timelineSpace.select("table").remove();
+    addExecutorTimeline(executorInfoArray, timelineSpace, fontSize);
+}
+
 
 //-------------------------------------------------------------------------------------------------------------------
 
@@ -326,6 +334,30 @@ var fontSize = 20;
 
 var mainTable = showDiv
 .append("table")
+;
+
+var menuButtonRow = mainTable
+.append("tr")
+;
+
+var menuButtonSpace = menuButtonRow
+.append("td")
+.style("padding", "12px")
+;
+
+var menuButtons = menuButtonSpace
+.append("ul")
+.attr("id", "menuButtons")
+;
+
+var resetScaleMenu = menuButtons
+.append("li")
+.text("Reset Time Line Scale")
+.style("font-size", fontSize + "px")
+.on("click", function(){
+    resetExecutorTimeline([executorInfo], timelineSpace, fontSize);
+})
+.append("ul")
 ;
 
 var timelineRow = mainTable

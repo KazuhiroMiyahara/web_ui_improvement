@@ -1064,7 +1064,18 @@ var sumSortButton = sortMenu
 .text("Sum of Checked Parameters")
 ;
 
+var resetScaleMenu = menuButtons
+.append("li")
+.text("Reset Time Line Scale")
+.style("font-size", fontSize + "px")
+.on("click", function(){
+    resetTaskTimeline(stageInfo.values, timelineSpace, fontSize, checkBoxAttributes);
+})
+.append("ul")
+;
+
 //-------------------------------------------------------------------------------
+
 
 var checkBoxTableRow = mainTable
 .append("tr")
@@ -1141,6 +1152,10 @@ addAllCheckBox(checkBoxRow, stageInfo, checkBoxAttributes);
 
 
 //-------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------
+
 
 var resourcesRow = mainTable
 .append("tr")
