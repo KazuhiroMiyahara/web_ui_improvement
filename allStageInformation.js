@@ -27,24 +27,7 @@ function linkStageInfo(stageInfo){
 }
 
 function addStageTimeline(stageInfoArray, timelineSpace, fontSize){
-  var timelineWidth = 1200;
-  var timelineCellWidth = timelineWidth + 2 * timeLineCellPaddingWidth;
-  var timelineGraphBarHeight = 20;
-  var barStrokeWidth = 1;
-
-  var timelineBodyDivHeight = (timelineGraphBarHeight + 2 * timeLineCellPaddingHeight) * 6;
-  var timelineIDCellWidth = 200;
-
-  var timelineAxisHeight = timelineGraphBarHeight;
-  var timelineAxisWidth = timelineWidth;
-
-var timelineTableTmp = timelineSpace
-  .append("table")
-  ;
-
-  var timelineHeaderTable = timelineTableTmp
-  .append("tr")
-  .append("td")
+  var timelineTable = timelineSpace
   .append("table")
   .style("font-size", fontSize + "px")
   .style("border-collapse", "separate")
@@ -52,30 +35,12 @@ var timelineTableTmp = timelineSpace
   .attr("cellpadding", 3)
   ;
 
-var timelineBodyDiv = timelineTableTmp
-.append("tr")
-.append("td")
-.append("div")
-.style("height", timelineBodyDivHeight + "px")
-.style("overflow-y", "scroll")
-//.style("overflow-y", "hidden")
-;
-
-var timelineBodyTable = timelineBodyDiv
-  .append("table")
-  .style("font-size", fontSize + "px")
-  .style("border-collapse", "separate")
-  .style("border-spacing", "1px 1px")
-  .attr("cellpadding", 3)
-  ;
-
-  var timelineTableHeaderRow = timelineHeaderTable
+  var timelineTableHeaderRow = timelineTable
   .append("tr")
   ;
 
   var timelineTableStageIDNameCell = timelineTableHeaderRow
   .append("th")
-  .attr("width", timelineIDCellWidth)
   .text("stageID")
   .style("font-size", fontSize + "px")
   .style("padding", "12px")
@@ -84,10 +49,16 @@ var timelineBodyTable = timelineBodyDiv
 
   var timelineTableAxisCell = timelineTableHeaderRow
   .append("td")
-  .attr("width", timelineCellWidth)
   .style("background", "sandybrown")
   .style("valign", "bottom")
   ;
+
+  var timelineWidth = 1500;
+  var timelineGraphBarHeight = 20;
+  var barStrokeWidth = 1;
+
+  var timelineAxisHeight = timelineGraphBarHeight;
+  var timelineAxisWidth = timelineWidth;
 
   var stageTimelineMinLength = STAGE_TIMELINE_MIN_LENGTH != null ? STAGE_TIMELINE_MIN_LENGTH : d3.min(stageInfoArray, function(stageInfo) {
       return Number(stageInfo.submissionTime);
@@ -120,7 +91,7 @@ var timelineBodyTable = timelineBodyDiv
   })
   ;
 
-  var timelineRow = timelineBodyTable
+  var timelineRow = timelineTable
   .selectAll(".tr")
   .data(stageInfoArray)
   .enter()
@@ -131,7 +102,6 @@ var timelineBodyTable = timelineBodyDiv
 
   var timelineStageIDCell = timelineRow
   .append("th")
-  .attr("width", timelineIDCellWidth)
   .text(function (stageInfo){
     return stageInfo.key;
   })
@@ -154,7 +124,6 @@ var timelineBodyTable = timelineBodyDiv
 
   var timelineGraphBarCell = timelineRow
   .append("td")
-  .attr("width", timelineCellWidth)
   .style("padding", timeLineCellPaddingHeight + "px " + timeLineCellPaddingWidth + "px")
   .style("background", function(stageInfo, index) {
     return stageInfo.failureReason != null ? failureColor : (index % 2 == 0 ? "wheat" : "tan");
